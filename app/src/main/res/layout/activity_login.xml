@@ -1,0 +1,255 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--
+    /*
+     *	This content is generated from the API File Info.
+     *	(Alt+Shift+Ctrl+I).
+     *
+     *	@desc
+     *	@file 		login_screen
+     *	@date 		Tuesday 05th of September 2023 01:28:18 PM
+     *	@title 		Page 1
+     *	@author
+     *	@keywords
+     *	@generator 	Export Kit v1.3.figma
+     *
+     */
+    -->
+
+    <TextView
+        android:id="@+id/hello__welcome_back"
+        android:layout_width="301dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="80dp"
+        android:gravity="center"
+        android:text="@string/hello__welcome_back_string"
+        android:textColor="@color/hello__welcome_back_color"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/ellipse_1"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="358dp"
+        android:background="@drawable/ellipse_1_shape"
+        android:foregroundGravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/dayflow_sitting"
+        android:layout_width="273dp"
+        android:layout_height="219dp"
+        android:layout_marginStart="204dp"
+        android:layout_marginTop="64dp"
+        android:contentDescription="dayflow_sitting"
+        android:src="@drawable/dayflow_sitting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/happy_to_see_you_again__to_use_your_account_please_login_first_"
+        android:layout_width="300.5dp"
+        android:layout_height="56.5dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/happy_to_see_you_again__to_use_your_account_please_login_first__string"
+        android:textColor="@color/hello__welcome_back_color"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/dayflow_sitting"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hello__welcome_back" />
+
+    <TextView
+        android:id="@+id/email_address"
+        android:layout_width="130.5dp"
+        android:layout_height="33.5dp"
+        android:layout_marginStart="53dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/email_address_string"
+        android:textColor="@color/hello__welcome_back_color"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/rectangle_2"
+        app:layout_constraintEnd_toStartOf="@+id/dayflow_sitting"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/password"
+        android:layout_width="130.5dp"
+        android:layout_height="33.5dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/password_string"
+        android:textColor="@color/hello__welcome_back_color"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.189"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rectangle_2" />
+
+    <TextView
+        android:id="@+id/or_login_with"
+        android:layout_width="130.5dp"
+        android:layout_height="33.5dp"
+        android:layout_marginStart="151dp"
+        android:layout_marginEnd="130dp"
+        android:layout_marginBottom="124dp"
+        android:text="@string/or_login_with_string"
+        android:textColor="@color/hello__welcome_back_color"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/forgot_password"
+        android:layout_width="130.5dp"
+        android:layout_height="29.5dp"
+        android:layout_marginStart="264dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/forgot_password_string"
+        android:textColor="@color/forgot_password_color"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rectangle_1" />
+
+    <ImageView
+        android:id="@+id/combined_shape_search"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:contentDescription="combined_shape"
+        android:src="@drawable/combined_shape"
+        app:layout_constraintBottom_toBottomOf="@+id/ellipse_1"
+        app:layout_constraintEnd_toEndOf="@+id/ellipse_1"
+        app:layout_constraintStart_toStartOf="@+id/ellipse_1"
+        app:layout_constraintTop_toTopOf="@+id/ellipse_1" />
+
+    <View
+        android:id="@+id/rectangle_1"
+        android:layout_width="350dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="380dp"
+        android:background="@drawable/rectangle_1_shape"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.393"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/rectangle_2"
+        android:layout_width="350dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="37dp"
+        android:background="@drawable/rectangle_2_shape"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dayflow_sitting" />
+
+    <ImageView
+        android:id="@+id/xmlid_22_"
+        android:layout_width="25dp"
+        android:layout_height="24.85dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="44dp"
+        android:contentDescription="xmlid_22_"
+        android:src="@drawable/xmlid_22_"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.298"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line_1" />
+
+    <ImageView
+        android:id="@+id/vector_ek4"
+        android:layout_width="23.47dp"
+        android:layout_height="26.34dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="115dp"
+        android:contentDescription="vector_ek4"
+        android:src="@drawable/vector_ek4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line_2" />
+
+    <View
+        android:id="@+id/line_1"
+        android:layout_width="89.01dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="241dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="148dp"
+        android:background="@drawable/line_1_shape"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/line_2"
+        android:layout_width="89.01dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="53dp"
+        android:layout_marginEnd="269dp"
+        android:layout_marginBottom="148dp"
+        android:background="@drawable/line_2_shape"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="107dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/my_button"
+        android:shadowColor="#9C27B0"
+        android:text="Login"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rectangle_1"
+        app:rippleColor="#673AB7"
+        app:strokeColor="#3F51B5" />
+
+    <EditText
+        android:id="@+id/editTextTextEmailAddress"
+        android:layout_width="309dp"
+        android:layout_height="53dp"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="@+id/rectangle_2"
+        app:layout_constraintStart_toStartOf="@+id/rectangle_2"
+        app:layout_constraintTop_toTopOf="@+id/rectangle_2" />
+
+    <EditText
+        android:id="@+id/editTextTextPassword"
+        android:layout_width="321dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/rectangle_1"
+        app:layout_constraintHorizontal_bias="0.456"
+        app:layout_constraintStart_toStartOf="@+id/rectangle_1"
+        app:layout_constraintTop_toTopOf="@+id/rectangle_1" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

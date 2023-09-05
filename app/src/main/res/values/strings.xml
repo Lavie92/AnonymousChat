@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- login_screen strings -->
+
+    <string name="app_name">Page 1</string>
+    <string name="ek_img_content">ExportKit Image</string>
+    <string name="hello__welcome_back_string">Hello, Welcome Back</string>
+    <string name="happy_to_see_you_again__to_use_your_account_please_login_first__string">Happy to see you again, to use your account please login first.</string>
+    <string name="email_address_string">Email Address</string>
+    <string name="password_string">Password</string>
+    <string name="or_login_with_string">Or Login with</string>
+    <string name="forgot_password_string">Forgot Password</string>
+    <string name="login_string">Login</string>
+
+
+    <string name="get_closer_to_string">Get Closer To </string>
+    <string name="everyone_string">EveryOne</string>
+    <string name="helps_you_to_contact_everyone_with_just_easy_way_string">Helps you to contact everyone with just easy way</string>
+    <string name="get_started_string">Get Started</string>
+
+    <string name="search_chat_string">Search Chat</string>
+    <string name="chats_string">Chats</string>
+    <string name="friends_string">Friends</string>
+    <string name="calls_string">Calls</string>
+
+</resources>
+
