@@ -13,6 +13,15 @@
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
         <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FormForgotActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ForgotPassActivity"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:exported="false" />
         <activity

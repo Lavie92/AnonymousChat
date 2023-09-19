@@ -1,0 +1,78 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btnLogin3"
+        android:layout_width="332dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="164dp"
+        android:layout_marginEnd="165dp"
+        android:layout_marginBottom="112dp"
+        android:background="@drawable/my_button"
+        android:shadowColor="#9C27B0"
+        android:text="Submit"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:rippleColor="#673AB7"
+        app:strokeColor="#3F51B5" />
+
+    <ImageView
+        android:id="@+id/combined_shape"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="combined_shape3"
+        android:src="@drawable/combined_shape"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/please_enter_the_email_associated_with_your_account_we_will_send_an_email_instruction_to_reset_your_password"
+        android:layout_width="321dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="45dp"
+        android:text="@string/please_enter_the_email_associated_with_your_account_we_will_send_an_email_instruction_to_reset_your_password_string"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locked_padlock_outline_2" />
+
+    <ImageView
+        android:id="@+id/locked_padlock_outline_2"
+        android:layout_width="238dp"
+        android:layout_height="160dp"
+        android:layout_marginStart="77dp"
+        android:layout_marginEnd="78dp"
+        android:contentDescription="locked_padlock_outline_2"
+        android:src="@drawable/locked_padlock_outline_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="54dp" />
+
+    <EditText
+        android:id="@+id/editTextText2"
+        style="@style/Widget.Material3.TextInputEditText.OutlinedBox"
+        android:layout_width="183dp"
+        android:layout_height="51dp"
+        android:backgroundTint="#FFFFFF"
+        android:ems="10"
+        android:hint="Please Enter Your Email"
+        android:inputType="text"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="443dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
