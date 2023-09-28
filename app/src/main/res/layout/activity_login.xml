@@ -76,32 +76,6 @@
         app:layout_constraintTop_toBottomOf="@+id/hello__welcome_back" />
 
     <TextView
-        android:id="@+id/email_address"
-        android:layout_width="130.5dp"
-        android:layout_height="33.5dp"
-        android:layout_marginStart="53dp"
-        android:layout_marginEnd="20dp"
-        android:text="@string/email_address_string"
-        android:textColor="@color/hello__welcome_back_color"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/rectangle_2"
-        app:layout_constraintEnd_toStartOf="@+id/dayflow_sitting"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/password"
-        android:layout_width="130.5dp"
-        android:layout_height="33.5dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/password_string"
-        android:textColor="@color/hello__welcome_back_color"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.147"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rectangle_2" />
-
-    <TextView
         android:id="@+id/or_login_with"
         android:layout_width="130.5dp"
         android:layout_height="33.5dp"
@@ -117,17 +91,34 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/forgot_password"
+        android:id="@+id/forgot_password2"
         android:layout_width="130.5dp"
         android:layout_height="29.5dp"
         android:layout_marginStart="264dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:text="@string/forgot_password_string"
         android:textColor="@color/forgot_password_color"
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rectangle_1" />
+        app:layout_constraintTop_toBottomOf="@+id/login_password" />
+
+    <TextView
+        android:id="@+id/textSignup"
+        android:layout_width="182dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="147dp"
+        android:text="You don't have Account?"
+        android:textColor="@color/purple_500"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.348"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
     <ImageView
         android:id="@+id/combined_shape_search"
@@ -141,29 +132,6 @@
         app:layout_constraintStart_toStartOf="@+id/ellipse_1"
         app:layout_constraintTop_toTopOf="@+id/ellipse_1"
         app:layout_constraintVertical_bias="0.529" />
-
-    <View
-        android:id="@+id/rectangle_1"
-        android:layout_width="409dp"
-        android:layout_height="54dp"
-        android:layout_marginTop="380dp"
-        android:background="@drawable/rectangle_1_shape"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.356"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/rectangle_2"
-        android:layout_width="407dp"
-        android:layout_height="57dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="37dp"
-        android:background="@drawable/rectangle_2_shape"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.314"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dayflow_sitting" />
 
     <ImageView
         android:id="@+id/xmlid_22_"
@@ -229,33 +197,44 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rectangle_1"
+        app:layout_constraintTop_toBottomOf="@+id/login_password"
         app:rippleColor="#673AB7"
         app:strokeColor="#3F51B5" />
 
     <EditText
-        android:id="@+id/editTextTextEmailAddress"
-        android:layout_width="377dp"
-        android:layout_height="53dp"
+        android:id="@+id/login_email"
+        android:layout_width="360dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="13dp"
+
+        android:layout_marginEnd="25dp"
+        android:background="@drawable/rectangle_1_shape"
+        android:drawableLeft="@drawable/icon_email"
+        android:drawablePadding="7dp"
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="@+id/rectangle_2"
-        app:layout_constraintHorizontal_bias="0.366"
-        app:layout_constraintStart_toStartOf="@+id/rectangle_2"
-        app:layout_constraintTop_toTopOf="@+id/rectangle_2" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dayflow_sitting" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
-        android:layout_width="370dp"
-        android:layout_height="42dp"
-        android:layout_marginTop="8dp"
+        android:id="@+id/login_password"
+        android:layout_width="360dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="29dp"
+
+        android:layout_marginEnd="25dp"
+        android:background="@drawable/rectangle_1_shape"
+        android:drawableLeft="@drawable/baseline_lock_person_24"
+        android:drawablePadding="7dp"
         android:ems="10"
         android:hint="Password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="@+id/rectangle_1"
-        app:layout_constraintHorizontal_bias="0.333"
-        app:layout_constraintStart_toStartOf="@+id/rectangle_1"
-        app:layout_constraintTop_toTopOf="@+id/rectangle_1" />
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_email" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "950748527968",
+    "project_id": "doan-chuyennganh",
+    "storage_bucket": "doan-chuyennganh.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950748527968:android:3a4175004c4a775ef07205",
+        "android_client_info": {
+          "package_name": "com.example.doan_chuyennganh"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEylaSvVUqGyvjSq9vN-avPUrArQMxlmU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

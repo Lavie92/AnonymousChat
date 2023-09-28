@@ -13,6 +13,9 @@
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
         <activity
+            android:name=".SignupActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
