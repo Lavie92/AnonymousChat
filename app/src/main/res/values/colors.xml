@@ -12,7 +12,8 @@
 	<color name="teal_700">#FF018786</color>
 	<color name="black">#FF000000</color>
 	<color name="white">#FFFFFFFF</color>
-
+	<color name="blue">#459DE4</color>
+	<color name="red">#FF0000</color>
 	<color name="_bg__login_screen_ek2_color">#FFFFFF</color>
 	<color name="ellipse_1_color">#ffffff</color>
 	<color name="hello__welcome_back_color">#000000</color>

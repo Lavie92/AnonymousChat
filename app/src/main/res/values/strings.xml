@@ -37,6 +37,13 @@
     <string name="user_name_ek5_string">Gender</string>
     <string name="jamesfranco_ek1_string">select  </string>
     <string name="dang_truong_an_string">DANG TRUONG AN</string>
+    <string name="default_web_client_id">950748527968-stcijveqt7kjbedqoc1vshi3c2pmopgl.apps.googleusercontent.com</string>
+
+
+    <string name="facebook_app_id">878703407163691</string>
+    <string name="fb_login_protocol_scheme">29893915dea07c7e8f4e39a250c5edfb</string>
+    <string name="facebook_client_token">85S6IYHfaHOSU3qltHm4bmRWaco=</string>
+
 
 </resources>
 
