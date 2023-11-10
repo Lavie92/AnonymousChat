@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -34,11 +37,9 @@
         <activity
             android:name=".ForgotPassActivity"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
         <activity
             android:name=".LoginActivity"
             android:exported="true">

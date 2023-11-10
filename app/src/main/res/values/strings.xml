@@ -43,6 +43,7 @@
     <string name="facebook_app_id">878703407163691</string>
     <string name="fb_login_protocol_scheme">29893915dea07c7e8f4e39a250c5edfb</string>
     <string name="facebook_client_token">85S6IYHfaHOSU3qltHm4bmRWaco=</string>
+    <string name="greeting">Tớ chào cậu!</string>
 
 
 </resources>

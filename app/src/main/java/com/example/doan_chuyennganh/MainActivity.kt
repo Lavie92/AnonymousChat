@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
 import com.facebook.login.widget.LoginButton
@@ -19,30 +20,31 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var mAuth: FirebaseAuth
+    private var ivStartChat: ImageView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val textView = findViewById<TextView>(R.id.name)
 
-
-
+        val auth = Firebase.auth
+        val user = auth.currentUser
+        ivStartChat = binding.ivStartChat
+        ivStartChat?.setOnClickListener {
+            val intent = Intent(this, ChatActivity::class.java)
+            startActivity(intent)
+        }
         mAuth = FirebaseAuth.getInstance()
 
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
+            .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build()
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
 
 
-        val textView = findViewById<TextView>(R.id.name)
 
-        val auth = Firebase.auth
-        val user = auth.currentUser
 
         if (user != null) {
             val userName = user.displayName
@@ -52,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
 // Inside onCreate() method
         val signout = findViewById<Button>(R.id.logout_button)
         signout.setOnClickListener {
@@ -60,8 +61,8 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
     }
+
     private fun signOutAndStartSignInActivity() {
         mAuth.signOut()
         Firebase.auth.signOut()
@@ -72,7 +73,4 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
     }
-
-
-
 }

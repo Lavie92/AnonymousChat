@@ -87,7 +87,7 @@
         app:layout_constraintTop_toTopOf="@+id/rectangle_6" />
 
     <ImageView
-        android:id="@+id/fill_1"
+        android:id="@+id/iv_StartChat"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="72dp"
@@ -116,7 +116,7 @@
         android:contentDescription="combined_shape_ek3"
         android:src="@drawable/combined_shape_ek3"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/fill_1"
+        app:layout_constraintStart_toEndOf="@+id/iv_StartChat"
         app:layout_constraintTop_toTopOf="@+id/rectangle_5" />
 
     <TextView
@@ -160,6 +160,7 @@
         android:ems="10"
         android:hint="Search Chat"
         android:inputType="text"
+        android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="@+id/rectangle_3"
         app:layout_constraintStart_toStartOf="@+id/rectangle_3"
         app:layout_constraintTop_toTopOf="@+id/rectangle_3" />
