@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PreMainActivity">
+
+    <TextView
+        android:id="@+id/user_name_ek"
+        android:layout_width="101dp"
+        android:layout_height="27dp"
+        android:text="@string/user_name_ek2_string"
+        android:textColor="@color/notifications_ek2_color"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="35dp"
+        tools:layout_editor_absoluteY="138dp" />
+
+    <TextView
+        android:id="@+id/your_email_ek"
+        android:layout_width="122dp"
+        android:layout_height="27dp"
+        android:text="@string/your_email_ek2_string"
+        android:textColor="@color/notifications_ek2_color"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="35dp"
+        tools:layout_editor_absoluteY="193dp" />
+
+    <TextView
+        android:id="@+id/notifications_ek"
+        android:layout_width="110dp"
+        android:layout_height="27dp"
+        android:text="@string/notifications_ek2_string"
+        android:textColor="@color/notifications_ek2_color"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="35dp"
+        tools:layout_editor_absoluteY="307dp" />
+
+    <ImageView
+        android:id="@+id/icon_ek"
+        android:layout_width="3dp"
+        android:layout_height="7dp"
+        android:contentDescription="icon_ek1"
+        android:src="@drawable/icon_ek1"
+        tools:layout_editor_absoluteX="313dp"
+        tools:layout_editor_absoluteY="395dp" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#9C27B0"
+        tools:layout_editor_absoluteX="313dp"
+        tools:layout_editor_absoluteY="313dp" />
+
+    <TextView
+        android:id="@+id/jamesfranco"
+        android:layout_width="101dp"
+        android:layout_height="22dp"
+        android:layout_gravity="center_vertical|end"
+        android:gravity="end"
+        android:text="@string/jamesfranco_string"
+        android:textColor="@color/james_gmail_com_color"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="258dp"
+        tools:layout_editor_absoluteY="147dp" />
+
+    <TextView
+        android:id="@+id/user_name_ek2"
+        android:layout_width="81dp"
+        android:layout_height="28dp"
+        android:text="@string/user_name_ek5_string"
+        android:textColor="@color/notifications_ek2_color"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="35dp"
+        tools:layout_editor_absoluteY="375dp" />
+
+    <TextView
+        android:id="@+id/dang_truong_an"
+        android:layout_width="200dp"
+        android:layout_height="27dp"
+        android:layout_gravity="center_horizontal|center"
+        android:gravity="center"
+        android:text="Anynomus Chat"
+        android:textColor="@color/dang_truong_an_color"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="105dp"
+        tools:layout_editor_absoluteY="50dp" />
+
+    <TextView
+        android:id="@+id/reset_password_ek"
+        android:layout_width="143dp"
+        android:layout_height="31dp"
+        android:text="@string/reset_password_ek2_string"
+        android:textColor="@color/notifications_ek2_color"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="35dp"
+        tools:layout_editor_absoluteY="240dp" />
+
+    <TextView
+        android:id="@+id/james_gmail_com"
+        android:layout_width="122dp"
+        android:layout_height="23dp"
+        android:layout_gravity="center_vertical|end"
+        android:gravity="end"
+        android:text="@string/james_gmail_com_string"
+        android:textColor="@color/james_gmail_com_color"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="237dp"
+        tools:layout_editor_absoluteY="190dp" />
+
+    <TextView
+        android:id="@+id/jamesfranco_ek"
+        android:layout_width="46dp"
+        android:layout_height="22dp"
+        android:layout_gravity="center_vertical|end"
+        android:gravity="end"
+        android:text="@string/jamesfranco_ek1_string"
+        android:textColor="@color/james_gmail_com_color"
+        android:textSize="14sp"
+        tools:layout_editor_absoluteX="313dp"
+        tools:layout_editor_absoluteY="388dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -36,8 +37,8 @@ class LoginActivity : AppCompatActivity() {
     val callbackManager = CallbackManager.Factory.create();
 
     private lateinit var  binding: ActivityLoginBinding
-    private lateinit var firebaseDatabase: FirebaseDatabase
-    private lateinit var databaseReference: DatabaseReference
+    private lateinit var firebaseDatabases: FirebaseDatabase
+    private lateinit var databaseReferences: DatabaseReference
 
     companion object {
         private const val RC_SIGN_IN = 9001
@@ -62,23 +63,28 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference = firebaseDatabase.reference.child("users")
+        firebaseDatabases = FirebaseDatabase.getInstance()
+        databaseReferences = firebaseDatabases.reference.child("users")
 
-        binding.btnLogin.setOnClickListener(){
-
+        supportActionBar?.hide()
+        binding.btnLogin.setOnClickListener{
             val loginEmail = binding.loginEmail.text.toString()
             val loginPassword = binding.loginPassword.text.toString()
+            if(checkFields()){
+                auth.signInWithEmailAndPassword(loginEmail,loginPassword).addOnCompleteListener() {
+                    if(it.isSuccessful){
+                        val user = auth.currentUser
+                        updateUI(user)
 
-            if(loginEmail.isNotEmpty() && loginPassword.isNotEmpty()){
-                loginUser(loginEmail,loginPassword)
-                startActivity(Intent(this, MainActivity::class.java))
-            }else{
-                Toast.makeText(this@LoginActivity,"All fields are mandatory", Toast.LENGTH_SHORT).show()
-
+                    }else{
+                        Toast.makeText(this,"Wrong Email or Password!",Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
+
+        //google
         binding.textSignup.setOnClickListener{
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
@@ -99,6 +105,8 @@ class LoginActivity : AppCompatActivity() {
         signInButton.setOnClickListener {
             signIn()
         }
+
+
 
 
         //
@@ -140,7 +148,9 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
+                    checkIfEmailExists(user?.email)
                     updateUI(user)
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -197,6 +207,8 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     Toast.makeText(this, "Signed in as ${user?.displayName}", Toast.LENGTH_SHORT).show()
+                    checkIfEmailExists(user?.email)
+
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
@@ -207,27 +219,52 @@ class LoginActivity : AppCompatActivity() {
     //End Google
 
 
-    private fun loginUser(email: String, password:String){
-        databaseReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists()){
-                    for(userSnapshot in snapshot.children){
-                        val userData = userSnapshot.getValue(UserData::class.java)
 
-                        if(userData!=null && userData.password == password){
-                            Toast.makeText(this@LoginActivity, "login successful", Toast.LENGTH_SHORT).show()
-                            return
+
+    private fun checkFields(): Boolean {
+        val signupEmail = binding.loginEmail.text.toString()
+        val signupPassword = binding.loginPassword.text.toString()
+        if(signupEmail.isNotEmpty() && signupPassword.isNotEmpty()){
+            if(!isValidEmail(signupEmail)){
+                Toast.makeText(this,"Email wrong format!", Toast.LENGTH_SHORT).show()
+                return false
+
+            }
+            if(signupPassword.length <=6){
+                Toast.makeText(this,"Password must least 6 characters", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            else
+                return true
+            //signupUser(signupEmail,signupPassword)
+        }
+        else{
+            return false
+            Toast.makeText(this,"All fields are mandatory", Toast.LENGTH_SHORT).show()
+
+        }
+    }
+
+    private fun checkIfEmailExists(email: String?) {
+        if (email != null) {
+            auth.fetchSignInMethodsForEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val signInMethods = task.result?.signInMethods
+                        if (signInMethods == null || signInMethods.isEmpty()) {
+                            val databaseReference = databaseReferences.database.reference.child("users").child(auth.currentUser!!.uid)
+                            val users : UserData = UserData(auth.currentUser!!.uid,auth.currentUser!!.email,auth.currentUser!!.displayName,null,null,false)
+                            databaseReference.setValue(users)
+
                         }
                     }
                 }
-                Toast.makeText(this@LoginActivity, "login failed", Toast.LENGTH_SHORT).show()
+        }
+    }
 
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@LoginActivity,"Database Error: ${error.message}", Toast.LENGTH_SHORT).show()
-
-            }
-        })
+    fun isValidEmail(email: String): Boolean {
+        val pattern = Patterns.EMAIL_ADDRESS
+        return pattern.matcher(email).matches()
     }
 }
