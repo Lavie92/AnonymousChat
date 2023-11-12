@@ -1,4 +1,4 @@
-package com.example.doan_chuyennganh
+package com.example.doan_chuyennganh.authentication
 
 data class UserData(
     val id:String? = null,

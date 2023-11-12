@@ -1,12 +1,10 @@
-package com.example.doan_chuyennganh
+package com.example.doan_chuyennganh.authentication
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.doan_chuyennganh.databinding.ActivityForgotPassBinding
 import com.example.doan_chuyennganh.databinding.ActivitySignupBinding
-import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
