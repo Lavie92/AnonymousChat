@@ -6,18 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.doan_chuyennganh.authentication.UserData
+import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.databinding.ActivityLoginBinding
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -262,7 +259,7 @@ public class LoginActivity : AppCompatActivity() {
                                 // Email đã tồn tại trong cơ sở dữ liệu
                             } else {
                                 // Email chưa tồn tại trong cơ sở dữ liệu
-                                val users: UserData = UserData(currentUser.uid, currentUser.email, currentUser.displayName, null, false, null, false)
+                                val users: User = User(currentUser.uid, currentUser.email, currentUser.displayName, null, false, null, false)
                                 databaseReference.child(currentUser.uid).setValue(users)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {

@@ -1,0 +1,7 @@
+package com.example.doan_chuyennganh.chat
+
+class ChatRoom(user1Id: String, user2Id: String?) {
+    val user1Id: String = ""
+    val user2Id: String = ""
+    val messages: Map<String, Message> = emptyMap()
+}

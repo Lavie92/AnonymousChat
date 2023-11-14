@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import com.example.doan_chuyennganh.authentication.UserData
+import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -20,7 +20,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
@@ -84,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     if (dataSnapshot.exists()) {
                         val currentUser = FirebaseAuth.getInstance().currentUser
-                        val matchedUser = dataSnapshot.children.first().getValue(UserData::class.java)
+                        val matchedUser = dataSnapshot.children.first().getValue(User::class.java)
 
                         val chatRoomId = createChatRoom(currentUser?.uid, matchedUser?.id)
                         val intent = Intent(context, ChatActivity::class.java)
