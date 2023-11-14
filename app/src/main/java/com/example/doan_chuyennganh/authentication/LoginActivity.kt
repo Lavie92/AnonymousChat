@@ -1,20 +1,24 @@
-package com.example.doan_chuyennganh.authentication
+package com.example.doan_chuyennganh
 
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.view.View
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.doan_chuyennganh.MainActivity
-import com.example.doan_chuyennganh.R
+import com.example.doan_chuyennganh.authentication.SignupActivity
+import com.example.doan_chuyennganh.authentication.UserData
 import com.example.doan_chuyennganh.databinding.ActivityLoginBinding
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
+import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -31,12 +35,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
-class LoginActivity : AppCompatActivity() {
+public class LoginActivity : AppCompatActivity() {
     val callbackManager = CallbackManager.Factory.create();
 
     private lateinit var  binding: ActivityLoginBinding
-    private lateinit var firebaseDatabase: FirebaseDatabase
-    private lateinit var databaseReference: DatabaseReference
+    private lateinit var firebaseDatabases: FirebaseDatabase
+    private lateinit var databaseReferences: DatabaseReference
 
     companion object {
         private const val RC_SIGN_IN = 9001
@@ -61,23 +65,28 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference = firebaseDatabase.reference.child("users")
+        firebaseDatabases = FirebaseDatabase.getInstance()
+        databaseReferences = firebaseDatabases.reference.child("users")
 
-        binding.btnLogin.setOnClickListener(){
-
+        supportActionBar?.hide()
+        binding.btnLogin.setOnClickListener{
             val loginEmail = binding.loginEmail.text.toString()
             val loginPassword = binding.loginPassword.text.toString()
+            if(checkFields()){
+                auth.signInWithEmailAndPassword(loginEmail,loginPassword).addOnCompleteListener() {
+                    if(it.isSuccessful){
+                        val user = auth.currentUser
+                        updateUI(user)
 
-            if(loginEmail.isNotEmpty() && loginPassword.isNotEmpty()){
-                loginUser(loginEmail,loginPassword)
-                startActivity(Intent(this, MainActivity::class.java))
-            }else{
-                Toast.makeText(this@LoginActivity,"All fields are mandatory", Toast.LENGTH_SHORT).show()
-
+                    }else{
+                        Toast.makeText(this,"Wrong Email or Password!",Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
+
+        //google
         binding.textSignup.setOnClickListener{
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
@@ -100,13 +109,15 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
+
+
         //
 
 
         //Facebook
         val callbackManager = CallbackManager.Factory.create()
 
-        val loginButton =findViewById<View>(R.id.login_button) as LoginButton
+        val loginButton =findViewById<View>(R.id.loginButton) as LoginButton
         loginButton.setPermissions( "email","public_profile")
         loginButton.registerCallback(
             callbackManager,
@@ -139,7 +150,9 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
+                    checkIfEmailExists(user?.email)
                     updateUI(user)
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -154,7 +167,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 //        super.onActivityResult(requestCode, resultCode, data)
 //
 //        // Pass the activity result back to the Facebook SDK
@@ -195,7 +208,10 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    Toast.makeText(this, "Signed in as ${user?.displayName}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Welcome back, ${user?.displayName}!", Toast.LENGTH_SHORT).show()
+                    checkIfEmailExists(user?.email)
+
+
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
@@ -206,27 +222,75 @@ class LoginActivity : AppCompatActivity() {
     //End Google
 
 
-    private fun loginUser(email: String, password:String){
-        databaseReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists()){
-                    for(userSnapshot in snapshot.children){
-                        val userData = userSnapshot.getValue(UserData::class.java)
 
-                        if(userData!=null && userData.password == password){
-                            Toast.makeText(this@LoginActivity, "login successful", Toast.LENGTH_SHORT).show()
-                            return
+
+    private fun checkFields(): Boolean {
+        val signupEmail = binding.loginEmail.text.toString()
+        val signupPassword = binding.loginPassword.text.toString()
+        if(signupEmail.isNotEmpty() && signupPassword.isNotEmpty()){
+            if(!isValidEmail(signupEmail)){
+                Toast.makeText(this,"Email wrong format!", Toast.LENGTH_SHORT).show()
+                return false
+
+            }
+            if(signupPassword.length <=6){
+                Toast.makeText(this,"Password must least 6 characters", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            else
+                return true
+            //signupUser(signupEmail,signupPassword)
+        }
+        else{
+            return false
+            Toast.makeText(this,"All fields are mandatory", Toast.LENGTH_SHORT).show()
+
+        }
+    }
+
+    private fun checkIfEmailExists(email: String?) {
+        if (email != null) {
+            val currentUser = auth.currentUser
+
+            if (currentUser != null) {
+                // Người dùng đã đăng nhập
+                val databaseReference = databaseReferences.database.reference.child("users")
+
+                databaseReference.orderByChild("email").equalTo(email)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                // Email đã tồn tại trong cơ sở dữ liệu
+                            } else {
+                                // Email chưa tồn tại trong cơ sở dữ liệu
+                                val users: UserData = UserData(currentUser.uid, currentUser.email, currentUser.displayName, null, false, null)
+                                databaseReference.child(currentUser.uid).setValue(users)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(this@LoginActivity, "Welcome, ${currentUser.displayName}", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(this@LoginActivity, "Failed to create user data: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                            }
                         }
-                    }
-                }
-                Toast.makeText(this@LoginActivity, "login failed", Toast.LENGTH_SHORT).show()
 
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Toast.makeText(this@LoginActivity, "Error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+            } else {
+
+                Toast.makeText(this@LoginActivity, "User not logged in", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@LoginActivity,"Database Error: ${error.message}", Toast.LENGTH_SHORT).show()
 
-            }
-        })
+
+
+    fun isValidEmail(email: String): Boolean {
+        val pattern = Patterns.EMAIL_ADDRESS
+        return pattern.matcher(email).matches()
     }
 }

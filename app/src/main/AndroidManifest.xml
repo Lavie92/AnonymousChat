@@ -29,7 +29,7 @@
             android:name=".authentication.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".authentication.ProfileActivity"
+            android:name=".ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".authentication.FormForgotActivity"
@@ -41,7 +41,7 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".authentication.LoginActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

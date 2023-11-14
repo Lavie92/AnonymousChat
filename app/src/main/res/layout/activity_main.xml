@@ -98,7 +98,7 @@
         app:layout_constraintTop_toTopOf="@+id/rectangle_5" />
 
     <ImageView
-        android:id="@+id/combined_shape_ek2"
+        android:id="@+id/btnSetting"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:contentDescription="combined_shape_ek2"

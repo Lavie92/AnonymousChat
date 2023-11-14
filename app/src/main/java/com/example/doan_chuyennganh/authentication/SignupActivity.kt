@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.databinding.ActivitySignupBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

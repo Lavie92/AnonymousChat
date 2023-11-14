@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.doan_chuyennganh.authentication.LoginActivity
+import android.widget.Toast
 import com.example.doan_chuyennganh.authentication.UserData
 import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.auth.User
@@ -25,7 +26,9 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private lateinit var mAuth: FirebaseAuth
+    private lateinit var auth: FirebaseAuth
+    private  lateinit var firebaseDatabase: FirebaseDatabase
+    private  lateinit var databaseReferences: DatabaseReference
     private var ivStartChat: ImageView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +43,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)
         }
-        mAuth = FirebaseAuth.getInstance()
-
+        this.auth = FirebaseAuth.getInstance()
+        //Load Screen to check Active
+        checkActive()
+        //
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build()
@@ -58,7 +63,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             // Handle the case where the user is not signed in
         }
-
+        binding.btnSetting.setOnClickListener{
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
 
 // Inside onCreate() method
         val signout = findViewById<Button>(R.id.logout_button)
@@ -104,7 +111,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun signOutAndStartSignInActivity() {
-        mAuth.signOut()
+        auth.signOut()
+        FirebaseAuth.getInstance().signOut();
         Firebase.auth.signOut()
         mGoogleSignInClient.signOut().addOnCompleteListener(this) {
             // Optional: Update UI or show a message to the user
@@ -113,4 +121,24 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    private fun checkActive(){
+        //mAuth = FirebaseAuth.getInstance()
+        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
+        databaseReferences.child(auth.currentUser!!.uid).get().addOnSuccessListener {
+            if(it.exists()){
+                val active = it.child("active").value
+                if(active == false){
+                    Toast.makeText(this,"Please complete some Information!",Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                }
+            }else{
+                Toast.makeText(this,"Error!",Toast.LENGTH_SHORT).show()
+
+            }
+
+        }
+
+    }
+
 }

@@ -267,7 +267,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
+        android:id="@+id/loginButton"
         android:layout_width="34dp"
         android:layout_height="28dp"
         android:layout_gravity="center_horizontal"
