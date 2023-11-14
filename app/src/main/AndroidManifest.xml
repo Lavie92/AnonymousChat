@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
+<!--        <activity-->
+<!--            android:name=".ChatbotActivity"-->
+<!--            android:exported="false" />-->
         <activity
             android:name=".PreMainActivity"
             android:exported="false" />
@@ -40,8 +43,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
         <activity
-            android:name=".LoginActivity"
+            android:name=".ChatbotActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

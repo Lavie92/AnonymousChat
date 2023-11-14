@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
     private  lateinit var firebaseDatabase: FirebaseDatabase
     private  lateinit var databaseReferences: DatabaseReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -34,9 +35,6 @@ class MainActivity : AppCompatActivity() {
         userID?.let{
             val uid = it.uid
         }
-
-
-
         mAuth = FirebaseAuth.getInstance()
 
         //Load Screen to check Active

@@ -17,7 +17,6 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_profile)
-
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         binding.btnSave.setOnClickListener{
             Toast.makeText(this,"No user signed in!",Toast.LENGTH_SHORT).show()
@@ -32,9 +31,7 @@ class ProfileActivity : AppCompatActivity() {
 
         }
     }
-
     private fun updateData(id: String,username: String, age: String, gender: String){
-
         databaseReferences = FirebaseDatabase.getInstance().getReference("users")
         val user = mapOf(
             "username" to username,
@@ -44,7 +41,6 @@ class ProfileActivity : AppCompatActivity() {
         )
         databaseReferences.child(id).updateChildren(user).addOnSuccessListener {
             Toast.makeText(this,"Saved!",Toast.LENGTH_SHORT).show()
-
         }.addOnFailureListener{
             Toast.makeText(this,"Failed!",Toast.LENGTH_SHORT).show()
         }
