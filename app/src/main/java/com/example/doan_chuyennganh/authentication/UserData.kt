@@ -6,5 +6,6 @@ data class UserData(
     val password: String? = null,
     val username: String? = null,
     val active: Boolean = false,
-    val gender: String? = null
+    val gender: String? = null,
+    val ready: Boolean = false
 )

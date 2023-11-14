@@ -11,7 +11,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.doan_chuyennganh.authentication.SignupActivity
 import com.example.doan_chuyennganh.authentication.UserData
 import com.example.doan_chuyennganh.databinding.ActivityLoginBinding
 import com.facebook.AccessToken
@@ -263,7 +262,7 @@ public class LoginActivity : AppCompatActivity() {
                                 // Email đã tồn tại trong cơ sở dữ liệu
                             } else {
                                 // Email chưa tồn tại trong cơ sở dữ liệu
-                                val users: UserData = UserData(currentUser.uid, currentUser.email, currentUser.displayName, null, false, null)
+                                val users: UserData = UserData(currentUser.uid, currentUser.email, currentUser.displayName, null, false, null, false)
                                 databaseReference.child(currentUser.uid).setValue(users)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
