@@ -2,7 +2,7 @@
 <resources>
     <!-- login_screen strings -->
 
-    <string name="app_name">Page 1</string>
+    <string name="app_name">Anonymous Chat</string>
     <string name="ek_img_content">ExportKit Image</string>
     <string name="hello__welcome_back_string">Hello, Welcome Back</string>
     <string name="happy_to_see_you_again__to_use_your_account_please_login_first__string">Happy to see you again, to use your account please login first.</string>
@@ -39,10 +39,6 @@
     <string name="dang_truong_an_string">DANG TRUONG AN</string>
     <string name="default_web_client_id">950748527968-stcijveqt7kjbedqoc1vshi3c2pmopgl.apps.googleusercontent.com</string>
 
-
-    <string name="facebook_app_id">878703407163691</string>
-    <string name="fb_login_protocol_scheme">29893915dea07c7e8f4e39a250c5edfb</string>
-    <string name="facebook_client_token">85S6IYHfaHOSU3qltHm4bmRWaco=</string>
     <string name="greeting">Tớ chào cậu!</string>
 
 
