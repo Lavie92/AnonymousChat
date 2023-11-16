@@ -51,8 +51,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-auth:22.2.0")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
-    implementation ("com.facebook.android:facebook-login:latest.release")
-    implementation ("com.facebook.android:facebook-android-sdk:[8,9)")
+
     implementation ("com.github.bumptech.glide:glide:4.8.0")
     implementation ("com.google.dagger:dagger:2.9")
     implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
