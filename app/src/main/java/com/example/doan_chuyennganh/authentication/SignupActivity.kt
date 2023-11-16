@@ -7,11 +7,17 @@ import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import com.example.doan_chuyennganh.authentication.User
+import com.example.doan_chuyennganh.databinding.ActivityForgotPassBinding
 import com.example.doan_chuyennganh.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 
 class SignupActivity : AppCompatActivity() {
@@ -45,7 +51,7 @@ class SignupActivity : AppCompatActivity() {
                     if(it.isSuccessful){
                         //
                         val databaseReference = databaseReferences.database.reference.child("users").child(auth.currentUser!!.uid)
-                        val users : User = User(auth.currentUser!!.uid,email,null,null,false,null,false)
+                        val users : User = User(auth.currentUser!!.uid,email,null,null,"",false,null,false)
                         databaseReference.setValue(users).addOnCompleteListener{
                             if(it.isSuccessful){
                                 auth.signOut()
