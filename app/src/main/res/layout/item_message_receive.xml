@@ -16,7 +16,6 @@
             android:layout_height="wrap_content"
             android:textColor="#B9000000"
             android:padding="10dp"
-            android:text="this is receive message"
             android:textSize="18sp"/>
 
     </RelativeLayout>

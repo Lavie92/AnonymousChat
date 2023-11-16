@@ -36,14 +36,17 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentMessage = messageList[position]
-        if (holder.javaClass == SentViewHolder::class.java) {
-            val viewHolder = holder as SentViewHolder
-            holder.sentMessage.text = currentMessage.text
-        } else {
-            val viewHolder = holder as ReceiveViewHolder
-            holder.receiveMessage.text = currentMessage.text
+
+        when (holder) {
+            is SentViewHolder -> {
+                holder.sentMessage?.text = currentMessage.content
+            }
+            is ReceiveViewHolder -> {
+                holder.receiveMessage?.text = currentMessage.content
+            }
         }
     }
+
 
     override fun getItemViewType(position: Int): Int {
         val currentMessage = messageList[position]
