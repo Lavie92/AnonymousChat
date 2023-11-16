@@ -100,14 +100,7 @@ public class LoginActivity : AppCompatActivity() {
         signInButton.setOnClickListener {
             signIn()
         }
-
-
-
-
         //
-
-
-
 
     }
 
@@ -145,11 +138,7 @@ public class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    Toast.makeText(this, "Welcome back, ${user?.displayName}!", Toast.LENGTH_SHORT).show()
                     checkIfEmailExists(user?.email)
-
-
-                    startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
                     Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
@@ -192,19 +181,34 @@ public class LoginActivity : AppCompatActivity() {
             if (currentUser != null) {
                 // Người dùng đã đăng nhập
                 val databaseReference = databaseReferences.database.reference.child("users")
-
                 databaseReference.orderByChild("email").equalTo(email)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             if (dataSnapshot.exists()) {
+                                databaseReferences.child(currentUser.uid).get().addOnSuccessListener {
+                                    if (it.exists()) {
+                                        //get value
+                                        val username = it.child("username").value
+                                        val userUpdate = mapOf(
+                                            "username" to username
+                                        )
+                                        databaseReferences.child(currentUser.uid).updateChildren(userUpdate)
+                                        // Now that the user data is updated, start the activity
+                                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                                        finish()
+                                    }
+                                }
                                 // Email đã tồn tại trong cơ sở dữ liệu
                             } else {
                                 // Email chưa tồn tại trong cơ sở dữ liệu
-                                val users: User = User(currentUser.uid, currentUser.email,"", currentUser.displayName, null, false, null)
+                                val users: User = User(currentUser.uid, currentUser.email, null, currentUser.displayName, "",false, "", false)
                                 databaseReference.child(currentUser.uid).setValue(users)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
                                             Toast.makeText(this@LoginActivity, "Welcome, ${currentUser.displayName}", Toast.LENGTH_SHORT).show()
+                                            // Now that the user data is created, start the activity
+                                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                                            finish()
                                         } else {
                                             Toast.makeText(this@LoginActivity, "Failed to create user data: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                                         }
@@ -213,11 +217,9 @@ public class LoginActivity : AppCompatActivity() {
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {
-                            Toast.makeText(this@LoginActivity, "Error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
                         }
                     })
             } else {
-
                 Toast.makeText(this@LoginActivity, "User not logged in", Toast.LENGTH_SHORT).show()
             }
         }
