@@ -145,18 +145,6 @@
 <!--        app:layout_constraintStart_toStartOf="parent"-->
 <!--        app:layout_constraintTop_toBottomOf="@+id/line_1" />-->
 
-    <ImageView
-        android:id="@+id/vector_ek4"
-        android:layout_width="23.47dp"
-        android:layout_height="26.34dp"
-        android:layout_marginBottom="72dp"
-        android:contentDescription="vector_ek4"
-        android:src="@drawable/vector_ek4"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.248"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <View
         android:id="@+id/line_1"
         android:layout_width="89.01dp"
@@ -243,7 +231,7 @@
         android:drawablePadding="7dp"
         android:ems="10"
         android:hint="Password"
-        android:inputType="textEmailAddress"
+        android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -263,7 +251,6 @@
         android:src="@drawable/google"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.766"
         app:layout_constraintStart_toStartOf="parent" />
 
 

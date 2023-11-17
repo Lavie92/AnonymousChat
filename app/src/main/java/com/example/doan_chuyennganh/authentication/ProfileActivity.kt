@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.doan_chuyennganh.authentication.SettingActivity
 import com.example.doan_chuyennganh.databinding.ActivityProfileBinding
 import com.google.firebase.FirebaseError
 import com.google.firebase.auth.FirebaseAuth
@@ -30,21 +31,35 @@ class ProfileActivity : AppCompatActivity() {
     private  lateinit var firebaseDatabase: FirebaseDatabase
     private  lateinit var databaseReferences: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private var isActive: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
+        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
 
 
         val userId = auth.currentUser?.uid
         val currentUser = auth.currentUser
-
+        if (userId != null) {
+            databaseReferences.child(userId).get().addOnSuccessListener {
+                if (it.exists()) {
+                    isActive = it.child("active").value as Boolean
+                }
+            }
+        }else{
+            Toast.makeText(this,"No user signed in!",Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
 
         //Read data
         readData(userId)
         //
+        binding.btnSetting.setOnClickListener{
+            startActivity(Intent(this, SettingActivity::class.java))
+        }
 
         binding.btnSave.setOnClickListener{
             val username = binding.txtChangeName.text.toString()
@@ -60,7 +75,13 @@ class ProfileActivity : AppCompatActivity() {
 
         }
     }
-
+    override fun onBackPressed() {
+        if (isActive) {
+            super.onBackPressed()
+        } else {
+            Toast.makeText(this, "Please fill Your Information to Access all features!!!", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun updateData(user: FirebaseUser,username: String, age: String, gender: String) {
         val userId = user.uid
@@ -144,7 +165,6 @@ class ProfileActivity : AppCompatActivity() {
             false
         }
     }
-
 
 
     private fun checkValue() :Boolean{

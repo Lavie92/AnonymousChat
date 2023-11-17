@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import com.example.doan_chuyennganh.authentication.Authentication
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.databinding.ActivityForgotPassBinding
 import com.example.doan_chuyennganh.databinding.ActivitySignupBinding
@@ -17,8 +18,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
+import org.mindrot.jbcrypt.BCrypt
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var  binding: ActivitySignupBinding
@@ -46,30 +49,8 @@ class SignupActivity : AppCompatActivity() {
             val email = binding.edtEmail.text.toString()
             val password = binding.edtPassword.text.toString()
 
-            if(checkFields()){
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
-                    if(it.isSuccessful){
-                        //
-                        val databaseReference = databaseReferences.database.reference.child("users").child(auth.currentUser!!.uid)
-                        val users : User = User(auth.currentUser!!.uid,email,null,null,"",false,null,false)
-                        databaseReference.setValue(users).addOnCompleteListener{
-                            if(it.isSuccessful){
-                                auth.signOut()
-                                Toast.makeText(this,"Account Created!",Toast.LENGTH_SHORT).show()
-                                startActivity(Intent(this, LoginActivity::class.java))
-                            }else{
-                                Toast.makeText(this,"Something is wrong!",Toast.LENGTH_SHORT).show()
-                            }
+            checkEmailExists(email,password)
 
-                        }
-                        //
-
-
-                    }else{
-                        Log.e("error: ",it.exception.toString())
-                    }
-                }
-            }
 
 
 
@@ -82,6 +63,34 @@ class SignupActivity : AppCompatActivity() {
 
 
 
+    }
+
+    private fun signUp(email: String?, password: String?) {
+        auth.createUserWithEmailAndPassword(email!!, password!!).addOnCompleteListener {
+            if (it.isSuccessful) {
+                //
+                val databaseReference = databaseReferences.database.reference.child("users")
+                    .child(auth.currentUser!!.uid)
+                val users: User =
+                    User(auth.currentUser!!.uid, email, "", "", false, null, false)
+                databaseReference.setValue(users).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        val authenticationRef = databaseReference.child("authentication")
+                        val postId = authenticationRef.push().key
+                        val authentication: Authentication = Authentication(email, hashPassword(password))
+                        authenticationRef.child(postId!!).setValue(authentication)
+                        //auth.signOut()
+                        Toast.makeText(this, "Account Created!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, LoginActivity::class.java))
+
+
+                    } else {
+                        Log.e("error: ", it.exception.toString())
+                    }
+
+                }
+            }
+        }
     }
 
     private fun checkFields(): Boolean {
@@ -114,6 +123,36 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkEmailExists(email: String, password: String) {
+        val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("users")
+
+        // Create a query to search for the email
+        val query: Query = databaseReference.orderByChild("email").equalTo(email)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Email exists in the database
+                    Toast.makeText(applicationContext," Email already exists! Try for another Email!",Toast.LENGTH_SHORT).show()
+                } else {
+                    if(checkFields()){
+                        signUp(email,password)
+
+                    }
+
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors
+                println("Error: ${databaseError.message}")
+            }
+        })
+    }
+    fun hashPassword(password: String): String {
+        val salt = BCrypt.gensalt()
+        return BCrypt.hashpw(password, salt)
+    }
 
     fun isValidEmail(email: String): Boolean {
         val pattern = Patterns.EMAIL_ADDRESS

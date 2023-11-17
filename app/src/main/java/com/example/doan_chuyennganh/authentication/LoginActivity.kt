@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.doan_chuyennganh.authentication.User
 
 import com.example.doan_chuyennganh.databinding.ActivityLoginBinding
+import com.google.android.gms.auth.api.identity.SignInPassword
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -26,6 +27,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 
 
@@ -66,15 +68,7 @@ public class LoginActivity : AppCompatActivity() {
             val loginEmail = binding.loginEmail.text.toString()
             val loginPassword = binding.loginPassword.text.toString()
             if(checkFields()){
-                auth.signInWithEmailAndPassword(loginEmail,loginPassword).addOnCompleteListener() {
-                    if(it.isSuccessful){
-                        val user = auth.currentUser
-                        updateUI(user)
-
-                    }else{
-                        Toast.makeText(this,"Wrong Email or Password!",Toast.LENGTH_SHORT).show()
-                    }
-                }
+                signInEmailPassword(loginEmail,loginPassword)
             }
         }
 
@@ -93,9 +87,6 @@ public class LoginActivity : AppCompatActivity() {
             finish() // finish the current activity to prevent the user from coming back to the SignInActivity using the back button
         }
 
-
-
-
         val signInButton = findViewById<ImageView>(R.id.signInButton)
         signInButton.setOnClickListener {
             signIn()
@@ -103,6 +94,24 @@ public class LoginActivity : AppCompatActivity() {
         //
 
     }
+
+
+    //Sign in Email/Password
+    private fun signInEmailPassword(loginEmail: String, loginPassword: String){
+        auth.signInWithEmailAndPassword(loginEmail,loginPassword).addOnCompleteListener() {
+            if(it.isSuccessful){
+                val user = auth.currentUser
+                updateUI(user)
+
+            }else{
+
+                Toast.makeText(this,"Wrong Email or Password!",Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    //end Sign in Email/Password
+
 
     //Google
     private fun signIn() {
@@ -119,8 +128,6 @@ public class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
@@ -139,6 +146,8 @@ public class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     checkIfEmailExists(user?.email)
+                    updateUI(auth.currentUser)
+
                     finish()
                 } else {
                     Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
@@ -146,9 +155,6 @@ public class LoginActivity : AppCompatActivity() {
             }
     }
     //End Google
-
-
-
 
     private fun checkFields(): Boolean {
         val signupEmail = binding.loginEmail.text.toString()
@@ -189,27 +195,39 @@ public class LoginActivity : AppCompatActivity() {
                                     if (it.exists()) {
                                         //get value
                                         val username = it.child("username").value
+                                        val email = it.child("email").value
+                                        val gender = it.child("gender").value
+                                        val active = it.child("active").value
+                                        val age = it.child("age").value
+                                        val ready = it.child("ready").value
+
                                         val userUpdate = mapOf(
+                                            "id" to auth.currentUser?.uid!!,
+                                            "email" to auth.currentUser?.email,
+                                            "gender" to gender,
+                                            "active" to active,
+                                            "age" to age,
+                                            "ready" to ready,
                                             "username" to username
                                         )
                                         databaseReferences.child(currentUser.uid).updateChildren(userUpdate)
                                         // Now that the user data is updated, start the activity
-                                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                                         finish()
                                     }
                                 }
                                 // Email đã tồn tại trong cơ sở dữ liệu
                             } else {
                                 // Email chưa tồn tại trong cơ sở dữ liệu
-                                val users: User = User(currentUser.uid, currentUser.email, null, currentUser.displayName, "",false, "", false)
+                                val users: User = User(currentUser.uid, currentUser.email,  currentUser.displayName, "",false, "", false)
                                 databaseReference.child(currentUser.uid).setValue(users)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
                                             Toast.makeText(this@LoginActivity, "Welcome, ${currentUser.displayName}", Toast.LENGTH_SHORT).show()
                                             // Now that the user data is created, start the activity
-                                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                                            updateUI(auth.currentUser)
                                             finish()
                                         } else {
+                                            updateUI(null)
                                             Toast.makeText(this@LoginActivity, "Failed to create user data: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                                         }
                                     }
