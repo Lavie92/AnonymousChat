@@ -18,11 +18,11 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             1 -> {
-                val view: View = LayoutInflater.from(context).inflate(R.layout.item_message_sent, parent, false)
+                val view: View = LayoutInflater.from(context).inflate(R.layout.item_message_receive, parent, false)
                 ReceiveViewHolder(view)
             }
             2 -> {
-                val view: View = LayoutInflater.from(context).inflate(R.layout.item_message_receive, parent, false)
+                val view: View = LayoutInflater.from(context).inflate(R.layout.item_message_sent, parent, false)
                 SentViewHolder(view)
             }
             else -> throw IllegalArgumentException("Invalid viewType: $viewType")
@@ -36,13 +36,14 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentMessage = messageList[position]
+        val messageText = currentMessage.getMessageText()
 
         when (holder) {
             is SentViewHolder -> {
-                holder.sentMessage?.text = currentMessage.content
+                holder.sentMessage.text = messageText
             }
             is ReceiveViewHolder -> {
-                holder.receiveMessage?.text = currentMessage.content
+                holder.receiveMessage.text = messageText
             }
         }
     }
