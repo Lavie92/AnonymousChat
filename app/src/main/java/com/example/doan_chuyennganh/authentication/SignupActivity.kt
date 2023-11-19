@@ -6,13 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
-import com.example.doan_chuyennganh.authentication.Authentication
 import com.example.doan_chuyennganh.authentication.User
-import com.example.doan_chuyennganh.databinding.ActivityForgotPassBinding
 import com.example.doan_chuyennganh.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -33,7 +29,9 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        binding.btnBack.setOnClickListener{
+            onBackPressed()
+        }
         auth = Firebase.auth
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReferences = firebaseDatabase.reference.child("users")
@@ -75,10 +73,6 @@ class SignupActivity : AppCompatActivity() {
                     User(auth.currentUser!!.uid, email, "", "", false, null, false)
                 databaseReference.setValue(users).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val authenticationRef = databaseReference.child("authentication")
-                        val postId = authenticationRef.push().key
-                        val authentication: Authentication = Authentication(email, hashPassword(password))
-                        authenticationRef.child(postId!!).setValue(authentication)
                         //auth.signOut()
                         Toast.makeText(this, "Account Created!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, LoginActivity::class.java))

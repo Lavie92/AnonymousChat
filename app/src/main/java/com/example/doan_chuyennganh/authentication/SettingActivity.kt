@@ -24,8 +24,15 @@ class SettingActivity : AppCompatActivity() {
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
 
-        binding.logoutButton.setOnClickListener{
+        binding.btnBack.setOnClickListener{
+            onBackPressed()
+        }
+        binding.Logout.setOnClickListener{
             signOutAndStartSignInActivity()
+        }
+
+        binding.changePass.setOnClickListener{
+            startActivity(Intent(this, ChangePassActivity::class.java))
         }
     }
     private fun signOutAndStartSignInActivity() {

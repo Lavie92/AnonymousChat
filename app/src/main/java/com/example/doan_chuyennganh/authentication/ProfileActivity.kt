@@ -41,6 +41,10 @@ class ProfileActivity : AppCompatActivity() {
         databaseReferences = FirebaseDatabase.getInstance().getReference("users")
 
 
+
+        binding.btnBack.setOnClickListener{
+            onBackPressed()
+        }
         val userId = auth.currentUser?.uid
         val currentUser = auth.currentUser
         if (userId != null) {
@@ -74,6 +78,8 @@ class ProfileActivity : AppCompatActivity() {
             }
 
         }
+
+
     }
     override fun onBackPressed() {
         if (isActive) {
@@ -102,6 +108,8 @@ class ProfileActivity : AppCompatActivity() {
             user!!.updateProfile(profileUpdates)
             databaseReferences.child(userId).updateChildren(userUpdate)
                 .addOnSuccessListener {
+                    binding.name.text = "@$username"
+                    isActive =true
                     Toast.makeText(this, "User data updated successfully", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener { e ->
@@ -132,6 +140,7 @@ class ProfileActivity : AppCompatActivity() {
                     val position = getIndexFromValue(spinner, gender.toString())
                     spinner.setSelection(position)
                     binding.txtChangeAge.setText(age.toString())
+                    binding.name.text = "@$username"
                     //end binding
 
                     //binding.switchFilter.
