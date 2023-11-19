@@ -103,6 +103,7 @@ class ProfileActivity : AppCompatActivity() {
                     val gender = it.child("gender").value
                     val active = it.child("active").value
                     val age = it.child("age").value
+                    val chatRoom = it.child("chatRoom").value
                     //end get value
 
                     //binding
