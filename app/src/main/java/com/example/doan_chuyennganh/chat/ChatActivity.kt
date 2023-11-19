@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
 import com.example.doan_chuyennganh.databinding.ActivityChatBinding
+import com.example.doan_chuyennganh.notification.NotificationService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -147,12 +148,24 @@ class ChatActivity : AppCompatActivity() {
                 messageAdapter.notifyDataSetChanged()
                 Log.d("loadMessages", "Adapter updated with new messages")
                 messageRecyclerView.scrollToPosition(messageList!!.size - 1)
+
+                if (newMessages.isNotEmpty()) {
+                    val lastMessage = newMessages.last()
+                    if (lastMessage.senderId != currentUserId) {
+                        showNotification("New Message", lastMessage.content.toString())
+                    }
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e("loadMessages", "Error loading messages: ${error.message}")
             }
         })
+    }
+
+    private fun showNotification(title: String, content: String) {
+        val notificationService = NotificationService()
+        notificationService.showNotification(this, title, content)
     }
 
     private fun sendMessage(
@@ -194,46 +207,6 @@ class ChatActivity : AppCompatActivity() {
                 }
             })
         }
-//        chatRoomsRef.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                for (roomSnapshot in snapshot.children) {
-//                    val roomId = roomSnapshot.key
-//                    val userId1 = roomSnapshot.child("user1Id").value as? String
-//                    val userId2 = roomSnapshot.child("user2Id").value as? String
-//
-//                    if (userId1 != null && userId2 != null) {
-//                        Log.d("userId", "User is in room: $userId1")
-//                        Log.d("UserId", "User is in room: $userId2")
-//                        receiverId = if (userId1 == currentUserId) userId2 else userId1
-//                        Log.d("userId", "User is in room: $userId1")
-//                        Log.d("UserId", "User is in room: $userId2")
-//                    }
-//                    Log.d("userId", "User is in room: $userId1")
-//                    Log.d("UserId", "User is in room: $userId2")
-//                    val messages = roomSnapshot.child("messages").children
-//                    for (messageSnapshot in messages) {
-//                        val senderId =
-//                            messageSnapshot.child("senderId").getValue(String::class.java)
-//                        val receiverUser =
-//                            messageSnapshot.child("receiverId").getValue(String::class.java)
-//                        if (currentUserId == senderId || currentUserId == receiverId) {
-//                            val roomName = roomId ?: ""
-//                            loadMessages(roomName)
-//                            chatRoomId = roomName
-//                            Log.d("room id", "User is in room: $chatRoomId")
-//                            return
-//                        }
-//                    }
-//                    Log.d("room id", "User is in room: $chatRoomId")
-//                    Log.d("userId", "User is in room: $userId1")
-//                    Log.d("UserId", "User is in room: $userId2")
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.e("ChatRoomStatus", "Error checking chat room status: ${error.message}")
-//            }
-//        })
     }
 
     private fun checkUsersInChatRoom(chatRoomId: String) {
