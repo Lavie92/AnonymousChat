@@ -11,6 +11,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.doan_chuyennganh.authentication.ForgotPassActivity
 import com.example.doan_chuyennganh.authentication.User
 
 import com.example.doan_chuyennganh.databinding.ActivityLoginBinding
@@ -51,7 +52,6 @@ public class LoginActivity : AppCompatActivity() {
     fun updateUI(account: FirebaseUser?) {
         if (account != null) {
             // User is signed in
-            Toast.makeText(this, "Signed in!", Toast.LENGTH_LONG).show()
             startActivity(Intent(this, MainActivity::class.java))
         }
     }
@@ -72,6 +72,13 @@ public class LoginActivity : AppCompatActivity() {
             }
         }
 
+
+        //Forgot pass
+        binding.forgotPassword2.setOnClickListener{
+            startActivity(Intent(this, ForgotPassActivity::class.java))
+        }
+
+        //End Forgot pass
 
         //google
         binding.textSignup.setOnClickListener{

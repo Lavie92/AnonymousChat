@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.example.doan_chuyennganh.authentication.SettingActivity
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding

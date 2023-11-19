@@ -27,7 +27,7 @@
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".authentication.FormForgotActivity"
+            android:name=".authentication.ChangePassActivity"
             android:exported="false" />
         <activity
             android:name=".authentication.ForgotPassActivity"
