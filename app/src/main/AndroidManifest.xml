@@ -15,6 +15,30 @@
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
         <activity
+            android:name=".ChatbotActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chat.LoveActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chat.MapActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chat.GenderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chat.AgeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chat.StudyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chat.GameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chat.FillActivity"
+            android:exported="false" />
+        <activity
             android:name=".chat.ChatActivity"
             android:exported="false" />
 

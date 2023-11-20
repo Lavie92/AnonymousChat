@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
-import com.example.doan_chuyennganh.databinding.ActivityChatBinding
+import com.example.doan_chuyennganh.databinding.ActivityGenderBinding
+
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,12 +23,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.util.UUID
 
-class ChatActivity : AppCompatActivity() {
+class GenderActivity : AppCompatActivity() {
 
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
     private lateinit var sendButton: ImageView
-    private lateinit var binding: ActivityChatBinding
+    private lateinit var binding: ActivityGenderBinding
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var usersRef: DatabaseReference
     private lateinit var chatRoomsRef: DatabaseReference
@@ -38,7 +40,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityChatBinding.inflate(layoutInflater)
+        binding = ActivityGenderBinding.inflate(layoutInflater)
         setContentView(binding.root)
         chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
         usersRef = FirebaseDatabase.getInstance().getReference("users")

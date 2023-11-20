@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".chat.GameActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/llTextField"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="-13dp" />
+
+    <LinearLayout
+        android:id="@+id/llTextField"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        android:weightSum="100" >
+
+        <Button
+            android:id="@+id/btnStartChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:background="@drawable/message_background_receive"
+            android:text="tìm" />
+
+        <Button
+            android:id="@+id/btnEndChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kết Thúc"
+            android:background="@drawable/message_background_receive"
+            android:layout_weight="10"/>
+
+
+        <EditText
+            android:id="@+id/messageBox"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@drawable/message_box_background"
+            android:hint="@string/greeting"
+            android:paddingLeft="10dp"
+            android:layout_weight="70" />
+        <ImageView
+            android:id="@+id/ivSend"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/send"
+            android:layout_weight="20"
+            android:paddingLeft="10dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

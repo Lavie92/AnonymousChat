@@ -3,12 +3,20 @@ package com.example.doan_chuyennganh
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.doan_chuyennganh.authentication.User
+import com.example.doan_chuyennganh.chat.AgeActivity
 import com.example.doan_chuyennganh.chat.ChatActivity
+import com.example.doan_chuyennganh.chat.FillActivity
+import com.example.doan_chuyennganh.chat.GameActivity
+import com.example.doan_chuyennganh.chat.GenderActivity
+import com.example.doan_chuyennganh.chat.LoveActivity
+import com.example.doan_chuyennganh.chat.MapActivity
+import com.example.doan_chuyennganh.chat.StudyActivity
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -21,7 +29,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
-
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -29,6 +38,13 @@ class MainActivity : AppCompatActivity() {
     private  lateinit var firebaseDatabase: FirebaseDatabase
     private  lateinit var databaseReferences: DatabaseReference
     private var ivStartChat: ImageView? = null
+    private var rectangle4: ImageView? = null
+    private var imgGameChanel: ImageView? = null
+    private var imgStudyChanel: ImageView? = null
+    private var imgAgeChanel: ImageView? = null
+    private var imgGenderChanel: ImageView? = null
+    private var imgMapChanel: ImageView? = null
+    private var imgLoveChanel: ImageView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -37,12 +53,57 @@ class MainActivity : AppCompatActivity() {
 
         val auth = Firebase.auth
         val user = auth.currentUser
+        imgLoveChanel = binding.imgLoveChanel
+        imgLoveChanel?.setOnClickListener {
+            // Thay đổi Intent từ ChatActivity sang FillActivity
+            val intent = Intent(this, LoveActivity::class.java)
+            startActivity(intent)
+        }
+        imgMapChanel = binding.imgMapChanel
+        imgMapChanel?.setOnClickListener {
+            // Thay đổi Intent từ ChatActivity sang FillActivity
+            val intent = Intent(this, MapActivity::class.java)
+            startActivity(intent)
+        }
+        imgGenderChanel = binding.imgGenderChanel
+        imgGenderChanel?.setOnClickListener {
+            // Thay đổi Intent từ ChatActivity sang FillActivity
+            val intent = Intent(this, GenderActivity::class.java)
+            startActivity(intent)
+        }
+        imgAgeChanel = binding.imgAgeChanel
+        imgAgeChanel?.setOnClickListener {
+            // Thay đổi Intent từ ChatActivity sang FillActivity
+            val intent = Intent(this, AgeActivity::class.java)
+            startActivity(intent)
+        }
+        imgStudyChanel = binding.imgStudyChanel
+        imgStudyChanel?.setOnClickListener {
+            // Thay đổi Intent từ ChatActivity sang FillActivity
+            val intent = Intent(this, StudyActivity::class.java)
+            startActivity(intent)
+        }
+        imgGameChanel = binding.imgGameChanel
+        imgGameChanel?.setOnClickListener {
+            // Thay đổi Intent từ ChatActivity sang FillActivity
+            val intent = Intent(this, GameActivity::class.java)
+            startActivity(intent)
+        }
+        rectangle4 = binding.rectangle4
+        rectangle4?.setOnClickListener {
+            // Thay đổi Intent từ ChatActivity sang FillActivity
+            val intent = Intent(this, FillActivity::class.java)
+            startActivity(intent)
+        }
         ivStartChat = binding.ivStartChat
         ivStartChat?.setOnClickListener {
             val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)
         }
         this.auth = FirebaseAuth.getInstance()
+
+
+
         //Load Screen to check Active
         checkActive()
         //
@@ -51,11 +112,6 @@ class MainActivity : AppCompatActivity() {
             .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build()
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-
-
-
-
-
         if (user != null) {
             val userName = user.displayName
             textView.text = "Welcome, " + userName
@@ -65,14 +121,11 @@ class MainActivity : AppCompatActivity() {
         binding.btnSetting.setOnClickListener{
             startActivity(Intent(this, ProfileActivity::class.java))
         }
-
 // Inside onCreate() method
         val signout = findViewById<Button>(R.id.logout_button)
         signout.setOnClickListener {
             signOutAndStartSignInActivity()
         }
-
-
     }
     fun findRandomUserForChat() {
         val usersRef = FirebaseDatabase.getInstance().getReference("users")
