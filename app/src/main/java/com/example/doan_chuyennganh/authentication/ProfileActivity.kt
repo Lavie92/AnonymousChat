@@ -32,12 +32,21 @@ class ProfileActivity : AppCompatActivity() {
     private  lateinit var databaseReferences: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private var isActive: Boolean = false
+    override fun onResume() {
+        super.onResume()
 
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish() // Optional: Finish the current activity to prevent going back to it
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
+
+
         databaseReferences = FirebaseDatabase.getInstance().getReference("users")
 
 

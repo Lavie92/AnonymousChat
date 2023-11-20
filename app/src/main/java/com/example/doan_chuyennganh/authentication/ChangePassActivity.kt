@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.databinding.ActivityChangePassBinding
 import com.google.firebase.auth.EmailAuthProvider
@@ -16,12 +17,22 @@ import com.google.firebase.ktx.Firebase
 class ChangePassActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChangePassBinding
     private lateinit var auth: FirebaseAuth
+    override fun onResume() {
+        super.onResume()
+
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish() // Optional: Finish the current activity to prevent going back to it
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChangePassBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-
+        if(auth.currentUser == null){
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
         binding.btnConfirm.setOnClickListener{
             val oldPass = binding.oldPass.text.toString()
             val newPass = binding.newPass.text.toString()
