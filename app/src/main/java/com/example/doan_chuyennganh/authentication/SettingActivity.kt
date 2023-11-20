@@ -17,14 +17,7 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    override fun onResume() {
-        super.onResume()
 
-        if (auth.currentUser == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish() // Optional: Finish the current activity to prevent going back to it
-        }
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingBinding.inflate(layoutInflater)
@@ -43,6 +36,14 @@ class SettingActivity : AppCompatActivity() {
 
         binding.changePass.setOnClickListener{
             startActivity(Intent(this, ChangePassActivity::class.java))
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish() // Optional: Finish the current activity to prevent going back to it
         }
     }
     private fun signOutAndStartSignInActivity() {
