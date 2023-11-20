@@ -33,7 +33,10 @@ class NotificationService {
 
         val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
+
+
         val intent = Intent(context, ChatActivity::class.java)
+
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,
@@ -50,6 +53,7 @@ class NotificationService {
             .setAutoCancel(true)
             .setSound(soundUri)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setContentIntent(pendingIntent)
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 

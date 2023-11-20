@@ -104,6 +104,7 @@ class ProfileActivity : AppCompatActivity() {
                     val active = it.child("active").value
                     val age = it.child("age").value
                     val chatRoom = it.child("chatRoom").value
+                    val location = it.child("location").value
                     //end get value
 
                     //binding
@@ -112,9 +113,7 @@ class ProfileActivity : AppCompatActivity() {
                     val position = getIndexFromValue(spinner, gender.toString())
                     spinner.setSelection(position)
                     binding.txtChangeAge.setText(age.toString())
-                    //end binding
 
-                    //binding.switchFilter.
                 }else{
                     startActivity(Intent(this, LoginActivity::class.java))
                     Toast.makeText(this,"No user Signed in!",Toast.LENGTH_SHORT).show()
