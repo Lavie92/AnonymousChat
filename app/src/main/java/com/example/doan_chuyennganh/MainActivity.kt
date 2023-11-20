@@ -34,14 +34,7 @@ class MainActivity : AppCompatActivity() {
     private  lateinit var firebaseDatabase: FirebaseDatabase
     private  lateinit var databaseReferences: DatabaseReference
     private var ivStartChat: ImageView? = null
-    override fun onResume() {
-        super.onResume()
 
-        if (auth.currentUser == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish() // Optional: Finish the current activity to prevent going back to it
-        }
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -77,6 +70,15 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish() // Optional: Finish the current activity to prevent going back to it
+        }
     }
     fun findRandomUserForChat() {
         val usersRef = FirebaseDatabase.getInstance().getReference("users")

@@ -40,21 +40,12 @@ class ChatActivity : AppCompatActivity() {
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private lateinit var auth: FirebaseAuth
 
-    override fun onResume() {
-        super.onResume()
 
-        if (auth.currentUser == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish() // Optional: Finish the current activity to prevent going back to it
-        }
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        if(auth.currentUser == null){
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
+        auth = FirebaseAuth.getInstance()
 
         chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
         usersRef = FirebaseDatabase.getInstance().getReference("users")
@@ -83,7 +74,14 @@ class ChatActivity : AppCompatActivity() {
             }
         }
     }
+    override fun onResume() {
+        super.onResume()
 
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish() // Optional: Finish the current activity to prevent going back to it
+        }
+    }
     private fun findRandomUserForChat() {
         chatRoomId = ""
         receiverId = ""
@@ -209,46 +207,46 @@ class ChatActivity : AppCompatActivity() {
                 }
             })
         }
-//        chatRoomsRef.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                for (roomSnapshot in snapshot.children) {
-//                    val roomId = roomSnapshot.key
-//                    val userId1 = roomSnapshot.child("user1Id").value as? String
-//                    val userId2 = roomSnapshot.child("user2Id").value as? String
-//
-//                    if (userId1 != null && userId2 != null) {
-//                        Log.d("userId", "User is in room: $userId1")
-//                        Log.d("UserId", "User is in room: $userId2")
-//                        receiverId = if (userId1 == currentUserId) userId2 else userId1
-//                        Log.d("userId", "User is in room: $userId1")
-//                        Log.d("UserId", "User is in room: $userId2")
-//                    }
-//                    Log.d("userId", "User is in room: $userId1")
-//                    Log.d("UserId", "User is in room: $userId2")
-//                    val messages = roomSnapshot.child("messages").children
-//                    for (messageSnapshot in messages) {
-//                        val senderId =
-//                            messageSnapshot.child("senderId").getValue(String::class.java)
-//                        val receiverUser =
-//                            messageSnapshot.child("receiverId").getValue(String::class.java)
-//                        if (currentUserId == senderId || currentUserId == receiverId) {
-//                            val roomName = roomId ?: ""
-//                            loadMessages(roomName)
-//                            chatRoomId = roomName
-//                            Log.d("room id", "User is in room: $chatRoomId")
-//                            return
-//                        }
-//                    }
-//                    Log.d("room id", "User is in room: $chatRoomId")
-//                    Log.d("userId", "User is in room: $userId1")
-//                    Log.d("UserId", "User is in room: $userId2")
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.e("ChatRoomStatus", "Error checking chat room status: ${error.message}")
-//            }
-//        })
+        chatRoomsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (roomSnapshot in snapshot.children) {
+                    val roomId = roomSnapshot.key
+                    val userId1 = roomSnapshot.child("user1Id").value as? String
+                    val userId2 = roomSnapshot.child("user2Id").value as? String
+
+                    if (userId1 != null && userId2 != null) {
+                        Log.d("userId", "User is in room: $userId1")
+                        Log.d("UserId", "User is in room: $userId2")
+                        receiverId = if (userId1 == currentUserId) userId2 else userId1
+                        Log.d("userId", "User is in room: $userId1")
+                        Log.d("UserId", "User is in room: $userId2")
+                    }
+                    Log.d("userId", "User is in room: $userId1")
+                    Log.d("UserId", "User is in room: $userId2")
+                    val messages = roomSnapshot.child("messages").children
+                    for (messageSnapshot in messages) {
+                        val senderId =
+                            messageSnapshot.child("senderId").getValue(String::class.java)
+                        val receiverUser =
+                            messageSnapshot.child("receiverId").getValue(String::class.java)
+                        if (currentUserId == senderId || currentUserId == receiverId) {
+                            val roomName = roomId ?: ""
+                            loadMessages(roomName)
+                            chatRoomId = roomName
+                            Log.d("room id", "User is in room: $chatRoomId")
+                            return
+                        }
+                    }
+                    Log.d("room id", "User is in room: $chatRoomId")
+                    Log.d("userId", "User is in room: $userId1")
+                    Log.d("UserId", "User is in room: $userId2")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("ChatRoomStatus", "Error checking chat room status: ${error.message}")
+            }
+        })
     }
 
     private fun checkUsersInChatRoom(chatRoomId: String) {
