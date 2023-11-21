@@ -4,14 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "com.example.filterbadwords"
-    compileSdk = 33
+    namespace = "com.example.filterbadwodslibrary"
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        targetSdk = 34
     }
 
     buildTypes {
@@ -30,6 +31,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    sourceSets {
+        getByName("main") {
+            assets {
+                srcDirs("src\\main\\assets", "src\\main\\assets\\2")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -37,6 +45,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
+    implementation ("org.apache.opennlp:opennlp-tools:1.9.3")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

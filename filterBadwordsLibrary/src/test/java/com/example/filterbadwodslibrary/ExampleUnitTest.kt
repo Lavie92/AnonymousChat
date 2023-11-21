@@ -1,4 +1,4 @@
-package com.example.filterbadwords
+package com.example.filterbadwodslibrary
 
 import org.junit.Test
 

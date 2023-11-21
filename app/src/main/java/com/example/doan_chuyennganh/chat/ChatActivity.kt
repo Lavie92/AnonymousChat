@@ -19,6 +19,7 @@ import com.example.doan_chuyennganh.databinding.ActivityChatBinding
 import com.example.doan_chuyennganh.encrypt.EncryptionUtils
 import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
+import com.example.filterbadwodslibrary.filterBadwords
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnCompleteListener
@@ -45,6 +46,9 @@ class ChatActivity : AppCompatActivity() {
     private var receiverId: String = ""
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    val badwords = filterBadwords()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -240,12 +244,13 @@ class ChatActivity : AppCompatActivity() {
                                 EncryptionUtils.decrypt(it, EncryptionUtils.getKeyFromString(it1))
                             }
                         }
+                    val filterWords = badwords.filterBadWords(decryptedMessage)
 
                     // Create a new Message object with the decrypted content
                     messageId?.let {
                         senderId?.let { it1 ->
                             receiverId?.let { it2 ->
-                                decryptedMessage?.let { it3 ->
+                                filterWords?.let { it3 ->
                                     timestamp?.let { it4 ->
                                         Message(
                                             it,
