@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SignupActivity">
+
+    <View
+        android:id="@+id/ellipse_4"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="358dp"
+        android:background="@drawable/ellipse_1_shape"
+        android:foregroundGravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="24dp"
+        android:contentDescription="combined_shape3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.066"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/combined_shape" />
+
+    <TextView
+        android:id="@+id/hello__welcome_back2"
+        android:layout_width="301dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="116dp"
+        android:gravity="center"
+        android:text="Welcome New Member!"
+        android:textColor="@color/hello__welcome_back_color"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/dayflow_sitting2"
+        android:layout_width="273dp"
+        android:layout_height="219dp"
+        android:layout_marginStart="204dp"
+        android:layout_marginTop="64dp"
+        android:contentDescription="dayflow_sitting"
+        android:src="@drawable/dayflow_sitting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edtEmail"
+        android:layout_width="360dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="13dp"
+
+        android:layout_marginEnd="55dp"
+        android:background="@drawable/rectangle_1_shape"
+        android:drawableLeft="@drawable/icon_email"
+        android:drawablePadding="7dp"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dayflow_sitting2" />
+
+    <Button
+        android:id="@+id/btnSignup"
+        android:layout_width="107dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/my_button"
+        android:shadowColor="#9C27B0"
+        android:text="Sign up"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtConfirmPassword"
+        app:rippleColor="#673AB7"
+        app:strokeColor="#3F51B5" />
+
+
+
+
+
+
+
+    <TextView
+        android:id="@+id/text_login"
+        android:layout_width="199dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="145dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="101dp"
+        android:text="Already have an Account?"
+        android:textColor="@color/purple_500"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSignup" />
+
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edtPassword"
+        android:layout_width="360dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="25dp"
+
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="56dp"
+        android:background="@drawable/rectangle_1_shape"
+        android:drawableLeft="@drawable/baseline_lock_person_24"
+        android:drawablePadding="7dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtEmail"
+        app:passwordToggleEnabled="true" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edtConfirmPassword"
+        android:layout_width="360dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="56dp"
+        android:background="@drawable/rectangle_1_shape"
+        android:drawableLeft="@drawable/baseline_password_24"
+        android:drawablePadding="7dp"
+        android:ems="10"
+        android:hint="Confirm Password"
+        android:inputType="textPassword"
+        app:passwordToggleEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtPassword" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

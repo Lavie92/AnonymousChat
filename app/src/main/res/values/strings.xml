@@ -2,7 +2,7 @@
 <resources>
     <!-- login_screen strings -->
 
-    <string name="app_name">Page 1</string>
+    <string name="app_name">Anonymous Chat</string>
     <string name="ek_img_content">ExportKit Image</string>
     <string name="hello__welcome_back_string">Hello, Welcome Back</string>
     <string name="happy_to_see_you_again__to_use_your_account_please_login_first__string">Happy to see you again, to use your account please login first.</string>
@@ -22,6 +22,25 @@
     <string name="chats_string">Chats</string>
     <string name="friends_string">Friends</string>
     <string name="calls_string">Calls</string>
+
+
+    <string name="please_enter_the_email_associated_with_your_account_we_will_send_an_email_instruction_to_reset_your_password_string">Please enter the Email associated with your account we will send an email instruction to reset your password</string>
+    <string name="submit_string">Submit</string>
+    <string name="please_enter_your_email_string">Please Enter Your Email</string>
+
+    <string name="notifications_ek2_string">Notifications</string>
+    <string name="reset_password_ek2_string">Reset Password</string>
+    <string name="your_email_ek2_string">Your Email</string>
+    <string name="james_gmail_com_string">james@gmail.com</string>
+    <string name="user_name_ek2_string">User Name</string>
+    <string name="jamesfranco_string">jamesfranco</string>
+    <string name="user_name_ek5_string">Gender</string>
+    <string name="jamesfranco_ek1_string">select  </string>
+    <string name="dang_truong_an_string">DANG TRUONG AN</string>
+    <string name="default_web_client_id">950748527968-stcijveqt7kjbedqoc1vshi3c2pmopgl.apps.googleusercontent.com</string>
+
+    <string name="greeting">Tớ chào cậu!</string>
+
 
 </resources>
 
