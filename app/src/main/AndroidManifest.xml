@@ -19,16 +19,11 @@
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
         <activity
+            android:name=".authentication.SettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".chat.ChatActivity"
             android:exported="false" />
-
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-        <meta-data
-            android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token" />
-
         <activity
             android:name=".SignupActivity"
             android:exported="false" />
@@ -36,7 +31,7 @@
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".authentication.FormForgotActivity"
+            android:name=".authentication.ChangePassActivity"
             android:exported="false" />
         <activity
             android:name=".authentication.ForgotPassActivity"
