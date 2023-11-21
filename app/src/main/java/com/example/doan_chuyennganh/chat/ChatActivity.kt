@@ -3,7 +3,6 @@ package com.example.doan_chuyennganh.chat
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
 import com.example.doan_chuyennganh.databinding.ActivityChatBinding
+import com.example.doan_chuyennganh.encrypt.EncryptionUtils
 import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -225,19 +225,53 @@ class ChatActivity : AppCompatActivity() {
         messagesRef.addValueEventListener(object : ValueEventListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun onDataChange(snapshot: DataSnapshot) {
-                val newMessages = snapshot.children.mapNotNull { it.getValue(Message::class.java) }
-                Log.d("loadMessages", "newMessages: $newMessages")
+                val newMessages = snapshot.children.mapNotNull { msgSnapshot ->
+                    val messageId = msgSnapshot.child("messageId").getValue(String::class.java)
+                    val senderId = msgSnapshot.child("senderId").getValue(String::class.java)
+                    val receiverId = msgSnapshot.child("receiverId").getValue(String::class.java)
+                    val encryptedMessage = msgSnapshot.child("content").getValue(String::class.java)
+                    val encryptedKey = msgSnapshot.child("encryptKey").getValue(String::class.java)
+                    val timestamp = msgSnapshot.child("timestamp").getValue(Long::class.java)
+
+                    // Decrypt the message using the key
+                    val decryptedMessage =
+                        encryptedMessage?.let {
+                            encryptedKey?.let { it1 ->
+                                EncryptionUtils.decrypt(it, EncryptionUtils.getKeyFromString(it1))
+                            }
+                        }
+
+                    // Create a new Message object with the decrypted content
+                    messageId?.let {
+                        senderId?.let { it1 ->
+                            receiverId?.let { it2 ->
+                                decryptedMessage?.let { it3 ->
+                                    timestamp?.let { it4 ->
+                                        Message(
+                                            it,
+                                            it1,
+                                            it2,
+                                            it3,
+                                            encryptedKey ?: "",
+                                            it4
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 messageList?.clear()
-                messageList?.addAll(newMessages)
+                newMessages?.let { messageList?.addAll(it) }
 
                 messageAdapter.notifyDataSetChanged()
-                Log.d("loadMessages", "Adapter updated with new messages")
                 messageRecyclerView.scrollToPosition(messageList!!.size - 1)
 
                 if (newMessages.isNotEmpty()) {
                     val lastMessage = newMessages.last()
                     if (lastMessage.senderId != currentUserId) {
-                        showNotification("New Message", lastMessage.content.toString())
+                        lastMessage.content?.let { showNotification("New Message", it) }
                     }
                 }
             }
@@ -259,11 +293,15 @@ class ChatActivity : AppCompatActivity() {
         receiverId: String,
         text: String
     ) {
+        val secretKey = EncryptionUtils.generateKey()
+        val encryptedMessage = EncryptionUtils.encrypt(text, secretKey)
+        val encryptedKey = EncryptionUtils.getKeyAsString(secretKey)
+
         checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
             if (!isChatRoomEnded) {
                 val timestamp = System.currentTimeMillis()
                 val messageId = UUID.randomUUID().toString()
-                val message = Message(messageId, senderId, receiverId, text, timestamp)
+                val message = Message(messageId, senderId, receiverId, encryptedMessage, encryptedKey, timestamp)
                 chatRoomsRef.child(chatRoomId).child("messages")
                     .push().setValue(message)
             } else {
