@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    implementation ("org.mindrot:jbcrypt:0.4")
     implementation ("com.google.android.gms:play-services-location:18.0.0")
     implementation ("com.google.firebase:firebase-messaging:23.0.0")
     implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
