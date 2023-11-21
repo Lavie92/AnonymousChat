@@ -19,6 +19,7 @@ import com.example.doan_chuyennganh.authentication.toUser
 import com.example.doan_chuyennganh.databinding.ActivityChatBinding
 import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
+import com.example.filterbadwords.filterBadwords
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnCompleteListener
@@ -45,6 +46,7 @@ class ChatActivity : AppCompatActivity() {
     private var receiverId: String = ""
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    val badWordFilter = filterBadwords()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

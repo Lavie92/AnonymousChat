@@ -58,6 +58,7 @@ dependencies {
     implementation ("com.google.dagger:dagger:2.9")
     implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
     implementation ("org.mindrot:jbcrypt:0.4")
+    implementation (project(":filterBadwords"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
