@@ -59,10 +59,7 @@ class SignupActivity : AppCompatActivity() {
             finish()
         }
 
-
-
     }
-
     private fun signUp(email: String?, password: String?) {
         auth.createUserWithEmailAndPassword(email!!, password!!).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -70,12 +67,13 @@ class SignupActivity : AppCompatActivity() {
                 val databaseReference = databaseReferences.database.reference.child("users")
                     .child(auth.currentUser!!.uid)
                 val users: User =
-                    User(auth.currentUser!!.uid, email, "", "", false, null, false)
+                    User(auth.currentUser!!.uid, email, "", "", false, null, false, true)
                 databaseReference.setValue(users).addOnCompleteListener {
                     if (it.isSuccessful) {
                         //auth.signOut()
                         Toast.makeText(this, "Account Created!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
 
 
                     } else {

@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
@@ -74,7 +75,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         if (auth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish() // Optional: Finish the current activity to prevent going back to it
@@ -103,7 +103,25 @@ class MainActivity : AppCompatActivity() {
                 }
             })
     }
+    override fun onBackPressed() {
+        // Kiểm tra xem người dùng đang ở MainActivity hay không
+        if (isTaskRoot) {
+            // Nếu là MainActivity, tắt ứng dụng khi ấn nút Back lần 2
+            if (backPressedOnce) {
+                super.onBackPressed()
+                return
+            }
 
+            backPressedOnce = true
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show()
+
+            // Thiết lập một đồng hồ đếm để đặt lại trạng thái backPressedOnce sau một khoảng thời gian
+            Handler().postDelayed({ backPressedOnce = false }, BACK_PRESS_INTERVAL.toLong())
+        } else {
+            // Nếu không phải MainActivity, thực hiện hành động mặc định khi ấn nút Back
+            super.onBackPressed()
+        }
+    }
     fun createChatRoom(user1Id: String?, user2Id: String?): String {
         val chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
 
@@ -138,5 +156,8 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
+    companion object {
+        private const val BACK_PRESS_INTERVAL = 2000 // Thời gian giữa hai lần ấn nút Back để thoát (2 giây)
+        private var backPressedOnce = false
+    }
 }

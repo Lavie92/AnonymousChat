@@ -32,15 +32,25 @@ class SettingActivity : AppCompatActivity() {
         }
         binding.Logout.setOnClickListener{
             signOutAndStartSignInActivity()
+            handleLogout()
         }
 
         binding.changePass.setOnClickListener{
             startActivity(Intent(this, ChangePassActivity::class.java))
         }
     }
+
+    private fun handleLogout() {
+        // Tạo Intent để chuyển hướng đến LoginActivity và xóa toàn bộ Activity đã mở trước đó
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        // Kết thúc Activity hiện tại
+        finish()
+    }
     override fun onResume() {
         super.onResume()
-
         if (auth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish() // Optional: Finish the current activity to prevent going back to it

@@ -224,67 +224,80 @@ class ChatActivity : AppCompatActivity() {
 
 
     private fun loadMessages(chatRoomId: String) {
+        var filter : Boolean
+
         val messagesRef = chatRoomsRef.child(chatRoomId).child("messages")
 
-        messagesRef.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val newMessages = snapshot.children.mapNotNull { msgSnapshot ->
-                    val messageId = msgSnapshot.child("messageId").getValue(String::class.java)
-                    val senderId = msgSnapshot.child("senderId").getValue(String::class.java)
-                    val receiverId = msgSnapshot.child("receiverId").getValue(String::class.java)
-                    val encryptedMessage = msgSnapshot.child("content").getValue(String::class.java)
-                    val encryptedKey = msgSnapshot.child("encryptKey").getValue(String::class.java)
-                    val timestamp = msgSnapshot.child("timestamp").getValue(Long::class.java)
+        if(currentUserId != null){
+            usersRef.child(currentUserId!!).get().addOnSuccessListener {
+                filter = it.child("filter").value as Boolean
 
-                    // Decrypt the message using the key
-                    val decryptedMessage =
-                        encryptedMessage?.let {
-                            encryptedKey?.let { it1 ->
-                                EncryptionUtils.decrypt(it, EncryptionUtils.getKeyFromString(it1))
+                //loadMessage
+                messagesRef.addValueEventListener(object : ValueEventListener {
+                    @SuppressLint("NotifyDataSetChanged")
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val newMessages = snapshot.children.mapNotNull { msgSnapshot ->
+                            val messageId = msgSnapshot.child("messageId").getValue(String::class.java)
+                            val senderId = msgSnapshot.child("senderId").getValue(String::class.java)
+                            val receiverId = msgSnapshot.child("receiverId").getValue(String::class.java)
+                            val encryptedMessage = msgSnapshot.child("content").getValue(String::class.java)
+                            val encryptedKey = msgSnapshot.child("encryptKey").getValue(String::class.java)
+                            val timestamp = msgSnapshot.child("timestamp").getValue(Long::class.java)
+
+                            // Decrypt the message using the key
+                            var decryptedMessage =
+                                encryptedMessage?.let {
+                                    encryptedKey?.let { it1 ->
+                                        EncryptionUtils.decrypt(it, EncryptionUtils.getKeyFromString(it1))
+                                    }
+                                }
+                            if(filter == true){
+                                decryptedMessage = badwords.filterBadWords(decryptedMessage)
                             }
-                        }
-                    val filterWords = badwords.filterBadWords(decryptedMessage)
 
-                    // Create a new Message object with the decrypted content
-                    messageId?.let {
-                        senderId?.let { it1 ->
-                            receiverId?.let { it2 ->
-                                filterWords?.let { it3 ->
-                                    timestamp?.let { it4 ->
-                                        Message(
-                                            it,
-                                            it1,
-                                            it2,
-                                            it3,
-                                            encryptedKey ?: "",
-                                            it4
-                                        )
+                            // Create a new Message object with the decrypted content
+                            messageId?.let {
+                                senderId?.let { it1 ->
+                                    receiverId?.let { it2 ->
+                                        decryptedMessage?.let { it3 ->
+                                            timestamp?.let { it4 ->
+                                                Message(
+                                                    it,
+                                                    it1,
+                                                    it2,
+                                                    it3,
+                                                    encryptedKey ?: "",
+                                                    it4
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        messageList?.clear()
+                        newMessages?.let { messageList?.addAll(it) }
+
+                        messageAdapter.notifyDataSetChanged()
+                        messageRecyclerView.scrollToPosition(messageList!!.size - 1)
+
+                        if (newMessages.isNotEmpty()) {
+                            val lastMessage = newMessages.last()
+                            if (lastMessage.senderId != currentUserId) {
+                                lastMessage.content?.let { showNotification("New Message", it) }
+                            }
+                        }
                     }
-                }
 
-                messageList?.clear()
-                newMessages?.let { messageList?.addAll(it) }
-
-                messageAdapter.notifyDataSetChanged()
-                messageRecyclerView.scrollToPosition(messageList!!.size - 1)
-
-                if (newMessages.isNotEmpty()) {
-                    val lastMessage = newMessages.last()
-                    if (lastMessage.senderId != currentUserId) {
-                        lastMessage.content?.let { showNotification("New Message", it) }
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.e("loadMessages", "Error loading messages: ${error.message}")
                     }
-                }
+                })
             }
+        }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("loadMessages", "Error loading messages: ${error.message}")
-            }
-        })
+
     }
 
     private fun showNotification(title: String, content: String) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,7 +9,9 @@
     android:isScrollContainer="false"
     android:scrollbars="horizontal"
     tools:context=".MainActivity">
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="410dp"
@@ -269,19 +272,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Age:"
+                android:text="Date of Birth:"
                 android:textColor="#5917e1"
                 android:textSize="18sp" />
 
-            <EditText
+            <Button
                 android:id="@+id/txtChangeAge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="age"
                 android:background="@android:color/transparent"
-                android:inputType="number"
-                android:text=""
+                android:clickable="true"
+                android:hint="Select Date and Time"
+                android:inputType="datetime"
+                android:onClick="showDateTimePicker"
                 android:textAlignment="viewEnd"
                 android:textColor="#5b5b5b"
                 android:textSize="18sp" />
@@ -293,7 +297,36 @@
             android:layout_margin="10dp"
             android:alpha="0.5"
             android:background="#585858" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
 
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Age:"
+                android:textColor="#5917e1"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtViewage"
+                android:hint="age"
+                android:textColor="#5b5b5b"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+        </LinearLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:alpha="0.5"
+            android:background="#585858" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -324,7 +357,15 @@
             android:background="#585858" />
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:orientation="vertical">
 
+            <!-- Các phần tử bên trong LinearLayout -->
+
+        </LinearLayout>
         <Button
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
@@ -336,9 +377,21 @@
             android:textStyle="bold"
 
             android:text="Save" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="vertical">
+
+            <!-- Các phần tử bên trong LinearLayout -->
+
+        </LinearLayout>
 
     </LinearLayout>
 
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

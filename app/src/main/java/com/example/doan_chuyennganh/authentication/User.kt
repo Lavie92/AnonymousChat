@@ -11,6 +11,7 @@ data class User(
     val active: Boolean = false,
     val gender: String? = null,
     val ready: Boolean = false,
+    val filter: Boolean = true,
     var chatRoom: String = "",
     var location: MyLocation? = MyLocation(),
 
