@@ -15,5 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "DoAn_ChuyenNganh"
 include(":app")
-include(":filterBadwords")
 include(":filterBadwordsLibrary")
