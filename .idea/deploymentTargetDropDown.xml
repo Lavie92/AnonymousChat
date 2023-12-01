@@ -7,19 +7,39 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\DongTrieu\.android\avd\Pixel_7_Pro_API_29.avd" />
+            <value value="C:\Users\An\.android\avd\Pixel_7_Pro_API_30.avd" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-11-22T15:47:25.126454100Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-12-01T14:34:46.310644300Z" />
+    <runningDeviceTargetsSelectedWithDialog>
+      <Target>
+        <type value="RUNNING_DEVICE_TARGET" />
+        <deviceKey>
+          <Key>
+            <type value="VIRTUAL_DEVICE_PATH" />
+            <value value="C:\Users\An\.android\avd\Pixel_7_Pro_API_30.avd" />
+          </Key>
+        </deviceKey>
+      </Target>
+      <Target>
+        <type value="RUNNING_DEVICE_TARGET" />
+        <deviceKey>
+          <Key>
+            <type value="SERIAL_NUMBER" />
+            <value value="52006087bc8e65ed" />
+          </Key>
+        </deviceKey>
+      </Target>
+    </runningDeviceTargetsSelectedWithDialog>
     <targetsSelectedWithDialog>
       <Target>
         <type value="QUICK_BOOT_TARGET" />
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\lavie\.android\avd\Pixel_7_Pro_API_30.avd" />
+            <value value="C:\Users\An\.android\avd\Pixel_7_Pro_API_30.avd" />
           </Key>
         </deviceKey>
       </Target>

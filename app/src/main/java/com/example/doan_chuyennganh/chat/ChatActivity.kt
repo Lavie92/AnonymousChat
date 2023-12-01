@@ -1,6 +1,5 @@
 package com.example.doan_chuyennganh.chat
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +9,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.authentication.User
@@ -19,16 +17,17 @@ import com.example.doan_chuyennganh.databinding.ActivityChatBinding
 import com.example.doan_chuyennganh.encrypt.EncryptionUtils
 import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
+import com.example.doan_chuyennganh.report.Reports
 import com.example.filterbadwodslibrary.filterBadwords
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.UUID
 
 class ChatActivity : AppCompatActivity() {
@@ -423,5 +422,33 @@ class ChatActivity : AppCompatActivity() {
             }
         })
     }
+    fun reportMessage(message: Message) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        val receiverUserId = message.receiverId
+        val senderUserId = currentUserId
+        Log.d("reportMessage", "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId")
+        val report = Reports(
+            UID_beReported = receiverUserId ?: "",
+            UID_report = senderUserId ?: "",
+            listOf = listOf(message),
+            id = UUID.randomUUID().toString()
+        )
+        var reportRef = FirebaseDatabase.getInstance().getReference("reports")
+        reportRef.child(UUID.randomUUID().toString()).push().setValue(report)
+    }
+//    fun reportMessage(message: Message) {
+//        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+//        val receiverUserId = message.receiverId
+//        val senderUserId = currentUserId
+//        Log.d("reportMessage", "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId")
+//        val report = Reports(
+//            UID_beReported = receiverUserId ?: "",
+//            UID_report = senderUserId ?: "",
+//            listOf = listOf(message),
+//            id = UUID.randomUUID().toString()
+//        )
+//        var reportRef = FirebaseDatabase.getInstance().getReference("reports")
+//        reportRef.child(UUID.randomUUID().toString()).push().setValue(report)
+//    }
 
 }

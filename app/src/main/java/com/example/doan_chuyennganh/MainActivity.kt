@@ -156,6 +156,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
     companion object {
         private const val BACK_PRESS_INTERVAL = 2000 // Thời gian giữa hai lần ấn nút Back để thoát (2 giây)
         private var backPressedOnce = false
