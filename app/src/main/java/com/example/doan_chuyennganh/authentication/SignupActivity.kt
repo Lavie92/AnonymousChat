@@ -67,7 +67,7 @@ class SignupActivity : AppCompatActivity() {
                 val databaseReference = databaseReferences.database.reference.child("users")
                     .child(auth.currentUser!!.uid)
                 val users: User =
-                    User(auth.currentUser!!.uid, email, "", "", false, null, false, true)
+                    User(auth.currentUser!!.uid, email, "", "", false, null, false, true,100)
                 databaseReference.setValue(users).addOnCompleteListener {
                     if (it.isSuccessful) {
                         //auth.signOut()

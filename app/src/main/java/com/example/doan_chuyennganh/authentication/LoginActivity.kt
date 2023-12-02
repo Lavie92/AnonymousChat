@@ -207,6 +207,7 @@ public class LoginActivity : AppCompatActivity() {
                                         val active = it.child("active").value
                                         val age = it.child("age").value
                                         val ready = it.child("ready").value
+                                        val point = it.child("point").value
 
                                         val userUpdate = mapOf(
                                             "id" to auth.currentUser?.uid!!,
@@ -215,7 +216,8 @@ public class LoginActivity : AppCompatActivity() {
                                             "active" to active,
                                             "age" to age,
                                             "ready" to ready,
-                                            "username" to username
+                                            "username" to username,
+                                            "point" to point
                                         )
                                         databaseReferences.child(currentUser.uid).updateChildren(userUpdate)
                                         // Now that the user data is updated, start the activity
@@ -225,7 +227,7 @@ public class LoginActivity : AppCompatActivity() {
                                 // Email đã tồn tại trong cơ sở dữ liệu
                             } else {
                                 // Email chưa tồn tại trong cơ sở dữ liệu
-                                val users: User = User(currentUser.uid, currentUser.email,  currentUser.displayName, "",false, "", false)
+                                val users: User = User(currentUser.uid, currentUser.email,  currentUser.displayName, "",false, "", false,true,100)
                                 databaseReference.child(currentUser.uid).setValue(users)
                                     .addOnCompleteListener { task ->
                                         if (task.isSuccessful) {

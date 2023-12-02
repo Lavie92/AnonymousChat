@@ -249,15 +249,16 @@ class ChatActivity : AppCompatActivity() {
                                         EncryptionUtils.decrypt(it, EncryptionUtils.getKeyFromString(it1))
                                     }
                                 }
+                            var message123 = decryptedMessage
                             if(filter == true){
-                                decryptedMessage = badwords.filterBadWords(decryptedMessage)
+                                message123 = badwords.filterBadWords(decryptedMessage)
                             }
 
                             // Create a new Message object with the decrypted content
                             messageId?.let {
                                 senderId?.let { it1 ->
                                     receiverId?.let { it2 ->
-                                        decryptedMessage?.let { it3 ->
+                                        message123?.let { it3 ->
                                             timestamp?.let { it4 ->
                                                 Message(
                                                     it,

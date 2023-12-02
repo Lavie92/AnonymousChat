@@ -12,6 +12,7 @@ data class User(
     val gender: String? = null,
     val ready: Boolean = false,
     val filter: Boolean = true,
+    val point: Int = 0,
     var chatRoom: String = "",
     var location: MyLocation? = MyLocation(),
 

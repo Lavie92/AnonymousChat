@@ -28,7 +28,7 @@ class filterBadwords {
             "del", "dell ngửi", "dell ngui", "dell chịu", "dell chiu", "dell hiểu", "dell hieu", "dellhieukieugi", "dell nói",
             "dell noi", "dellnoinhieu", "dell biết", "dell biet", "dell nghe", "dell ăn", "dell an", "dell được", "dell duoc",
             "dell làm", "dell lam", "dell đi", "dell di", "dell chạy", "dell chay", "deohieukieugi", "địt", "đm", "dm", "đmm",
-            "dmm", "đmmm", "dmmm", "đmmmm", "dmmmm", "đmmmmm", "dmmmmm", "đcm", "dcm", "đcmm", "dcmm", "đcmmm", "dcmmm", "đcmmmm",
+            "dmm", "đmmm", "dmmm", "đmmmm", "dmmmm", "ditme", "ditmemay","concac", "đmmmmm", "dmmmmm", "đcm", "dcm", "đcmm", "dcmm", "đcmmm", "dcmmm", "đcmmmm",
             "dcmmmm", "đệch", "đệt", "dit", "dis", "diz", "đjt", "djt", "địt mẹ", "địt mịe", "địt má", "địt mía", "địt ba", "địt bà",
             "địt cha", "địt con", "địt bố", "địt cụ", "dis me", "disme", "dismje", "dismia", "dis mia", "dis mie", "đis mía", "đis mịa",
             "ditmemayconcho", "ditmemay", "ditmethangoccho", "ditmeconcho", "dmconcho", "dmcs", "ditmecondi", "ditmecondicho", "đụ",
