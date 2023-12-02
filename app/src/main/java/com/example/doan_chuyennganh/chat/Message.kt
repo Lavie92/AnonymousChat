@@ -1,7 +1,6 @@
 package com.example.doan_chuyennganh.chat
 
 class Message {
-
     var messageId: String? = null
     var senderId: String? = null
     var receiverId: String? = null

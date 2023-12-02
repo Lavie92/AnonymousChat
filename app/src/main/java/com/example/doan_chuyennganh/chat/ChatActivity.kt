@@ -27,7 +27,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.FirebaseFirestore
 import java.util.UUID
 
 class ChatActivity : AppCompatActivity() {
@@ -422,48 +421,43 @@ class ChatActivity : AppCompatActivity() {
             }
         })
     }
+    var receiverUserId: String? = null
+    var senderUserId: String? = null
+
     fun reportMessage(message: Message) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        val receiverUserId = message.receiverId
-        val senderUserId = currentUserId
+        receiverUserId = message.receiverId
+        senderUserId = message.senderId
+
+        Log.d("reportMessage", "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId")
+
+        val messagesArrayList = ArrayList<Map<String, Any?>>()
+
+        // Extract only the necessary properties from the Message object
+        val messageMap = mapOf(
+            "timestamp" to message.timestamp,
+            "content" to message.content
+        )
+
+        messagesArrayList.add(messageMap)
+
+        // Set UID_beReported to the ID of the user being reported
+        val report = Reports(
+            UID_beReported = receiverUserId ?: "",
+            UID_report = senderUserId ?: "",
+            Message = messagesArrayList
+        )
 
         val reportRef = FirebaseDatabase.getInstance().getReference("reports").child(chatRoomId)
 
-        // Check if a report with the same chat room ID exists
-        reportRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Report for the chat room already exists
-                    for (childSnapshot in dataSnapshot.children) {
-                        // Assuming the key is the unique identifier for each report
-                        val reportId = childSnapshot.key
-                        // Append the message to the existing report
-                        if (reportId != null) {
-                            reportRef.child(reportId).child("listOf").push().setValue(message)
-                        }
-                        return
-                    }
-                }
-
-                // If no report exists for the chat room, create a new one
-                val messagesArrayList = ArrayList<Message>()
-                messagesArrayList.add(message)
-
-                val report = Reports(
-                    UID_beReported = receiverUserId ?: "",
-                    UID_report = senderUserId ?: "",
-                    listOf = messagesArrayList
-                )
-
-                // Push the new report to the reports node
-                reportRef.push().setValue(report)
+        // Push the new report to the reports node
+        reportRef.push().setValue(report)
+            .addOnSuccessListener {
+                Log.d("reportMessage", "Report added successfully")
             }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle potential errors here
-                Log.e("reportMessage", "Error checking for existing reports: $databaseError")
+            .addOnFailureListener {
+                Log.e("reportMessage", "Error adding report: ${it.message}")
             }
-        })
     }
 
 
