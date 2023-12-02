@@ -5,6 +5,7 @@ import com.example.doan_chuyennganh.chat.Message
 data class Reports(
     val UID_beReported: String,
     val UID_report: String,
-    val listOf: List<Message>,
-    val id: String
+    val listOf: ArrayList<Message>
+
 )
+
