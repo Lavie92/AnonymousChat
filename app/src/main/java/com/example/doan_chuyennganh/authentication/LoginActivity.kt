@@ -46,6 +46,11 @@ public class LoginActivity : AppCompatActivity() {
     }
 
     private lateinit var auth: FirebaseAuth
+    override fun onStart() {
+        super.onStart()
+        val currentUser = auth.currentUser
+        updateUI(currentUser)
+    }
     fun updateUI(account: FirebaseUser?) {
         if (account != null) {
             // User is signed in
@@ -87,7 +92,6 @@ public class LoginActivity : AppCompatActivity() {
             finish()
         }
         val currentUser = auth.currentUser
-        updateUI(currentUser)
 
         val signInButton = findViewById<ImageView>(R.id.signInButton)
         signInButton.setOnClickListener {

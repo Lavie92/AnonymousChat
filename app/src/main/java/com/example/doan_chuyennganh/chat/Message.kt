@@ -8,6 +8,7 @@ class Message {
     var timestamp: Long = 0
     var encryptKey: String? = null
 
+
     constructor() {}
     constructor(messageId: String, senderId: String, receiverId: String, text: String, encryptKey: String,timestamp: Long) {
         this.messageId = messageId
@@ -20,4 +21,6 @@ class Message {
     fun getMessageText(): String {
         return content.toString()
     }
+
+
 }

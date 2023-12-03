@@ -52,9 +52,9 @@ class SplashScreenActivity : AppCompatActivity() {
 
                     val chatIntent = Intent(this@SplashScreenActivity, ChatActivity::class.java)
                     startActivity(chatIntent)
+                    finish()
                 }
             }
-            finish()
         }, 1000)
     }
 }
