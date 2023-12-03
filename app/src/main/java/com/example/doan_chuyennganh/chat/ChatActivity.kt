@@ -422,17 +422,14 @@ class ChatActivity : AppCompatActivity() {
             }
         })
     }
-    var receiverUserId: String? = null
-    var senderUserId: String? = null
 
     fun reportMessage(message: Message) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        receiverUserId = message.receiverId
-        senderUserId = message.senderId
+        val receiverUserId = currentUserId
+        val senderUserId = message.senderId
 
         Log.d("reportMessage", "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId")
 
-        val messagesArrayList = ArrayList<Map<String, Any?>>()
 
         // Extract only the necessary properties from the Message object
         val messageMap = mapOf(
@@ -440,23 +437,19 @@ class ChatActivity : AppCompatActivity() {
             "content" to message.content
         )
 
-        messagesArrayList.add(messageMap)
-
         // Set UID_beReported to the ID of the user being reported
-        val report = Reports(
-            UID_beReported = receiverUserId ?: "",
-            UID_report = senderUserId ?: "",
-            Message = messagesArrayList
-        )
+        val report = Reports(senderUserId!!, receiverUserId!!)
 
-        val reportRef = FirebaseDatabase.getInstance().getReference("reports").child(chatRoomId)
+        val reportRef = FirebaseDatabase.getInstance().getReference("reports").child(chatRoomId).child(message.messageId!!)
+        reportRef.setValue(report)
 
-        // Push the new report to the reports node
-        reportRef.push().setValue(report)
+        // Push the messageMap to a different child node under the messageID
+        reportRef.child("messageMap").setValue(messageMap)
             .addOnSuccessListener {
-                Log.d("reportMessage", "Report added successfully")
+                Toast.makeText(this, "Report added successfully", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
+                Toast.makeText(this, "Error adding report: ${it.message}", Toast.LENGTH_SHORT).show()
                 Log.e("reportMessage", "Error adding report: ${it.message}")
             }
     }
