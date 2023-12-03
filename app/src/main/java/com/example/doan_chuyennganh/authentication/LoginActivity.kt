@@ -3,6 +3,7 @@ package com.example.doan_chuyennganh
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.util.Patterns
 import android.view.View
@@ -10,11 +11,13 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
+import android.window.SplashScreen
 import androidx.appcompat.app.AppCompatActivity
 import com.example.doan_chuyennganh.authentication.ForgotPassActivity
 import com.example.doan_chuyennganh.authentication.User
 
 import com.example.doan_chuyennganh.databinding.ActivityLoginBinding
+import com.example.doan_chuyennganh.layout.SplashScreenActivity
 import com.google.android.gms.auth.api.identity.SignInPassword
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -43,16 +46,13 @@ public class LoginActivity : AppCompatActivity() {
     }
 
     private lateinit var auth: FirebaseAuth
-    public override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = auth.currentUser
-        updateUI(currentUser)
-    }
     fun updateUI(account: FirebaseUser?) {
         if (account != null) {
             // User is signed in
-            startActivity(Intent(this, MainActivity::class.java))
+            val splashIntent = Intent(this@LoginActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toMain")
+            startActivity(splashIntent)
+            finish()
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,12 +87,7 @@ public class LoginActivity : AppCompatActivity() {
             finish()
         }
         val currentUser = auth.currentUser
-
-        if (currentUser != null) {
-            // The user is already signed in, navigate to MainActivity
-            startActivity(Intent(this, MainActivity::class.java))
-            finish() // finish the current activity to prevent the user from coming back to the SignInActivity using the back button
-        }
+        updateUI(currentUser)
 
         val signInButton = findViewById<ImageView>(R.id.signInButton)
         signInButton.setOnClickListener {

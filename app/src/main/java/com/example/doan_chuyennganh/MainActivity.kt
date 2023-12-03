@@ -14,6 +14,7 @@ import com.example.doan_chuyennganh.authentication.SettingActivity
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
+import com.example.doan_chuyennganh.layout.SplashScreenActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -45,8 +46,9 @@ class MainActivity : AppCompatActivity() {
         val user = auth.currentUser
         ivStartChat = binding.ivStartChat
         ivStartChat?.setOnClickListener {
-            val intent = Intent(this, ChatActivity::class.java)
-            startActivity(intent)
+            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toChat")
+            startActivity(splashIntent)
         }
         this.auth = FirebaseAuth.getInstance()
         //Load Screen to check Active
