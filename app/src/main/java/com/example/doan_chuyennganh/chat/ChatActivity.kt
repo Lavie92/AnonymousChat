@@ -444,6 +444,7 @@ class ChatActivity : AppCompatActivity() {
         reportRef.setValue(report)
 
         // Push the messageMap to a different child node under the messageID
+        reportRef.child("status").setValue("doing")
         reportRef.child("messageMap").setValue(messageMap)
             .addOnSuccessListener {
                 Toast.makeText(this, "Report added successfully", Toast.LENGTH_SHORT).show()

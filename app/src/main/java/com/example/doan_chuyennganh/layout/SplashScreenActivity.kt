@@ -35,7 +35,7 @@ class SplashScreenActivity : AppCompatActivity() {
                             .addOnSuccessListener { snapshot ->
                                 if (snapshot.exists()) {
                                     val point = snapshot.child("point").value
-                                    if(point.toString().toInt() < 40){
+                                    if(point.toString().toInt() <= 0){
                                         startActivity(Intent(this@SplashScreenActivity,BannedActivity::class.java))
                                         finish()
                                     }else{

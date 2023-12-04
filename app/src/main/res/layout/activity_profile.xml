@@ -9,19 +9,23 @@
     android:isScrollContainer="false"
     android:scrollbars="horizontal"
     tools:context=".MainActivity">
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="410dp"
-        android:layout_height="363dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/top_background" />
 
-    <View
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="410dp"
+            android:layout_height="363dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/top_background" />
+
+        <View
         android:id="@+id/ellipse_2"
         android:layout_width="37dp"
         android:layout_height="37dp"
@@ -47,17 +51,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/combined_shape" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/profile" />
+        <ProgressBar
+            android:id="@+id/imgProgess"
+            style="@style/CircularDeterminateProgressBar"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageView"
+            tools:progress="100"/>
 
-    <TextView
+        <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,10 +70,10 @@
         android:textColor="#ffffff"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="@+id/imgProgess"
         app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="@+id/imageView2"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintStart_toStartOf="@+id/imgProgess"
+        app:layout_constraintTop_toBottomOf="@+id/imgProgess" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -389,7 +393,34 @@
 
     </LinearLayout>
 
+        <TextView
+            android:id="@+id/tvPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="84dp"
+            android:text="TextView"
+            android:textColor="@color/_bg__frame_2_ek2_color"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/imgProgess"
+            app:layout_constraintEnd_toEndOf="@+id/imgProgess"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="@+id/imgProgess"
+            app:layout_constraintTop_toTopOf="@+id/imgProgess"
+            app:layout_constraintVertical_bias="0.011" />
 
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Điểm uy tín"
+            android:textColor="@color/_bg__frame_2_ek2_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/imgProgess"
+            app:layout_constraintHorizontal_bias="0.492"
+            app:layout_constraintStart_toStartOf="@+id/imgProgess"
+            app:layout_constraintTop_toBottomOf="@+id/tvPoint" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

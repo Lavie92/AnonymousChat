@@ -1,25 +1,30 @@
 package com.example.doan_chuyennganh
 
+import android.R
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.doan_chuyennganh.active.SharedPreferencesManager
+import com.example.doan_chuyennganh.authentication.NotificationActivity
 import com.example.doan_chuyennganh.authentication.SettingActivity
 import com.example.doan_chuyennganh.databinding.ActivityProfileBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.userProfileChangeRequest
@@ -47,21 +52,32 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var sharedPreferencesManager: SharedPreferencesManager
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
 
-
         databaseReferences = FirebaseDatabase.getInstance().getReference("users")
-
 
         sharedPreferencesManager = SharedPreferencesManager(this)
 
         binding.btnBack.setOnClickListener{
             onBackPressed()
         }
+
+        binding.tvPoint.setOnTouchListener{view, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                binding.tvPoint.tooltipText = "Với mỗi lần VI PHẠM, bạn sẽ bị trừ 10 điểm. Nếu điểm của bạn về 0, bạn sẽ bị CHẶN trên hệ thống!"
+
+                true // Consume the touch event
+            } else if (event.action == MotionEvent.ACTION_UP) {
+
+            }
+            false // Don't consume other touch events (optional)
+        }
+
 
         val userId = auth.currentUser?.uid
         val currentUser = auth.currentUser
@@ -91,6 +107,11 @@ class ProfileActivity : AppCompatActivity() {
         //
         binding.btnSetting.setOnClickListener{
             startActivity(Intent(this, SettingActivity::class.java))
+        }
+
+        binding.btnNoti.setOnClickListener{
+            startActivity(Intent(this, NotificationActivity::class.java))
+
         }
 
             binding.btnSave.setOnClickListener{
@@ -368,8 +389,13 @@ class ProfileActivity : AppCompatActivity() {
                     val age = snapshot.child("age").value
                     val filter = snapshot.child("filter").value
                     val chatRoom = snapshot.child("chatRoom").value
+                    val point = snapshot.child("point").value
 
-                    // Binding giá trị vào các thành phần UI
+                    binding.imgProgess.progress= point.toString().toInt()
+                    binding.tvPoint.text = point.toString()
+
+
+                            // Binding giá trị vào các thành phần UI
                     binding.txtChangeName.setText(username.toString())
                     binding.txtChangeEmail.setText(email.toString())
                     val position = getIndexFromValue(spinner, gender.toString())
