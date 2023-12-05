@@ -1,5 +1,6 @@
 package com.example.doan_chuyennganh
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.util.Patterns
 import android.widget.Toast
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.databinding.ActivitySignupBinding
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -72,7 +74,17 @@ class SignupActivity : AppCompatActivity() {
                     if (it.isSuccessful) {
                         //auth.signOut()
                         Toast.makeText(this, "Account Created!", Toast.LENGTH_SHORT).show()
+
+
+                        auth.currentUser!!.sendEmailVerification()
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Log.d(TAG, "Email sent.")
+                                }
+                            }
                         startActivity(Intent(this, LoginActivity::class.java))
+                        Toast.makeText(this, "Vui lòng xác thực Email trước khi đăng nhập!", Toast.LENGTH_SHORT).show()
+                        auth.signOut()
                         finish()
 
 

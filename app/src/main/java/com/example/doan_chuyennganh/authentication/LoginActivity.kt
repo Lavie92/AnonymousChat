@@ -1,29 +1,20 @@
 package com.example.doan_chuyennganh
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.util.Patterns
-import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
-import android.window.SplashScreen
 import androidx.appcompat.app.AppCompatActivity
 import com.example.doan_chuyennganh.authentication.ForgotPassActivity
 import com.example.doan_chuyennganh.authentication.User
 
 import com.example.doan_chuyennganh.databinding.ActivityLoginBinding
 import com.example.doan_chuyennganh.layout.SplashScreenActivity
-import com.google.android.gms.auth.api.identity.SignInPassword
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -31,7 +22,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 
 
@@ -104,16 +94,21 @@ public class LoginActivity : AppCompatActivity() {
 
     //Sign in Email/Password
     private fun signInEmailPassword(loginEmail: String, loginPassword: String){
-        auth.signInWithEmailAndPassword(loginEmail,loginPassword).addOnCompleteListener() {
-            if(it.isSuccessful){
-                val user = auth.currentUser
-                updateUI(user)
+        auth.signInWithEmailAndPassword(loginEmail, loginPassword).addOnCompleteListener() {
+                if (it.isSuccessful) {
+                    if(!auth.currentUser!!.isEmailVerified) {
+                        Toast.makeText(this, "Vui lòng xác thực Email trước khi đăng nhập!", Toast.LENGTH_SHORT).show()
+                        auth.signOut()
+                    }else{
+                        val user = auth.currentUser
+                        updateUI(user)
+                    }
 
-            }else{
-
-                Toast.makeText(this,"Wrong Email or Password!",Toast.LENGTH_SHORT).show()
-            }
+                } else {
+                    Toast.makeText(this, "Wrong Email or Password!", Toast.LENGTH_SHORT).show()
+                }
         }
+
     }
 
     //end Sign in Email/Password
