@@ -1,23 +1,17 @@
 package com.example.doan_chuyennganh
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import com.example.doan_chuyennganh.authentication.SettingActivity
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -35,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private  lateinit var firebaseDatabase: FirebaseDatabase
     private  lateinit var databaseReferences: DatabaseReference
     private var ivStartChat: ImageView? = null
+    private var ivFindNearUser: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +39,12 @@ class MainActivity : AppCompatActivity() {
         val auth = Firebase.auth
         val user = auth.currentUser
         ivStartChat = binding.ivStartChat
+        ivFindNearUser = binding.ivFindNearUser
         ivStartChat?.setOnClickListener {
             val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)
         }
+
         this.auth = FirebaseAuth.getInstance()
         //Load Screen to check Active
         checkActive()
@@ -63,7 +60,6 @@ class MainActivity : AppCompatActivity() {
 
 
         } else {
-            // Handle the case where the user is not signed in
         }
         binding.btnSetting.setOnClickListener{
             startActivity(Intent(this, ProfileActivity::class.java))

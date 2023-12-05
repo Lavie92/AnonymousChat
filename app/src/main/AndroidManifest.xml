@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -18,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
+        <activity
+            android:name=".chat.ChatWithNearFriendActivity"
+            android:exported="false" />
         <activity
             android:name=".authentication.SettingActivity"
             android:exported="false" />
@@ -48,6 +50,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".notification.MyFirebaseMessagingService"
             android:exported="false">

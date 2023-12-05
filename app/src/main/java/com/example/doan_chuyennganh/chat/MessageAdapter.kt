@@ -2,6 +2,7 @@ package com.example.doan_chuyennganh.chat
 
 import android.content.Context
 import android.provider.Telephony.Mms.Sent
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,11 +42,15 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
         when (holder) {
             is SentViewHolder -> {
                 holder.sentMessage.text = messageText
+                holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
+
             }
             is ReceiveViewHolder -> {
                 holder.receiveMessage.text = messageText
+                holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
             }
         }
+
     }
 
 
@@ -59,9 +64,12 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
     }
     class SentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val sentMessage = itemView.findViewById<TextView>(R.id.tvSentMessage)
+        val tvSentTime = itemView.findViewById<TextView>(R.id.tvSentTime)
+
     }
 
     class ReceiveViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receiveMessage = itemView.findViewById<TextView>(R.id.tvReceiveMessage)
+        val tvSentTime = itemView.findViewById<TextView>(R.id.tvReceiveTime)
     }
 }

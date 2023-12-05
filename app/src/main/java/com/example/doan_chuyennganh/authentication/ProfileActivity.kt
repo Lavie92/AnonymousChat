@@ -368,6 +368,7 @@ class ProfileActivity : AppCompatActivity() {
                     val age = snapshot.child("age").value
                     val filter = snapshot.child("filter").value
                     val chatRoom = snapshot.child("chatRoom").value
+                    val isFindByLocation = snapshot.child("isFindByLocation").value
 
                     // Binding giá trị vào các thành phần UI
                     binding.txtChangeName.setText(username.toString())

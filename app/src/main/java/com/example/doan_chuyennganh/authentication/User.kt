@@ -14,6 +14,7 @@ data class User(
     val filter: Boolean = true,
     var chatRoom: String = "",
     var location: MyLocation? = MyLocation(),
+    var isFindByLocation: Boolean = false,
 
     )
 fun FirebaseUser.toUser(location: MyLocation? = null): User? {
