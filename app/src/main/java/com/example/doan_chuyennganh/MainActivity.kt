@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private  lateinit var firebaseDatabase: FirebaseDatabase
     private  lateinit var databaseReferences: DatabaseReference
     private var ivStartChat: ImageView? = null
+    private var ivFindNearUser: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +40,13 @@ class MainActivity : AppCompatActivity() {
         val auth = Firebase.auth
         val user = auth.currentUser
         ivStartChat = binding.ivStartChat
+        ivFindNearUser = binding.ivFindNearUser
         ivStartChat?.setOnClickListener {
             val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
             splashIntent.putExtra("source_activity", "toChat")
             startActivity(splashIntent)
         }
+
         this.auth = FirebaseAuth.getInstance()
 
 
@@ -62,7 +65,6 @@ class MainActivity : AppCompatActivity() {
 
 
         } else {
-            // Handle the case where the user is not signed in
         }
         binding.btnSetting.setOnClickListener{
             startActivity(Intent(this, ProfileActivity::class.java))

@@ -1,16 +1,23 @@
 package com.example.doan_chuyennganh.chat
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.view.MenuInflater
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
 import com.example.doan_chuyennganh.databinding.ActivityChatBinding
@@ -21,13 +28,17 @@ import com.example.doan_chuyennganh.report.Reports
 import com.example.filterbadwodslibrary.filterBadwords
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.UUID
+import java.util.concurrent.CompletableFuture
 
 class ChatActivity : AppCompatActivity() {
 
@@ -45,7 +56,8 @@ class ChatActivity : AppCompatActivity() {
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     val badwords = filterBadwords()
-
+    private lateinit var popupMenu: PopupMenu
+    private val handler = Handler()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,11 +81,10 @@ class ChatActivity : AppCompatActivity() {
         loadMessages(chatRoomId)
 
         btnStartChat.setOnClickListener {
-            findRandomUserForChat()
+            showPopupMenu(btnStartChat)
         }
 
         btnEndChat.setOnClickListener {
-            val lastChatRoom = chatRoomId
             endChat(chatRoomId) { success ->
                 if (success) {
                 } else {
@@ -92,46 +103,54 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadMessagesForCurrentUser(chatRoomId: String) {
-        // Load messages for the current user
-        loadMessages(chatRoomId)
-    }
 
-    private fun loadMessagesForOtherUser(chatRoomId: String) {
-        val otherUserId = if (currentUserId == receiverId) currentUserId else receiverId
-        val otherUserRef = usersRef.child(otherUserId)
 
-        otherUserRef.child("chatRoom").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val otherChatRoom = snapshot.getValue(String::class.java)
-                if (otherChatRoom != null) {
-                    loadMessages(otherChatRoom)
+    private fun showPopupMenu(view: View) {
+        // Tạo PopupMenu với view là nút "Tìm"
+        popupMenu = PopupMenu(this, view)
+        val inflater: MenuInflater = popupMenu.menuInflater
+        inflater.inflate(R.menu.popup_menu, popupMenu.menu)
+
+        // Set item click listener
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.menuRandom -> {
+                    findRandomUserForChat()
+                    true
                 }
+                R.id.menuLocation -> {
+                    findNearestUserForChat()
+                    true
+                }
+                else -> false
             }
+        }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(
-                    "LoadMessagesForOtherUser",
-                    "Error loading messages for the other user: ${error.message}"
-                )
-            }
-        })
+        // Hiển thị PopupMenu
+        popupMenu.show()
     }
 
+    private val timeoutRunnable = Runnable {
+        updateUserStatus(currentUserId.toString(), false)
+        isFindByLocation(currentUserId.toString(), false)
+        Toast.makeText(this, "No user found. Please try again.", Toast.LENGTH_SHORT).show()
+    }
     private fun findRandomUserForChat() {
         chatRoomId = ""
         receiverId = ""
         checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
             if (isChatRoomEnded) {
                 removeMessage(chatRoomId)
-            } else {
-                Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
             }
         }
         Toast.makeText(this, "Dang tim kiem", Toast.LENGTH_SHORT).show()
         if (currentUserId != null) {
             updateUserStatus(currentUserId, true)
+            isFindByLocation(currentUserId, false)
         }
+
+        handler.postDelayed(timeoutRunnable, 30000)
+
         usersRef.get().addOnSuccessListener { snapshot ->
 
             val allUsers = snapshot.children.map {
@@ -158,12 +177,147 @@ class ChatActivity : AppCompatActivity() {
                     findRandomUserForChat()
                 }
             }
+            else {
+                Toast.makeText(this, "Try again...", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun findNearestUserForChat() {
+        chatRoomId = ""
+        receiverId = ""
+        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+            if (isChatRoomEnded) {
+                removeMessage(chatRoomId)
+            } else {
+                Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
+            }
+        }
+        Toast.makeText(this, "Đang tìm kiếm...", Toast.LENGTH_SHORT).show()
+        if (currentUserId != null) {
+            isFindByLocation(currentUserId, true)
+            updateUserStatus(currentUserId, false)
+        }
+        //set timeout
+        handler.postDelayed(timeoutRunnable, 30000)
+
+        var distanceUser = 0.0
+        usersRef.get().addOnSuccessListener { snapshot ->
+            setCurrentUserLocation()!!
+            getCurrentUserLocationFromFirebase { currentUserLocation ->
+                if (currentUserLocation != null) {
+                    val allUsers = snapshot.children.map {
+                        val user = it.getValue(User::class.java)!!
+                        user.isFindByLocation = it.child("isFindByLocation").getValue(Boolean::class.java) ?: false
+                        user
+                    }.filter { it.isFindByLocation && it.id != currentUserId }
+
+                    var nearestUser: User? = null
+                    for (user in allUsers) {
+                        val userLocation = user.location
+                        if (userLocation != null) {
+                            val distance = calculateDistance(
+                                currentUserLocation.latitude,
+                                currentUserLocation.longitude,
+                                userLocation.latitude,
+                                userLocation.longitude
+                            )
+                            if (distance <= 100.0) {
+                                nearestUser = user
+                                distanceUser = BigDecimal(distance).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+                            }
+                        }
+                    }
+
+                    if (nearestUser != null) {
+                        //ìf user available, remove timeout
+                        handler.removeCallbacks(timeoutRunnable)
+                        val nearestUserLocation = nearestUser.location
+                        if (nearestUserLocation != null) {
+                            Toast.makeText(
+                                this,
+                                "Chào mừng ${nearestUser.username}, người dùng gần nhất!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            receiverId = nearestUser.id.toString()
+
+                            chatRoomId = currentUser?.toUser()?.let {
+                                createChatRoom(
+                                    it,
+                                    nearestUser
+                                )
+                            }.toString()
+                            sendMessage(
+                                chatRoomId,
+                                "system",
+                                currentUserId.toString(),
+                                "người dùng gần nhất! đã tham gia chat!! với ${distanceUser} km"
+                            )
+                            currentUserId?.let { updateUserStatus(it, false) }
+                            receiverId?.let { updateUserStatus(it, false) }
+                            currentUserId?.let { isFindByLocation(it, false) }
+                            receiverId?.let { isFindByLocation(it, false) }
+                        } else {
+                            Toast.makeText(this, "Không thể lấy vị trí của người dùng gần nhất.", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this, "Không tìm thấy người dùng nào.", Toast.LENGTH_SHORT).show()
+                    }
+
+                } else {
+                    Log.e("UserLocation", "Failed to get user location from Firebase.")
+                }
+            }
+        }
+    }
+    private fun getCurrentUserLocationFromFirebase(callback: (MyLocation?) -> Unit) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != null) {
+            usersRef.child(currentUserId).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val currentUserLocation = snapshot.child("location").getValue(MyLocation::class.java)
+                    callback(currentUserLocation)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("getCurrentUserLocationFromFirebase", "Error getting user location: ${error.message}")
+                    callback(null)
+                }
+            })
+        } else {
+            callback(null)
+        }
+    }
+
+    private fun calculateDistance(
+        lat1: Double,
+        lon1: Double,
+        lat2: Double,
+        lon2: Double
+    ): Double {
+        val R = 6371 // Radius of the earth in km
+        val dLat = deg2rad(lat2 - lat1)  // deg2rad below
+        val dLon = deg2rad(lon2 - lon1)
+        val a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val distance = R * c
+        return distance
+    }
+
+    private fun deg2rad(deg: Double): Double {
+        return deg * (Math.PI / 180)
     }
 
     private fun updateUserStatus(userId: String, ready: Boolean) {
         val userRef = usersRef.child(userId)
         userRef.child("ready").setValue(ready)
+    }
+    private fun isFindByLocation(userId: String, isFindByLocation: Boolean) {
+        val userRef = usersRef.child(userId)
+        userRef.child("isFindByLocation").setValue(isFindByLocation)
     }
 
 
@@ -171,10 +325,6 @@ class ChatActivity : AppCompatActivity() {
         chatRoomId = UUID.randomUUID().toString()
         user1.chatRoom = chatRoomId
         user2.chatRoom = chatRoomId
-
-        user1.location = getCurrentUserLocation()
-        user2.location = getCurrentUserLocation()
-
         val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
         chatRoomRef.child("user1Id").setValue(user1.id)
         chatRoomRef.child("user2Id").setValue(user2.id)
@@ -188,29 +338,62 @@ class ChatActivity : AppCompatActivity() {
         return chatRoomId
     }
 
-    private fun getCurrentUserLocation(): MyLocation? {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        var userLocation = MyLocation()
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location ->
-                    if (location != null) {
-                        userLocation =
-                            MyLocation(latitude = location.latitude, longitude = location.longitude)
-                        updateUserLocation(userLocation)
-                    } else {
-                    }
+//    private fun getCurrentUserLocation(callback: (MyLocation?) -> Unit) {
+//        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+//
+//        // Tạo CompletableFuture để đợi kết quả
+//        val completableFuture = CompletableFuture<MyLocation?>()
+//
+//        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//            fusedLocationClient.lastLocation
+//                .addOnSuccessListener { location ->
+//                    val userLocation = if (location != null) {
+//                        MyLocation(latitude = location.latitude, longitude = location.longitude)
+//                    } else {
+//                        MyLocation() // Hoặc có thể trả về null tùy thuộc vào yêu cầu của bạn
+//                    }
+//
+//                    // Gửi kết quả về CompletableFuture
+//                    completableFuture.complete(userLocation)
+//
+//                    if (location != null) {
+//                        updateUserLocation(userLocation)
+//                    }
+//                }
+//        } else {
+//            requestPermissions(
+//                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+//                1
+//            )
+//        }
+//
+//        // Đợi CompletableFuture hoàn thành và gọi callback
+//        completableFuture.thenAccept { result ->
+//            callback.invoke(result)
+//        }
+//    }
+private fun setCurrentUserLocation(): MyLocation? {
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    var userLocation = MyLocation()
+    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED
+    ) {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    userLocation = MyLocation(latitude = location.latitude, longitude = location.longitude)
+                    updateUserLocation(userLocation)
                 }
-        } else {
-            requestPermissions(
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                1
-            )
-        }
-        return userLocation
+            }
+    } else {
+        requestPermissions(
+            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+            1
+        )
     }
+    return userLocation
+}
+
 
     private fun updateUserLocation(location: MyLocation) {
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -226,7 +409,7 @@ class ChatActivity : AppCompatActivity() {
 
         val messagesRef = chatRoomsRef.child(chatRoomId).child("messages")
 
-        if(currentUserId != null){
+        if(currentUserId != null) {
             usersRef.child(currentUserId!!).get().addOnSuccessListener {
                 filter = it.child("filter").value as Boolean
 
@@ -235,22 +418,31 @@ class ChatActivity : AppCompatActivity() {
                     @SuppressLint("NotifyDataSetChanged")
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val newMessages = snapshot.children.mapNotNull { msgSnapshot ->
-                            val messageId = msgSnapshot.child("messageId").getValue(String::class.java)
-                            val senderId = msgSnapshot.child("senderId").getValue(String::class.java)
-                            val receiverId = msgSnapshot.child("receiverId").getValue(String::class.java)
-                            val encryptedMessage = msgSnapshot.child("content").getValue(String::class.java)
-                            val encryptedKey = msgSnapshot.child("encryptKey").getValue(String::class.java)
-                            val timestamp = msgSnapshot.child("timestamp").getValue(Long::class.java)
+                            val messageId =
+                                msgSnapshot.child("messageId").getValue(String::class.java)
+                            val senderId =
+                                msgSnapshot.child("senderId").getValue(String::class.java)
+                            val receiverId =
+                                msgSnapshot.child("receiverId").getValue(String::class.java)
+                            val encryptedMessage =
+                                msgSnapshot.child("content").getValue(String::class.java)
+                            val encryptedKey =
+                                msgSnapshot.child("encryptKey").getValue(String::class.java)
+                            val timestamp =
+                                msgSnapshot.child("timestamp").getValue(Long::class.java)
 
                             // Decrypt the message using the key
                             var decryptedMessage =
                                 encryptedMessage?.let {
                                     encryptedKey?.let { it1 ->
-                                        EncryptionUtils.decrypt(it, EncryptionUtils.getKeyFromString(it1))
+                                        EncryptionUtils.decrypt(
+                                            it,
+                                            EncryptionUtils.getKeyFromString(it1)
+                                        )
                                     }
                                 }
                             var message123 = decryptedMessage
-                            if(filter == true){
+                            if (filter == true) {
                                 message123 = badwords.filterBadWords(decryptedMessage)
                             }
 
@@ -295,8 +487,6 @@ class ChatActivity : AppCompatActivity() {
                 })
             }
         }
-
-
     }
 
     private fun showNotification(title: String, content: String) {

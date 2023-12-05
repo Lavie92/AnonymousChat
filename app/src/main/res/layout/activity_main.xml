@@ -105,11 +105,11 @@
         android:src="@drawable/combined_shape_ek2"
         app:layout_constraintBottom_toBottomOf="@+id/rectangle_5"
         app:layout_constraintEnd_toEndOf="@+id/rectangle_5"
-        app:layout_constraintStart_toEndOf="@+id/combined_shape_ek3"
+        app:layout_constraintStart_toEndOf="@+id/ivFindNearUser"
         app:layout_constraintTop_toTopOf="@+id/rectangle_5" />
 
     <ImageView
-        android:id="@+id/combined_shape_ek3"
+        android:id="@+id/ivFindNearUser"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="88dp"

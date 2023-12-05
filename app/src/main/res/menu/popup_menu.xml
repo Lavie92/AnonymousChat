@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menuRandom"
+        android:title="Tìm Ngẫu Nhiên"/>
+
+    <item
+        android:id="@+id/menuLocation"
+        android:title="Tìm theo Địa Điểm"/>
+
+</menu>

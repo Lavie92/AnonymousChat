@@ -17,6 +17,15 @@
             android:textColor="#B9000000"
             android:padding="10dp"
             android:textSize="18sp"/>
+        <TextView
+            android:id="@+id/tvReceiveTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvReceiveMessage"
+            android:layout_marginTop="-2dp"
+            android:text="12:00"
+            android:textColor="#F0272525"
+            android:textSize="12sp" />
 
     </RelativeLayout>
 </RelativeLayout>
