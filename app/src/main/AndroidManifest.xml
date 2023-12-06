@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -20,6 +19,12 @@
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
         <activity
+            android:name=".voice_chat.MainActivity"
+            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".voice_chat.VoiceChatActivity"-->
+<!--            android:exported="false" />-->
+        <activity
             android:name=".authentication.NotificationActivity"
             android:exported="false" />
         <activity
@@ -30,10 +35,9 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".chat.ChatWithNearFriendActivity"-->
-<!--            android:exported="false" />-->
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".chat.ChatWithNearFriendActivity" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".authentication.SettingActivity"
             android:exported="false" />
@@ -55,17 +59,14 @@
         <activity
             android:name=".authentication.ForgotPassActivity"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".chat.ChatActivity"-->
-<!--            android:exported="false"/>-->
-<!--        </activity>-->
-
+            android:exported="false" /> <!-- <activity -->
+        <!-- android:name=".chat.ChatActivity" -->
+        <!-- android:exported="false"/> -->
+        <!-- </activity> -->
         <activity
-            android:name=".layout.StartActivity"
+            android:name=".voice_chat.VoiceChatActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -73,8 +74,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>

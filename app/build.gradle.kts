@@ -45,6 +45,11 @@ android {
 }
 
 dependencies {
+
+    implementation ("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
+    implementation ("com.github.ZEGOCLOUD:zego_uikit_signaling_plugin_android:+")
+
+    implementation ("com.squareup.picasso:picasso:2.8")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation ("org.mindrot:jbcrypt:0.4")
     implementation ("com.google.android.gms:play-services-location:18.0.0")
