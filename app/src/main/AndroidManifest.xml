@@ -52,11 +52,17 @@
         <activity
             android:name=".authentication.ForgotPassActivity"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        <activity>
+            android:name=".ChatbotActivity"
+            android:exported="false"/>
+        </activity>
+
         <activity
-            android:name=".layout.StartActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

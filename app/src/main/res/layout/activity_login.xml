@@ -191,7 +191,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.458" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/login_password"
         android:layout_width="360dp"
         android:layout_height="52dp"
@@ -210,6 +210,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:passwordToggleEnabled="true"
         app:layout_constraintVertical_bias="0.544" />
 
     <ImageView
