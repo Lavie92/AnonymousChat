@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
@@ -15,6 +17,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.R
@@ -76,6 +79,9 @@ class ChatActivity : AppCompatActivity() {
         messageRecyclerView.layoutManager = LinearLayoutManager(this)
         val btnStartChat: Button = binding.btnStartChat
         val btnEndChat: Button = binding.btnEndChat
+
+
+
 
         checkChatRoomId()
         loadMessages(chatRoomId)

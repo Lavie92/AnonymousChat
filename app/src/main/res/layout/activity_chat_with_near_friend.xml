@@ -20,13 +20,14 @@
         android:orientation="horizontal"
         android:layout_marginBottom="5dp"
         android:weightSum="100" >
+
         <Button
             android:id="@+id/btnStartChat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tìm xung quanh"
+            android:layout_weight="100"
             android:background="@drawable/message_background_receive"
-            android:layout_weight="10"/>
+            android:text="tìm xung quanh" />
         <Button
             android:id="@+id/btnEndChat"
             android:layout_width="wrap_content"
@@ -38,12 +39,12 @@
 
         <EditText
             android:id="@+id/messageBox"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="50dp"
+            android:layout_weight="10"
             android:background="@drawable/message_box_background"
             android:hint="@string/greeting"
-            android:paddingLeft="10dp"
-            android:layout_weight="70" />
+            android:paddingLeft="10dp" />
         <ImageView
             android:id="@+id/ivSend"
             android:layout_width="50dp"

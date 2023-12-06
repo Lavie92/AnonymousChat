@@ -2,32 +2,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <RelativeLayout
+        android:id="@+id/relavetive"
         android:layout_width="wrap_content"
-        android:background="@drawable/message_background_sent"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:layout_height="wrap_content" >
+        android:layout_marginRight="5dp"
+        android:background="@drawable/message_background_sent">
 
         <TextView
             android:id="@+id/tvSentMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:maxWidth="250dp"
             android:padding="10dp"
-            android:text="this is my message"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:id="@+id/tvSentTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvSentMessage"
-            android:layout_marginTop="-2dp"
-            android:text="12:00"
-            android:textColor="#F0272525"
-            android:textSize="12sp" />
+            android:text="Sent "
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvSentTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relavetive"
+        android:layout_alignEnd="@+id/relavetive"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="14dp"
+        android:gravity="end"
+        android:text="12:00"
+        android:textColor="#F0272525"
+        android:textSize="12sp" />
+
 </RelativeLayout>

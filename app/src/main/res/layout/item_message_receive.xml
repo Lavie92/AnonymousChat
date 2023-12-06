@@ -2,30 +2,37 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="wrap_content"
-        android:background="@drawable/message_background_receive"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:layout_height="wrap_content" >
+        android:layout_marginRight="5dp"
+        android:background="@drawable/message_background_receive">
 
         <TextView
             android:id="@+id/tvReceiveMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#B9000000"
+            android:maxWidth="250dp"
             android:padding="10dp"
-            android:textSize="18sp"/>
-        <TextView
-            android:id="@+id/tvReceiveTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvReceiveMessage"
-            android:layout_marginTop="-2dp"
-            android:text="12:00"
-            android:textColor="#F0272525"
-            android:textSize="12sp" />
+            android:text="Receive"
+            android:textColor="#B9000000"
+            android:textSize="18sp" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvReceiveTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relativeLayout"
+        android:layout_alignStart="@id/relativeLayout"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="8dp"
+        android:text="12:00"
+        android:textColor="#F0272525"
+        android:textSize="12sp" />
 </RelativeLayout>
