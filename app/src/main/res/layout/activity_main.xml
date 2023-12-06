@@ -19,6 +19,109 @@
      */
     -->
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="421dp"
+        android:layout_marginTop="176dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layoutAIChat"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/border_ai"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imgAI"
+                android:layout_width="30dp"
+                android:layout_height="60dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/a" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_weight="2"
+                android:fontFamily="monospace"
+                android:gravity="end"
+                android:text="AI Chat"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutRandomChat"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/border_random"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imgRandom"
+                android:layout_width="30dp"
+                android:layout_height="60dp"
+                android:layout_gravity="top|left"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/n" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_weight="2"
+                android:fontFamily="monospace"
+                android:gravity="end"
+                android:text="Random Chat"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutNearestChat"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/border_nearest"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imgNearest"
+                android:layout_width="30dp"
+                android:layout_height="60dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/r" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_weight="2"
+                android:fontFamily="monospace"
+                android:gravity="end"
+                android:text="Nearest Chat"
+                android:textSize="30dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <View
         android:id="@+id/rectangle_3"
         android:layout_width="290dp"
@@ -51,17 +154,6 @@
         app:layout_constraintStart_toEndOf="@+id/rectangle_3"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/rectangle_4"
-        android:layout_width="350dp"
-        android:layout_height="68dp"
-        android:layout_marginTop="280dp"
-        android:background="@drawable/rectangle_4_shape"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/combined_shape_search"
         android:layout_width="24dp"
@@ -86,73 +178,6 @@
         app:layout_constraintStart_toStartOf="@+id/rectangle_6"
         app:layout_constraintTop_toTopOf="@+id/rectangle_6" />
 
-    <ImageView
-        android:id="@+id/iv_StartChat"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="72dp"
-        android:contentDescription="fill_1"
-        android:src="@drawable/fill_1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/rectangle_5"
-        app:layout_constraintTop_toTopOf="@+id/rectangle_5" />
-
-    <ImageView
-        android:id="@+id/btnSetting"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:contentDescription="combined_shape_ek2"
-        android:src="@drawable/combined_shape_ek2"
-        app:layout_constraintBottom_toBottomOf="@+id/rectangle_5"
-        app:layout_constraintEnd_toEndOf="@+id/rectangle_5"
-        app:layout_constraintStart_toEndOf="@+id/ivFindNearUser"
-        app:layout_constraintTop_toTopOf="@+id/rectangle_5" />
-
-    <ImageView
-        android:id="@+id/ivFindNearUser"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="88dp"
-        android:contentDescription="combined_shape_ek3"
-        android:src="@drawable/combined_shape_ek3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iv_StartChat"
-        app:layout_constraintTop_toTopOf="@+id/rectangle_5" />
-
-    <TextView
-        android:textSize="20sp"
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="32dp"
-        android:text="Chats"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="32dp"
-        android:text="Friends"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Calls"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toEndOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
-
     <EditText
         android:id="@+id/editTextText"
         android:layout_width="wrap_content"
@@ -165,7 +190,34 @@
         app:layout_constraintStart_toStartOf="@+id/rectangle_3"
         app:layout_constraintTop_toTopOf="@+id/rectangle_3" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="83dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/border_text"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
+        <ImageView
+            android:id="@+id/iv_StartChat"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="20dp"
+            android:layout_weight="2"
+            android:contentDescription="fill_1"
+            android:src="@drawable/fill_1" />
+
+        <ImageView
+            android:id="@+id/btnSetting"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="20dp"
+            android:layout_weight="2"
+            android:contentDescription="combined_shape_ek2"
+            android:src="@drawable/combined_shape_ek2" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

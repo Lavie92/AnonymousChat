@@ -40,12 +40,25 @@ class MainActivity : AppCompatActivity() {
         val auth = Firebase.auth
         val user = auth.currentUser
         ivStartChat = binding.ivStartChat
-        ivFindNearUser = binding.ivFindNearUser
-        ivStartChat?.setOnClickListener {
+        //ivFindNearUser = binding.ivFindNearUser
+        binding.layoutRandomChat.setOnClickListener {
             val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
-            splashIntent.putExtra("source_activity", "toChat")
+            splashIntent.putExtra("source_activity", "toChatRandom")
             startActivity(splashIntent)
         }
+
+        binding.layoutAIChat.setOnClickListener{
+            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toChatAI")
+            startActivity(splashIntent)
+        }
+
+        binding.layoutNearestChat.setOnClickListener{
+            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toChatNearest")
+            startActivity(splashIntent)
+        }
+
 
         this.auth = FirebaseAuth.getInstance()
 

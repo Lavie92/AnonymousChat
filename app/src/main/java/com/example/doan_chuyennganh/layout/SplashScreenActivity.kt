@@ -10,6 +10,7 @@ import com.example.doan_chuyennganh.MainActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.BannedActivity
 import com.example.doan_chuyennganh.chat.ChatActivity
+import com.example.doan_chuyennganh.chatAI.ChatbotActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -48,7 +49,17 @@ class SplashScreenActivity : AppCompatActivity() {
                     }
 
 
-                } else if (sourceActivity != null && sourceActivity == "toChat") {
+                } else if (sourceActivity != null && sourceActivity == "toChatRandom") {
+
+                    val chatIntent = Intent(this@SplashScreenActivity, ChatActivity::class.java)
+                    startActivity(chatIntent)
+                    finish()
+                } else if (sourceActivity != null && sourceActivity == "toChatAI") {
+
+                    val chatIntent = Intent(this@SplashScreenActivity, ChatbotActivity::class.java)
+                    startActivity(chatIntent)
+                    finish()
+                } else if (sourceActivity != null && sourceActivity == "toChatNearest") {
 
                     val chatIntent = Intent(this@SplashScreenActivity, ChatActivity::class.java)
                     startActivity(chatIntent)
