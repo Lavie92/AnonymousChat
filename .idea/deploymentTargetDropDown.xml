@@ -7,33 +7,11 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\DongTrieu\.android\avd\Pixel_7_Pro_API_29_1.avd" />
+            <value value="C:\Users\lavie\.android\avd\Nexus_5_API_30.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-12-05T15:02:51.105335500Z" />
-    <multipleDevicesSelectedInDropDown value="true" />
-    <targetsSelectedWithDialog>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\lavie\.android\avd\Nexus_5_API_30.avd" />
-            <value value="C:\Users\DongTrieu\.android\avd\Pixel_7_Pro_API_29_2.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\DongTrieu\.android\avd\Pixel_7_Pro_API_29_1.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-    </targetsSelectedWithDialog>
+    <timeTargetWasSelectedWithDropDown value="2023-12-06T17:14:38.503407800Z" />
   </component>
 </project>
