@@ -66,7 +66,7 @@
         <!-- android:exported="false"/> -->
         <!-- </activity> -->
         <activity
-            android:name=".voice_chat.VoiceChatActivity"
+            android:name=".layout.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -63,7 +63,7 @@
 
     <TextView
         android:id="@+id/or_login_with"
-        android:layout_width="93dp"
+        android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_marginBottom="124dp"
         android:text="@string/or_login_with_string"
@@ -122,21 +122,11 @@
         android:id="@+id/line_1"
         android:layout_width="89.01dp"
         android:layout_height="1dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginBottom="140dp"
         android:background="@drawable/line_1_shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <View
-        android:id="@+id/line_2"
-        android:layout_width="89.01dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginBottom="140dp"
-        android:background="@drawable/line_2_shape"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <!--    <Button-->
 <!--        android:id="@+id/signInButton"-->
@@ -154,6 +144,16 @@
 <!--        app:layout_constraintStart_toEndOf="@+id/imageView"-->
 <!--        app:layout_constraintTop_toBottomOf="@+id/vector_ek4" />-->
 
+
+    <View
+        android:id="@+id/line_2"
+        android:layout_width="89.01dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="140dp"
+        android:background="@drawable/line_2_shape"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnLogin"
