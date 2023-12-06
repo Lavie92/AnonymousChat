@@ -1,4 +1,5 @@
-package com.malkinfo.chatgpts
+package com.example.doan_chuyennganh.chatAI
+
 
 class Message(
     var message:String,

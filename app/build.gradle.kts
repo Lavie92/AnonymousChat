@@ -58,7 +58,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-auth:22.2.0")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
-
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation ("com.github.bumptech.glide:glide:4.8.0")
     implementation ("com.google.dagger:dagger:2.9")
     implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
