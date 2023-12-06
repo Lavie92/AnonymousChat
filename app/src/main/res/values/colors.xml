@@ -46,5 +46,7 @@
 	<color name="notifications_ek2_color">#303535</color>
 	<color name="base_color">#771F98</color>
 	<color name="james_gmail_com_color">#6F8BA4</color>
-	<color name="dang_truong_an_color">#E70037</color>
+	<color name="ai">#feddd4</color>
+	<color name="nearest">#789c76</color>
+	<color name="random">#b8d6e1</color>
 </resources>

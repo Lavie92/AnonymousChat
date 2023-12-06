@@ -43,7 +43,7 @@ import java.math.RoundingMode
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-class ChatActivity : AppCompatActivity() {
+class ChatNearestActivity : AppCompatActivity() {
 
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
@@ -85,7 +85,7 @@ class ChatActivity : AppCompatActivity() {
         loadMessages(chatRoomId)
 
         btnStartChat.setOnClickListener {
-            findRandomUserForChat()
+            findNearestUserForChat()
         }
 
         btnEndChat.setOnClickListener {
@@ -109,60 +109,99 @@ class ChatActivity : AppCompatActivity() {
 
 
 
-
     private val timeoutRunnable = Runnable {
         updateUserStatus(currentUserId.toString(), false)
         isFindByLocation(currentUserId.toString(), false)
         Toast.makeText(this, "No user found. Please try again.", Toast.LENGTH_SHORT).show()
     }
-    private fun findRandomUserForChat() {
+
+    private fun findNearestUserForChat() {
         chatRoomId = ""
         receiverId = ""
         checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
             if (isChatRoomEnded) {
                 removeMessage(chatRoomId)
+            } else {
+                Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
             }
         }
-        Toast.makeText(this, "Dang tim kiem", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Đang tìm kiếm...", Toast.LENGTH_SHORT).show()
         if (currentUserId != null) {
-            updateUserStatus(currentUserId, true)
-            isFindByLocation(currentUserId, false)
+            isFindByLocation(currentUserId, true)
+            updateUserStatus(currentUserId, false)
         }
-
+        //set timeout
         handler.postDelayed(timeoutRunnable, 30000)
 
+        var distanceUser = 0.0
         usersRef.get().addOnSuccessListener { snapshot ->
+            setCurrentUserLocation()!!
+            getCurrentUserLocationFromFirebase { currentUserLocation ->
+                if (currentUserLocation != null) {
+                    val allUsers = snapshot.children.map {
+                        val user = it.getValue(User::class.java)!!
+                        user.isFindByLocation = it.child("isFindByLocation").getValue(Boolean::class.java) ?: false
+                        user
+                    }.filter { it.isFindByLocation && it.id != currentUserId }
 
-            val allUsers = snapshot.children.map {
-                it.getValue(User::class.java)!!
-            }
-                .filter { it.ready }
-            if (allUsers.size > 1) {
-                val randomUser = allUsers.random()
-                if (randomUser.id != currentUserId) {
-                    Toast.makeText(this, "Welcome ${randomUser.username}", Toast.LENGTH_SHORT)
-                        .show()
-                    receiverId = randomUser.id.toString()
-                    chatRoomId =
-                        currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
-                    sendMessage(
-                        chatRoomId,
-                        "system",
-                        currentUserId.toString(),
-                        "Bạn đã tham gia chat!!"
-                    )
-                    currentUserId?.let { updateUserStatus(it, false) }
-                    receiverId?.let { updateUserStatus(it, false) }
+                    var nearestUser: User? = null
+                    for (user in allUsers) {
+                        val userLocation = user.location
+                        if (userLocation != null) {
+                            val distance = calculateDistance(
+                                currentUserLocation.latitude,
+                                currentUserLocation.longitude,
+                                userLocation.latitude,
+                                userLocation.longitude
+                            )
+                            if (distance <= 100.0) {
+                                nearestUser = user
+                                distanceUser = BigDecimal(distance).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+                            }
+                        }
+                    }
+
+                    if (nearestUser != null) {
+                        //ìf user available, remove timeout
+                        handler.removeCallbacks(timeoutRunnable)
+                        val nearestUserLocation = nearestUser.location
+                        if (nearestUserLocation != null) {
+                            Toast.makeText(
+                                this,
+                                "Chào mừng ${nearestUser.username}, người dùng gần nhất!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            receiverId = nearestUser.id.toString()
+
+                            chatRoomId = currentUser?.toUser()?.let {
+                                createChatRoom(
+                                    it,
+                                    nearestUser
+                                )
+                            }.toString()
+                            sendMessage(
+                                chatRoomId,
+                                "system",
+                                currentUserId.toString(),
+                                "người dùng gần nhất! đã tham gia chat!! với ${distanceUser} km"
+                            )
+                            currentUserId?.let { updateUserStatus(it, false) }
+                            receiverId?.let { updateUserStatus(it, false) }
+                            currentUserId?.let { isFindByLocation(it, false) }
+                            receiverId?.let { isFindByLocation(it, false) }
+                        } else {
+                            Toast.makeText(this, "Không thể lấy vị trí của người dùng gần nhất.", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this, "Không tìm thấy người dùng nào.", Toast.LENGTH_SHORT).show()
+                    }
+
                 } else {
-                    findRandomUserForChat()
+                    Log.e("UserLocation", "Failed to get user location from Firebase.")
                 }
-            }
-            else {
-                Toast.makeText(this, "Try again...", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
     private fun getCurrentUserLocationFromFirebase(callback: (MyLocation?) -> Unit) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUserId != null) {

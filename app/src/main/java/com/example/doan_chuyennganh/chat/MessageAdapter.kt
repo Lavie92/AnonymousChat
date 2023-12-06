@@ -21,6 +21,7 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
     val ITEM_RECEIVE = 1
     val ITEM_SENT = 2
     private var isReported: Boolean = false
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             1 -> {
@@ -43,18 +44,31 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentMessage = messageList[position]
         val messageText = currentMessage.getMessageText()
+        var lastMessageTimestamp :Long = 0
 
         when (holder) {
             is SentViewHolder -> {
                 holder.sentMessage.text = messageText
-                holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
+                if (currentMessage.timestamp != lastMessageTimestamp) {
+                    holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
+                    lastMessageTimestamp = currentMessage.timestamp
+                } else {
+                    holder.tvSentTime.text = ""
 
+                }
             }
             is ReceiveViewHolder -> {
                 holder.receiveMessage.text = messageText
-                holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
+                if (currentMessage.timestamp != lastMessageTimestamp) {
+                    holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
+                    lastMessageTimestamp = currentMessage.timestamp
+                } else {
+                    holder.tvSentTime.text = ""
+                }
             }
+
         }
+
         when (holder) {
             is ReceiveViewHolder -> {
                 holder.receiveMessage.text = messageText
