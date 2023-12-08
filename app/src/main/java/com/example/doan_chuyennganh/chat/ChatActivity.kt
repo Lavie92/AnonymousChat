@@ -198,7 +198,6 @@ class ChatActivity : AppCompatActivity() {
             isFindByLocation(currentUserId, false)
         }
 
-        handler.postDelayed(timeoutRunnable, 30000)
 
         usersRef.get().addOnSuccessListener { snapshot ->
 
@@ -206,7 +205,7 @@ class ChatActivity : AppCompatActivity() {
                 it.getValue(User::class.java)!!
             }
                 .filter { it.ready }
-            if (allUsers.size > 1) {
+            if (allUsers.isNotEmpty()) {
                 val randomUser = allUsers.random()
                 if (randomUser.id != currentUserId) {
                     Toast.makeText(this, "Welcome ${randomUser.username}", Toast.LENGTH_SHORT)
