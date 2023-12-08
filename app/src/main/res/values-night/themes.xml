@@ -1,7 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.DoAn_ChuyenNganh" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Base.Theme.DoAn_ChuyenNganh" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your dark theme here. -->
-         <item name="colorPrimary">@color/cardview_light_background</item>
+        <item name="colorPrimary">@color/cardview_light_background</item>
     </style>
+    <style name="Theme.DoAn_ChuyenNganh" parent="Base.Theme.DoAn_ChuyenNganh" />
+
 </resources>

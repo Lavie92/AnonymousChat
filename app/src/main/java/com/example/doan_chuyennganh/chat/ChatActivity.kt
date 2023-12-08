@@ -11,9 +11,11 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
+import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -32,6 +34,7 @@ import com.example.filterbadwodslibrary.filterBadwords
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -44,7 +47,9 @@ import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
 class ChatActivity : AppCompatActivity() {
+    private lateinit var menuLayout: LinearLayout
 
+    private var optionsVisible = false
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
     private lateinit var sendButton: ImageView
@@ -80,7 +85,10 @@ class ChatActivity : AppCompatActivity() {
         val btnStartChat: Button = binding.btnStartChat
         val btnEndChat: Button = binding.btnEndChat
 
-
+        val btnShowOptions: FloatingActionButton = findViewById(R.id.btnShowOptions)
+        btnShowOptions.setOnClickListener {
+            toggleOptions()
+        }
 
 
         checkChatRoomId()
@@ -109,7 +117,42 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun toggleOptions() {
+        val btnStartChat: Button = findViewById(R.id.btnStartChat)
+        val btnEndChat: Button = findViewById(R.id.btnEndChat)
+        val btnheart: Button = findViewById(R.id.btnheart)
+        val slideUp = TranslateAnimation(0f, 0f, btnStartChat.height.toFloat(), 0f)
+        slideUp.duration = 500
 
+        val slideDown = TranslateAnimation(0f, 0f, 0f, btnStartChat.height.toFloat())
+        slideDown.duration = 50
+
+        if (!optionsVisible) {
+            // Show options (slide up)
+            btnStartChat.startAnimation(slideUp)
+            btnEndChat.startAnimation(slideUp)
+            btnheart.startAnimation((slideUp))
+            btnheart.visibility = View.VISIBLE
+            btnStartChat.visibility = View.VISIBLE
+            btnEndChat.visibility = View.VISIBLE
+            checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
+                if (!isChatRoomchatting) {
+                    // If chatting, hide the "Tìm" button
+                    btnStartChat.visibility = View.GONE
+                }
+            }
+        } else {
+            // Hide options (slide down)
+            btnStartChat.startAnimation(slideDown)
+            btnEndChat.startAnimation(slideDown)
+            btnheart.startAnimation(slideDown)
+            btnheart.visibility = View.GONE
+            btnStartChat.visibility = View.GONE
+            btnEndChat.visibility = View.GONE
+        }
+
+        optionsVisible = !optionsVisible
+    }
 
     private fun showPopupMenu(view: View) {
         // Tạo PopupMenu với view là nút "Tìm"
