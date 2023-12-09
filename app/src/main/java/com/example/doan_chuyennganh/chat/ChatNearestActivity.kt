@@ -304,7 +304,7 @@ class ChatNearestActivity : AppCompatActivity() {
 //            callback.invoke(result)
 //        }
 //    }
-private fun setCurrentUserLocation(): MyLocation? {
+private fun setCurrentUserLocation() {
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     var userLocation = MyLocation()
     if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -323,7 +323,6 @@ private fun setCurrentUserLocation(): MyLocation? {
             1
         )
     }
-    return userLocation
 }
 
 
