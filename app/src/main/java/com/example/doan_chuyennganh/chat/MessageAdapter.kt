@@ -101,7 +101,7 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
             .setItems(arrayOf("Report", "Copy","Delete")) { _, which ->
                 when (which) {
 //                    0 -> reportMessage(currentMessage)
-                    0 -> (context as? ChatActivity)?.reportMessage(currentMessage)
+                    0 -> reportMessage(currentMessage, context)
                     1 -> copyMessage(currentMessage)
                     3 -> deleteMessage(currentMessage)
                 }
@@ -111,38 +111,17 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
 
     }
 
+
     private fun deleteMessage(currentMessage: Message) {
         val db = FirebaseFirestore.getInstance()
         currentMessage.senderId?.let { db.collection("messages").document(it).delete() }
     }
-    fun reportMessage(message: Message) {
-        // Lấy ID của người dùng hiện tại đang đăng nhập (người gửi tin nhắn)
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-
-        // Lấy ID của người nhận tin nhắn (người bị báo cáo)
-        val receiverUserId = message.receiverId
-
-        // Lấy ID của người gửi tin nhắn (người báo cáo)
-        val senderUserId = currentUserId
-
-        Log.d("reportMessage", "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId")
-
-        // Tạo đối tượng Reports
-        val report = Reports(
-            UID_beReported = receiverUserId ?: "", // Người nhận tin nhắn là người bị báo cáo
-            UID_report = senderUserId ?: "",  // Người gửi tin nhắn là người báo cáo
-        )
-
-        // Lưu bản báo cáo lên Firebase
-        val database = FirebaseFirestore.getInstance()
-        database.collection("reports")
-            .add(report)
-            .addOnSuccessListener { documentReference ->
-                Log.d("reportMessage", "Report added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.e("reportMessage", "Error adding report", e)
-            }
+    private fun reportMessage(message: Message, context: Context? = null) {
+        if (context is ChatActivity) {
+            context.reportMessage(message)
+        } else if (context is ChatNearestActivity) {
+            context.reportMessage(message)
+        }
     }
 
     private fun copyMessage(currentMessage: Message) {
