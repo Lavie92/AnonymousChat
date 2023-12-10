@@ -51,7 +51,6 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
                 holder.sentMessage.text = messageText
                 if (currentMessage.timestamp != lastMessageTimestamp) {
                     holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
-                    lastMessageTimestamp = currentMessage.timestamp
                 } else {
                     holder.tvSentTime.text = ""
 
@@ -61,7 +60,6 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
                 holder.receiveMessage.text = messageText
                 if (currentMessage.timestamp != lastMessageTimestamp) {
                     holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
-                    lastMessageTimestamp = currentMessage.timestamp
                 } else {
                     holder.tvSentTime.text = ""
                 }
