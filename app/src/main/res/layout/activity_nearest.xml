@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".chat.ChatActivity">
+    tools:context=".chat.ChatNearestActivity">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcMessage"
         android:layout_width="match_parent"
@@ -21,45 +22,45 @@
         android:layout_marginBottom="5dp"
         android:gravity="bottom"
         android:weightSum="100" >
-    <LinearLayout
-        android:layout_width="85dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <Button
-            android:layout_marginLeft="2dp"
-            android:id="@+id/btnheart"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_gravity="center"
-            android:background="@drawable/heart"
-            android:visibility="gone"
-            />
-
-        <Button
-            android:layout_marginTop="8dp"
-            android:id="@+id/btnEndChat"
-            android:layout_marginLeft="5dp"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="85dp"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:visibility="gone"
-            android:background="@drawable/message_background_receive"
-            android:text="Kết Thúc"
-         />
+            android:orientation="vertical">
+            <Button
+                android:layout_marginLeft="2dp"
+                android:id="@+id/btnheart"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:background="@drawable/heart"
+                android:visibility="gone"
+                />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnShowOptions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="6dp"
-            android:onClick="showOptionsPopup"
-            app:backgroundTint="@color/purple_200"
-            app:srcCompat="@drawable/baseline_add_24" />
+            <Button
+                android:layout_marginTop="8dp"
+                android:id="@+id/btnEndChat"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:visibility="gone"
+                android:background="@drawable/message_background_receive"
+                android:text="Kết Thúc"
+                />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnShowOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="6dp"
+                android:onClick="showOptionsPopup"
+                app:backgroundTint="@color/purple_200"
+                app:srcCompat="@drawable/baseline_add_24" />
 
 
 
-    </LinearLayout>
+        </LinearLayout>
         <EditText
             android:id="@+id/messageBox"
             android:layout_width="260dp"
@@ -81,14 +82,14 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/btnRandom"
+        android:id="@+id/btnNearest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/rcMessage"
         android:layout_centerInParent="true"
         android:layout_marginBottom="46dp"
         android:background="@drawable/border_chat"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/imgRandom2"

@@ -10,7 +10,7 @@ data class ReportsCustom(
 
 data class Reports(
     val UID_beReported: String,
-    val UID_report: String,
+    val UID_report: String
 )
 
 

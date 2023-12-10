@@ -1,5 +1,6 @@
 package com.example.doan_chuyennganh.chatAI
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.chatAI.MessageAdapter
 import com.example.doan_chuyennganh.databinding.ActivityChatbotBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -121,4 +124,35 @@ class ChatbotActivity : AppCompatActivity() {
     companion object{
         val JSON : okhttp3.MediaType = "application/json; charset=utf-8".toMediaType()
     }
+
+    //Session check
+    override fun onDestroy() {
+        super.onDestroy()
+        removeSession()
+    }
+
+    private fun removeSession() {
+        // Get the session ID
+        val sessionId = getSessionId()
+
+        // Remove from SharedPreferences
+        val sharedPref = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            remove("SESSION_ID")
+            apply()
+        }
+
+        // Remove from Firebase
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.let {
+            val databaseReference = FirebaseDatabase.getInstance().getReference("users")
+            databaseReference.child(it.uid).child("sessions").child(sessionId).removeValue()
+        }
+    }
+
+    private fun getSessionId(): String {
+        val sharedPref = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE)
+        return sharedPref.getString("SESSION_ID", "") ?: ""
+    }
+    //end Session check
 }

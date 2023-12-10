@@ -2,6 +2,9 @@ package com.example.doan_chuyennganh.chat
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,19 +14,23 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
+import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
 import com.example.doan_chuyennganh.databinding.ActivityChatBinding
+import com.example.doan_chuyennganh.databinding.ActivityNearestBinding
 import com.example.doan_chuyennganh.encrypt.EncryptionUtils
 import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
@@ -32,6 +39,7 @@ import com.example.filterbadwodslibrary.filterBadwords
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -48,7 +56,7 @@ class ChatNearestActivity : AppCompatActivity() {
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
     private lateinit var sendButton: ImageView
-    private lateinit var binding: ActivityChatBinding
+    private lateinit var binding: ActivityNearestBinding
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var usersRef: DatabaseReference
     private lateinit var chatRoomsRef: DatabaseReference
@@ -61,12 +69,19 @@ class ChatNearestActivity : AppCompatActivity() {
     val badwords = filterBadwords()
     private lateinit var popupMenu: PopupMenu
     private val handler = Handler()
+    private var readyToFind = false
+    private var optionsVisible = false
+    private lateinit var auth: FirebaseAuth
+    private  lateinit var databaseReferences: DatabaseReference
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityChatBinding.inflate(layoutInflater)
+        binding = ActivityNearestBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        auth = FirebaseAuth.getInstance()
+
+        checkSession()
 
         chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
         usersRef = FirebaseDatabase.getInstance().getReference("users")
@@ -77,20 +92,48 @@ class ChatNearestActivity : AppCompatActivity() {
         messageAdapter = MessageAdapter(this, messageList!!)
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(this)
-        val btnStartChat: Button = binding.btnStartChat
         val btnEndChat: Button = binding.btnEndChat
 
-
-        checkChatRoomId()
-        loadMessages(chatRoomId)
-
-        btnStartChat.setOnClickListener {
-            findNearestUserForChat()
+        val btnShowOptions: FloatingActionButton = findViewById(R.id.btnShowOptions)
+        btnShowOptions.setOnClickListener {
+            toggleOptions()
         }
 
+
+
+//        btnStartChat.setOnClickListener {
+//            showPopupMenu(btnStartChat)
+//        }
+
+        checkChatRoomId()
+        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+            if (isChatRoomEnded) {
+                readyToFind = false
+                toggleFind()
+            } else {
+                readyToFind = true
+                toggleFind()
+
+            }
+        }
+
+        loadMessages(chatRoomId)
+
+        //
+
+        binding.btnNearest.setOnClickListener{
+            readyToFind = true
+            toggleFind()
+            findNearestUserForChat()
+        }
+        //
+
         btnEndChat.setOnClickListener {
+
             endChat(chatRoomId) { success ->
                 if (success) {
+                    readyToFind = false
+                    toggleFind()
                 } else {
                     // Handle the case where ending the chat was not successful
                     Log.e("EndChat", "Failed to end chat.")
@@ -107,14 +150,67 @@ class ChatNearestActivity : AppCompatActivity() {
         }
     }
 
+    private fun toggleFind(){
+        val slideUp = TranslateAnimation(0f, 0f, binding.btnNearest.height.toFloat(), 0f)
+        val slideDown = TranslateAnimation(0f, 0f, 0f, binding.btnNearest.height.toFloat())
+        slideDown.duration = 50
+        slideUp.duration = 500
+        if(!readyToFind){
+            binding.btnNearest.startAnimation(slideUp)
+            binding.btnNearest.visibility = View.VISIBLE
+            checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
+                if (!isChatRoomchatting) {
+                    // If chatting, hide the "Tìm" button
+                    binding.btnNearest.visibility = View.GONE
+                }
+            }
+        }
+        else{
+            binding.btnNearest.startAnimation(slideDown)
+            binding.btnNearest.visibility = View.GONE
+        }
+        readyToFind = !readyToFind
 
+
+    }
+
+
+    private fun toggleOptions() {
+        val btnEndChat: Button = findViewById(R.id.btnEndChat)
+        val btnheart: Button = findViewById(R.id.btnheart)
+        val slideUp = TranslateAnimation(0f, 0f, btnheart.height.toFloat(), 0f)
+        slideUp.duration = 500
+
+        val slideDown = TranslateAnimation(0f, 0f, 0f, btnheart.height.toFloat())
+        slideDown.duration = 50
+
+        if (!optionsVisible) {
+            // Show options (slide up)
+            btnEndChat.startAnimation(slideUp)
+            btnheart.startAnimation((slideUp))
+            btnheart.visibility = View.VISIBLE
+            btnEndChat.visibility = View.VISIBLE
+            checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
+                if (!isChatRoomchatting) {
+                    // If chatting, hide the "Tìm" button
+                }
+            }
+        } else {
+            // Hide options (slide down)
+            btnEndChat.startAnimation(slideDown)
+            btnheart.startAnimation(slideDown)
+            btnheart.visibility = View.GONE
+            btnEndChat.visibility = View.GONE
+        }
+
+        optionsVisible = !optionsVisible
+    }
 
     private val timeoutRunnable = Runnable {
         updateUserStatus(currentUserId.toString(), false)
         isFindByLocation(currentUserId.toString(), false)
         Toast.makeText(this, "No user found. Please try again.", Toast.LENGTH_SHORT).show()
     }
-
     private fun findNearestUserForChat() {
         chatRoomId = ""
         receiverId = ""
@@ -125,7 +221,7 @@ class ChatNearestActivity : AppCompatActivity() {
                 Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
             }
         }
-        Toast.makeText(this, "Đang tìm kiếm...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Finding...", Toast.LENGTH_SHORT).show()
         if (currentUserId != null) {
             isFindByLocation(currentUserId, true)
             updateUserStatus(currentUserId, false)
@@ -270,61 +366,27 @@ class ChatNearestActivity : AppCompatActivity() {
         return chatRoomId
     }
 
-//    private fun getCurrentUserLocation(callback: (MyLocation?) -> Unit) {
-//        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-//
-//        // Tạo CompletableFuture để đợi kết quả
-//        val completableFuture = CompletableFuture<MyLocation?>()
-//
-//        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            fusedLocationClient.lastLocation
-//                .addOnSuccessListener { location ->
-//                    val userLocation = if (location != null) {
-//                        MyLocation(latitude = location.latitude, longitude = location.longitude)
-//                    } else {
-//                        MyLocation() // Hoặc có thể trả về null tùy thuộc vào yêu cầu của bạn
-//                    }
-//
-//                    // Gửi kết quả về CompletableFuture
-//                    completableFuture.complete(userLocation)
-//
-//                    if (location != null) {
-//                        updateUserLocation(userLocation)
-//                    }
-//                }
-//        } else {
-//            requestPermissions(
-//                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-//                1
-//            )
-//        }
-//
-//        // Đợi CompletableFuture hoàn thành và gọi callback
-//        completableFuture.thenAccept { result ->
-//            callback.invoke(result)
-//        }
-//    }
-private fun setCurrentUserLocation(): MyLocation? {
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-    var userLocation = MyLocation()
-    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
-        PackageManager.PERMISSION_GRANTED
-    ) {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    userLocation = MyLocation(latitude = location.latitude, longitude = location.longitude)
-                    updateUserLocation(userLocation)
+    private fun setCurrentUserLocation(): MyLocation? {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        var userLocation = MyLocation()
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    if (location != null) {
+                        userLocation = MyLocation(latitude = location.latitude, longitude = location.longitude)
+                        updateUserLocation(userLocation)
+                    }
                 }
-            }
-    } else {
-        requestPermissions(
-            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-            1
-        )
+        } else {
+            requestPermissions(
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                1
+            )
+        }
+        return userLocation
     }
-    return userLocation
-}
 
 
     private fun updateUserLocation(location: MyLocation) {
@@ -340,6 +402,8 @@ private fun setCurrentUserLocation(): MyLocation? {
         var filter : Boolean
 
         val messagesRef = chatRoomsRef.child(chatRoomId).child("messages")
+
+
 
         if(currentUserId != null) {
             usersRef.child(currentUserId!!).get().addOnSuccessListener {
@@ -406,6 +470,15 @@ private fun setCurrentUserLocation(): MyLocation? {
                         messageRecyclerView.scrollToPosition(messageList!!.size - 1)
 
                         if (newMessages.isNotEmpty()) {
+                            checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+                                if (isChatRoomEnded) {
+                                    readyToFind = false
+                                    toggleFind()
+                                } else {
+                                    readyToFind = true
+                                    toggleFind()
+                                }
+                            }
                             val lastMessage = newMessages.last()
                             if (lastMessage.senderId != currentUserId) {
                                 lastMessage.content?.let { showNotification("New Message", it) }
@@ -576,7 +649,59 @@ private fun setCurrentUserLocation(): MyLocation? {
                 Log.e("reportMessage", "Error adding report: ${it.message}")
             }
     }
+    //Sessions check
+    private fun getSessionId(): String? {
+        val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
+        return sharedPref.getString("sessionID2", null)
+    }
+    private fun checkSession() {
+        val sessionId = getSessionId()
+        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
+        val user = auth.currentUser
+        user?.let {
+            databaseReferences.child(it.uid).child("session")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val currentSessionID = snapshot.value as String?
+                        if(sessionId != currentSessionID){
+                            showConfirmationDialog()
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle error
+                    }
+                })
+        }
+    }
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Thông báo!")
+        builder.setMessage("Tài khoản này đang được đăng nhập ở thiết bị khác, vui lòng đăng nhập lại!")
+
+        builder.setPositiveButton("OK") { _: DialogInterface, _: Int ->
+            signOutAndStartSignInActivity()
+            handleLogout()
+            finish()
+        }
 
 
+        builder.show()
+    }
+    private fun signOutAndStartSignInActivity() {
+        auth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+
+
+    }
+    private fun handleLogout() {
+        // Tạo Intent để chuyển hướng đến LoginActivity và xóa toàn bộ Activity đã mở trước đó
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        // Kết thúc Activity hiện tại
+        finish()
+    }
 
 }

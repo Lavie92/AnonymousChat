@@ -1,5 +1,6 @@
 package com.example.doan_chuyennganh
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
@@ -23,6 +24,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.util.UUID
 
 
 public class LoginActivity : AppCompatActivity() {
@@ -30,6 +32,8 @@ public class LoginActivity : AppCompatActivity() {
     private lateinit var  binding: ActivityLoginBinding
     private lateinit var firebaseDatabases: FirebaseDatabase
     private lateinit var databaseReferences: DatabaseReference
+
+    private var sessionId: String? = null
 
     companion object {
         private const val RC_SIGN_IN = 9001
@@ -42,7 +46,9 @@ public class LoginActivity : AppCompatActivity() {
         updateUI(currentUser)
     }
     fun updateUI(account: FirebaseUser?) {
+        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
         if (account != null) {
+            createSession()
             // User is signed in
             val splashIntent = Intent(this@LoginActivity, SplashScreenActivity::class.java)
             splashIntent.putExtra("source_activity", "toMain")
@@ -50,6 +56,24 @@ public class LoginActivity : AppCompatActivity() {
             finish()
         }
     }
+    private fun createSession() {
+        sessionId = UUID.randomUUID().toString()
+        val user = auth.currentUser
+        user?.let {
+            databaseReferences.child(it.uid).child("session").setValue(sessionId!!)
+            storeSessionId(sessionId!!)
+
+        }
+    }
+
+    private fun storeSessionId(sessionId: String) {
+        val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putString("sessionID2", sessionId)
+            apply()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -211,7 +235,7 @@ public class LoginActivity : AppCompatActivity() {
                                             "age" to age,
                                             "ready" to ready,
                                             "username" to username,
-                                            "point" to point
+                                            "point" to point,
                                         )
                                         databaseReferences.child(currentUser.uid).updateChildren(userUpdate)
                                         // Now that the user data is updated, start the activity

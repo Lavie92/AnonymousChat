@@ -28,6 +28,9 @@
             android:name=".authentication.NotificationActivity"
             android:exported="false" />
         <activity
+            android:name=".chat.ChatNearestActivity"
+            android:exported="false" />
+        <activity
             android:name=".authentication.BannedActivity"
             android:exported="false" />
         <activity

@@ -2,10 +2,12 @@
 
     <item
         android:id="@+id/menuRandom"
-        android:title="Tìm Ngẫu Nhiên"/>
+        android:icon="@drawable/border_random"
+        android:title="Tìm Ngẫu Nhiên" />
 
     <item
         android:id="@+id/menuLocation"
-        android:title="Tìm theo Địa Điểm"/>
+        android:icon="@drawable/border_nearest"
+        android:title="Tìm theo Địa Điểm" />
 
 </menu>

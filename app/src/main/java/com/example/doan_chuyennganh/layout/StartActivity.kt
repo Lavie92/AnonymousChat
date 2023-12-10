@@ -9,7 +9,9 @@ import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
 import com.example.doan_chuyennganh.databinding.ActivityStartBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class StartActivity : AppCompatActivity() {
     private  lateinit var databaseReferences: DatabaseReference
@@ -36,4 +38,35 @@ class StartActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    //Session check
+    override fun onDestroy() {
+        super.onDestroy()
+        removeSession()
+    }
+
+    private fun removeSession() {
+        // Get the session ID
+        val sessionId = getSessionId()
+
+        // Remove from SharedPreferences
+        val sharedPref = getSharedPreferences("PreSession", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            remove("sessionID")
+            apply()
+        }
+
+        // Remove from Firebase
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.let {
+            val databaseReference = FirebaseDatabase.getInstance().getReference("users")
+            databaseReference.child(it.uid).child("sessions").child(sessionId).removeValue()
+        }
+    }
+
+    private fun getSessionId(): String {
+        val sharedPref = getSharedPreferences("PreSession", Context.MODE_PRIVATE)
+        return sharedPref.getString("sessionID", "") ?: ""
+    }
+    //end Session check
 }

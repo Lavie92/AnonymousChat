@@ -1,5 +1,8 @@
 package com.example.doan_chuyennganh
 
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,8 +23,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.values
 import com.google.firebase.ktx.Firebase
 import org.mindrot.jbcrypt.*
+import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -46,6 +51,11 @@ class MainActivity : AppCompatActivity() {
             splashIntent.putExtra("source_activity", "toChatRandom")
             startActivity(splashIntent)
         }
+        binding.layoutNearestChat.setOnClickListener {
+            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toChatNearest")
+            startActivity(splashIntent)
+        }
 
         binding.layoutAIChat.setOnClickListener{
             val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
@@ -53,17 +63,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(splashIntent)
         }
 
-        binding.layoutNearestChat.setOnClickListener{
-            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
-            splashIntent.putExtra("source_activity", "toChatNearest")
-            startActivity(splashIntent)
-        }
 
 
         this.auth = FirebaseAuth.getInstance()
 
 
         //Load Screen to check Active
+        checkSession()
         checkActive()
         //
 
@@ -86,6 +92,64 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+    //Sessions check
+    private fun getSessionId(): String? {
+        val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
+        return sharedPref.getString("sessionID2", null)
+    }
+    private fun checkSession() {
+        val sessionId = getSessionId()
+        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
+        val user = auth.currentUser
+        user?.let {
+            databaseReferences.child(it.uid).child("session")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val currentSessionID = snapshot.value as String?
+                        if(sessionId != currentSessionID){
+                            showConfirmationDialog()
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle error
+                    }
+                })
+        }
+    }
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Thông báo!")
+        builder.setMessage("Tài khoản này đang được đăng nhập ở thiết bị khác, vui lòng đăng nhập lại!")
+
+        builder.setPositiveButton("OK") { _: DialogInterface, _: Int ->
+            signOutAndStartSignInActivity()
+            handleLogout()
+            finish()
+        }
+
+
+        builder.show()
+    }
+    private fun signOutAndStartSignInActivity() {
+        auth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+
+
+    }
+    private fun handleLogout() {
+        // Tạo Intent để chuyển hướng đến LoginActivity và xóa toàn bộ Activity đã mở trước đó
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        // Kết thúc Activity hiện tại
+        finish()
+    }
+
+    //end Sessions check
+
+
 
     override fun onResume() {
         super.onResume()

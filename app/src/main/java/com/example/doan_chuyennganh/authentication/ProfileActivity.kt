@@ -4,6 +4,7 @@ import android.R
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -28,8 +29,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.userProfileChangeRequest
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.text.ParseException
@@ -62,7 +66,7 @@ class ProfileActivity : AppCompatActivity() {
         databaseReferences = FirebaseDatabase.getInstance().getReference("users")
 
         sharedPreferencesManager = SharedPreferencesManager(this)
-
+        checkSession()
         binding.btnBack.setOnClickListener{
             onBackPressed()
         }
@@ -130,6 +134,7 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
+    //end Session check
     //Check Function
     private fun checkAge(){
         val check = binding.txtViewage.text.toString()
@@ -253,27 +258,7 @@ class ProfileActivity : AppCompatActivity() {
     //End onFunctions
 
     //Dialogs
-    private fun showConfirmationDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Confirmation")
-        builder.setMessage("Có thông tin vừa thay đổi, bạn có muốn lưu không?")
 
-        builder.setPositiveButton("Có") { _: DialogInterface, _: Int ->
-            // Nếu chọn "Có", cập nhật thông tin và rời khỏi Activity
-            val username = binding.txtChangeName.text.toString()
-            val age = binding.txtChangeAge.text.toString()
-            val gender = binding.genderSpinner.selectedItem.toString()
-            updateData(auth.currentUser!!, username, age, gender)
-            finish()
-        }
-
-        builder.setNegativeButton("Không") { _: DialogInterface, _: Int ->
-            // Nếu chọn "Không", chỉ rời khỏi Activity mà không cập nhật thông tin
-            finish()
-        }
-
-        builder.show()
-    }
     private fun showSetAge() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Confirmation")
@@ -574,7 +559,60 @@ class ProfileActivity : AppCompatActivity() {
     }
     //end Datetime Picker
 
+    //Sessions check
+    private fun getSessionId(): String? {
+        val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
+        return sharedPref.getString("sessionID2", null)
+    }
+    private fun checkSession() {
+        val sessionId = getSessionId()
+        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
+        val user = auth.currentUser
+        user?.let {
+            databaseReferences.child(it.uid).child("session")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val currentSessionID = snapshot.value as String?
+                        if(sessionId != currentSessionID){
+                            showConfirmationDialog()
+                        }
+                    }
 
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle error
+                    }
+                })
+        }
+    }
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Thông báo!")
+        builder.setMessage("Tài khoản này đang được đăng nhập ở thiết bị khác, vui lòng đăng nhập lại!")
+
+        builder.setPositiveButton("OK") { _: DialogInterface, _: Int ->
+            signOutAndStartSignInActivity()
+            handleLogout()
+            finish()
+        }
+
+
+        builder.show()
+    }
+    private fun signOutAndStartSignInActivity() {
+        auth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+
+
+    }
+    private fun handleLogout() {
+        // Tạo Intent để chuyển hướng đến LoginActivity và xóa toàn bộ Activity đã mở trước đó
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        // Kết thúc Activity hiện tại
+        finish()
+    }
 
 
 }

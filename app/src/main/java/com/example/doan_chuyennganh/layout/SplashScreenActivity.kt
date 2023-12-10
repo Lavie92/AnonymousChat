@@ -1,19 +1,26 @@
 package com.example.doan_chuyennganh.layout
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.widget.Toast
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.MainActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.BannedActivity
 import com.example.doan_chuyennganh.chat.ChatActivity
+import com.example.doan_chuyennganh.chat.ChatNearestActivity
 import com.example.doan_chuyennganh.chatAI.ChatbotActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import java.util.UUID
 
 class SplashScreenActivity : AppCompatActivity() {
     private  lateinit var databaseReferences: DatabaseReference
@@ -31,6 +38,8 @@ class SplashScreenActivity : AppCompatActivity() {
                 val sourceActivity = intent.getStringExtra("source_activity")
                 if (sourceActivity != null && sourceActivity == "toMain") {
                     databaseReferences = FirebaseDatabase.getInstance().getReference("users")
+
+
                     if (auth.currentUser != null) {
                         databaseReferences.child(auth.currentUser?.uid!!).get()
                             .addOnSuccessListener { snapshot ->
@@ -61,11 +70,15 @@ class SplashScreenActivity : AppCompatActivity() {
                     finish()
                 } else if (sourceActivity != null && sourceActivity == "toChatNearest") {
 
-                    val chatIntent = Intent(this@SplashScreenActivity, ChatActivity::class.java)
+                    val chatIntent = Intent(this@SplashScreenActivity, ChatNearestActivity::class.java)
                     startActivity(chatIntent)
                     finish()
                 }
             }
         }, 1000)
     }
+
+
+
+
 }

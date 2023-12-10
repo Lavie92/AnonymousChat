@@ -2,6 +2,9 @@ package com.example.doan_chuyennganh.chat
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,10 +21,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
@@ -66,12 +72,16 @@ class ChatActivity : AppCompatActivity() {
     val badwords = filterBadwords()
     private lateinit var popupMenu: PopupMenu
     private val handler = Handler()
-
-
+    private var readyToFind = false
+    private  lateinit var databaseReferences: DatabaseReference
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        auth = FirebaseAuth.getInstance()
+
+        checkSession()
 
         chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
         usersRef = FirebaseDatabase.getInstance().getReference("users")
@@ -82,7 +92,6 @@ class ChatActivity : AppCompatActivity() {
         messageAdapter = MessageAdapter(this, messageList!!)
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(this)
-        val btnStartChat: Button = binding.btnStartChat
         val btnEndChat: Button = binding.btnEndChat
 
         val btnShowOptions: FloatingActionButton = findViewById(R.id.btnShowOptions)
@@ -91,16 +100,44 @@ class ChatActivity : AppCompatActivity() {
         }
 
 
-        checkChatRoomId()
-        loadMessages(chatRoomId)
 
-        btnStartChat.setOnClickListener {
-            showPopupMenu(btnStartChat)
+//        btnStartChat.setOnClickListener {
+//            showPopupMenu(btnStartChat)
+//        }
+
+        checkChatRoomId()
+        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+            if (isChatRoomEnded) {
+                readyToFind = false
+                toggleFind()
+            } else {
+                readyToFind = true
+                toggleFind()
+
+            }
         }
 
+        loadMessages(chatRoomId)
+
+        //
+
+        binding.btnRandom.setOnClickListener{
+            if(currentUserId!=null){
+                updateUserStatus(currentUserId,true)
+                isFindByLocation(currentUserId,false)
+            }
+            readyToFind = true
+            toggleFind()
+            findRandomUserForChat()
+        }
+        //
+
         btnEndChat.setOnClickListener {
+
             endChat(chatRoomId) { success ->
                 if (success) {
+                    readyToFind = false
+                    toggleFind()
                 } else {
                     // Handle the case where ending the chat was not successful
                     Log.e("EndChat", "Failed to end chat.")
@@ -117,66 +154,60 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun toggleFind(){
+        val slideUp = TranslateAnimation(0f, 0f, binding.btnRandom.height.toFloat(), 0f)
+        val slideDown = TranslateAnimation(0f, 0f, 0f, binding.btnRandom.height.toFloat())
+        slideDown.duration = 50
+        slideUp.duration = 500
+        if(!readyToFind){
+            binding.btnRandom.startAnimation(slideUp)
+            binding.btnRandom.visibility = View.VISIBLE
+            checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
+                if (!isChatRoomchatting) {
+                    // If chatting, hide the "Tìm" button
+                    binding.btnRandom.visibility = View.GONE
+                }
+            }
+        }
+        else{
+            binding.btnRandom.startAnimation(slideDown)
+            binding.btnRandom.visibility = View.GONE
+        }
+        readyToFind = !readyToFind
+
+
+    }
+
+
     private fun toggleOptions() {
-        val btnStartChat: Button = findViewById(R.id.btnStartChat)
         val btnEndChat: Button = findViewById(R.id.btnEndChat)
         val btnheart: Button = findViewById(R.id.btnheart)
-        val slideUp = TranslateAnimation(0f, 0f, btnStartChat.height.toFloat(), 0f)
+        val slideUp = TranslateAnimation(0f, 0f, btnheart.height.toFloat(), 0f)
         slideUp.duration = 500
 
-        val slideDown = TranslateAnimation(0f, 0f, 0f, btnStartChat.height.toFloat())
+        val slideDown = TranslateAnimation(0f, 0f, 0f, btnheart.height.toFloat())
         slideDown.duration = 50
 
         if (!optionsVisible) {
             // Show options (slide up)
-            btnStartChat.startAnimation(slideUp)
             btnEndChat.startAnimation(slideUp)
             btnheart.startAnimation((slideUp))
             btnheart.visibility = View.VISIBLE
-            btnStartChat.visibility = View.VISIBLE
             btnEndChat.visibility = View.VISIBLE
             checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
                 if (!isChatRoomchatting) {
                     // If chatting, hide the "Tìm" button
-                    btnStartChat.visibility = View.GONE
                 }
             }
         } else {
             // Hide options (slide down)
-            btnStartChat.startAnimation(slideDown)
             btnEndChat.startAnimation(slideDown)
             btnheart.startAnimation(slideDown)
             btnheart.visibility = View.GONE
-            btnStartChat.visibility = View.GONE
             btnEndChat.visibility = View.GONE
         }
 
         optionsVisible = !optionsVisible
-    }
-
-    private fun showPopupMenu(view: View) {
-        // Tạo PopupMenu với view là nút "Tìm"
-        popupMenu = PopupMenu(this, view)
-        val inflater: MenuInflater = popupMenu.menuInflater
-        inflater.inflate(R.menu.popup_menu, popupMenu.menu)
-
-        // Set item click listener
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.menuRandom -> {
-                    findRandomUserForChat()
-                    true
-                }
-                R.id.menuLocation -> {
-                    findNearestUserForChat()
-                    true
-                }
-                else -> false
-            }
-        }
-
-        // Hiển thị PopupMenu
-        popupMenu.show()
     }
 
     private val timeoutRunnable = Runnable {
@@ -196,6 +227,7 @@ class ChatActivity : AppCompatActivity() {
         if (currentUserId != null) {
             updateUserStatus(currentUserId, true)
             isFindByLocation(currentUserId, false)
+
         }
 
 
@@ -386,40 +418,6 @@ class ChatActivity : AppCompatActivity() {
         return chatRoomId
     }
 
-//    private fun getCurrentUserLocation(callback: (MyLocation?) -> Unit) {
-//        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-//
-//        // Tạo CompletableFuture để đợi kết quả
-//        val completableFuture = CompletableFuture<MyLocation?>()
-//
-//        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            fusedLocationClient.lastLocation
-//                .addOnSuccessListener { location ->
-//                    val userLocation = if (location != null) {
-//                        MyLocation(latitude = location.latitude, longitude = location.longitude)
-//                    } else {
-//                        MyLocation() // Hoặc có thể trả về null tùy thuộc vào yêu cầu của bạn
-//                    }
-//
-//                    // Gửi kết quả về CompletableFuture
-//                    completableFuture.complete(userLocation)
-//
-//                    if (location != null) {
-//                        updateUserLocation(userLocation)
-//                    }
-//                }
-//        } else {
-//            requestPermissions(
-//                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-//                1
-//            )
-//        }
-//
-//        // Đợi CompletableFuture hoàn thành và gọi callback
-//        completableFuture.thenAccept { result ->
-//            callback.invoke(result)
-//        }
-//    }
 private fun setCurrentUserLocation(): MyLocation? {
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     var userLocation = MyLocation()
@@ -456,6 +454,8 @@ private fun setCurrentUserLocation(): MyLocation? {
         var filter : Boolean
 
         val messagesRef = chatRoomsRef.child(chatRoomId).child("messages")
+
+
 
         if(currentUserId != null) {
             usersRef.child(currentUserId!!).get().addOnSuccessListener {
@@ -522,6 +522,15 @@ private fun setCurrentUserLocation(): MyLocation? {
                         messageRecyclerView.scrollToPosition(messageList!!.size - 1)
 
                         if (newMessages.isNotEmpty()) {
+                            checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+                                if (isChatRoomEnded) {
+                                    readyToFind = false
+                                    toggleFind()
+                                } else {
+                                    readyToFind = true
+                                    toggleFind()
+                                }
+                            }
                             val lastMessage = newMessages.last()
                             if (lastMessage.senderId != currentUserId) {
                                 lastMessage.content?.let { showNotification("New Message", it) }
@@ -692,7 +701,59 @@ private fun setCurrentUserLocation(): MyLocation? {
                 Log.e("reportMessage", "Error adding report: ${it.message}")
             }
     }
+    //Sessions check
+    private fun getSessionId(): String? {
+        val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
+        return sharedPref.getString("sessionID2", null)
+    }
+    private fun checkSession() {
+        val sessionId = getSessionId()
+        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
+        val user = auth.currentUser
+        user?.let {
+            databaseReferences.child(it.uid).child("session")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val currentSessionID = snapshot.value as String?
+                        if(sessionId != currentSessionID){
+                            showConfirmationDialog()
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle error
+                    }
+                })
+        }
+    }
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Thông báo!")
+        builder.setMessage("Tài khoản này đang được đăng nhập ở thiết bị khác, vui lòng đăng nhập lại!")
+
+        builder.setPositiveButton("OK") { _: DialogInterface, _: Int ->
+            signOutAndStartSignInActivity()
+            handleLogout()
+            finish()
+        }
 
 
+        builder.show()
+    }
+    private fun signOutAndStartSignInActivity() {
+        auth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+
+
+    }
+    private fun handleLogout() {
+        // Tạo Intent để chuyển hướng đến LoginActivity và xóa toàn bộ Activity đã mở trước đó
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        // Kết thúc Activity hiện tại
+        finish()
+    }
 
 }

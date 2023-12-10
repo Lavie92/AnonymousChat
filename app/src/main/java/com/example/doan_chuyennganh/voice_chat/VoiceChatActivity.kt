@@ -1,5 +1,6 @@
 package com.example.doan_chuyennganh.voice_chat
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.doan_chuyennganh.R
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.tencent.mmkv.MMKV
 import java.util.Locale
 
@@ -62,4 +65,6 @@ class VoiceChatActivity : AppCompatActivity() {
             startActivity(intent)
         }, 1000)
     }
+
+
 }
