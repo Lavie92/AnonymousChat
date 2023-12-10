@@ -33,6 +33,7 @@ import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
 import com.example.doan_chuyennganh.databinding.ActivityChatBinding
 import com.example.doan_chuyennganh.encrypt.EncryptionUtils
+import com.example.doan_chuyennganh.layout.SplashScreenActivity
 import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
 import com.example.doan_chuyennganh.report.Reports
@@ -99,7 +100,11 @@ class ChatActivity : AppCompatActivity() {
             toggleOptions()
         }
 
-
+        binding.btnBack.setOnClickListener{
+            val splashIntent = Intent(this@ChatActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toMain")
+            startActivity(splashIntent)
+        }
 
 //        btnStartChat.setOnClickListener {
 //            showPopupMenu(btnStartChat)

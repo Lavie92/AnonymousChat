@@ -30,8 +30,9 @@ import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
 import com.example.doan_chuyennganh.databinding.ActivityChatBinding
-import com.example.doan_chuyennganh.databinding.ActivityNearestBinding
+import com.example.doan_chuyennganh.databinding.ActivityChatNearestBinding
 import com.example.doan_chuyennganh.encrypt.EncryptionUtils
+import com.example.doan_chuyennganh.layout.SplashScreenActivity
 import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
 import com.example.doan_chuyennganh.report.Reports
@@ -56,7 +57,7 @@ class ChatNearestActivity : AppCompatActivity() {
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
     private lateinit var sendButton: ImageView
-    private lateinit var binding: ActivityNearestBinding
+    private lateinit var binding: ActivityChatNearestBinding
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var usersRef: DatabaseReference
     private lateinit var chatRoomsRef: DatabaseReference
@@ -77,7 +78,7 @@ class ChatNearestActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityNearestBinding.inflate(layoutInflater)
+        binding = ActivityChatNearestBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
 
@@ -99,7 +100,10 @@ class ChatNearestActivity : AppCompatActivity() {
             toggleOptions()
         }
 
-
+        binding.btnBack.setOnClickListener{
+            val splashIntent = Intent(this@ChatNearestActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toMain")
+            startActivity(splashIntent)        }
 
 //        btnStartChat.setOnClickListener {
 //            showPopupMenu(btnStartChat)
