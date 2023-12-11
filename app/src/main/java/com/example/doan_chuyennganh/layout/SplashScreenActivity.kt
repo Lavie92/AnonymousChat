@@ -73,6 +73,11 @@ class SplashScreenActivity : AppCompatActivity() {
                     val chatIntent = Intent(this@SplashScreenActivity, ChatNearestActivity::class.java)
                     startActivity(chatIntent)
                     finish()
+                }else if (sourceActivity != null && sourceActivity == "toAudioChat") {
+
+                    val chatIntent = Intent(this@SplashScreenActivity, com.example.doan_chuyennganh.voice_chat.MainActivity::class.java)
+                    startActivity(chatIntent)
+                    finish()
                 }
             }
         }, 1000)

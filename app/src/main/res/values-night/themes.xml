@@ -1,9 +1,19 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.DoAn_ChuyenNganh" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your dark theme here. -->
+    <!-- Base application theme based on MaterialComponents. -->
+    <style name="Base.Theme.DoAn_ChuyenNganh" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/cardview_light_background</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Additional attributes from AppCompat theme if needed -->
+        <!-- ... -->
     </style>
-    <style name="Theme.DoAn_ChuyenNganh" parent="Base.Theme.DoAn_ChuyenNganh" />
 
+    <style name="Theme.DoAn_ChuyenNganh" parent="Base.Theme.DoAn_ChuyenNganh" />
 </resources>

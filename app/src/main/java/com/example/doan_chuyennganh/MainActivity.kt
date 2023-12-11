@@ -63,6 +63,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(splashIntent)
         }
 
+        binding.layoutAudioChat.setOnClickListener{
+            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toAudioChat")
+            startActivity(splashIntent)
+        }
 
 
         this.auth = FirebaseAuth.getInstance()

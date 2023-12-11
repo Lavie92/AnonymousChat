@@ -18,6 +18,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/border_audiocall" />
+
         <activity
             android:name=".voice_chat.MainActivity"
             android:exported="false" />
