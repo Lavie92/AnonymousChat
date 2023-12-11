@@ -276,6 +276,27 @@ class ProfileActivity : AppCompatActivity() {
         builder.show()
     }
 
+    private fun showConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirmation")
+        builder.setMessage("Có thông tin vừa thay đổi, bạn có muốn lưu không?")
+
+        builder.setPositiveButton("Có") { _: DialogInterface, _: Int ->
+            // Nếu chọn "Có", cập nhật thông tin và rời khỏi Activity
+            val username = binding.txtChangeName.text.toString()
+            val age = binding.txtChangeAge.text.toString()
+            val gender = binding.genderSpinner.selectedItem.toString()
+            updateData(auth.currentUser!!, username, age, gender)
+            finish()
+        }
+
+        builder.setNegativeButton("Không") { _: DialogInterface, _: Int ->
+            // Nếu chọn "Không", chỉ rời khỏi Activity mà không cập nhật thông tin
+            finish()
+        }
+
+        builder.show()
+    }
     private fun showError(input :EditText, err: String){
         input.error = err
         input.requestFocus()
@@ -574,7 +595,7 @@ class ProfileActivity : AppCompatActivity() {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val currentSessionID = snapshot.value as String?
                         if(sessionId != currentSessionID){
-                            showConfirmationDialog()
+                            showCheckSession()
                         }
                     }
 
@@ -584,7 +605,7 @@ class ProfileActivity : AppCompatActivity() {
                 })
         }
     }
-    private fun showConfirmationDialog() {
+    private fun showCheckSession() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Thông báo!")
         builder.setMessage("Tài khoản này đang được đăng nhập ở thiết bị khác, vui lòng đăng nhập lại!")
