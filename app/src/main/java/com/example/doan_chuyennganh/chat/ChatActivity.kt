@@ -69,13 +69,13 @@ class ChatActivity : AppCompatActivity() {
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     private var receiverId: String = ""
     private val currentUser = FirebaseAuth.getInstance().currentUser
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     val badwords = filterBadwords()
-    private lateinit var popupMenu: PopupMenu
     private val handler = Handler()
     private var readyToFind = false
     private  lateinit var databaseReferences: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var btnHeart:Button
+    private lateinit var btnRandom:Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
@@ -89,6 +89,8 @@ class ChatActivity : AppCompatActivity() {
         messageRecyclerView = binding.rcMessage
         messageBox = binding.messageBox
         sendButton = binding.ivSend
+        btnHeart = binding.btnHeart
+        btnRandom = binding.btnRandom
         messageList = ArrayList()
         messageAdapter = MessageAdapter(this, messageList!!)
         messageRecyclerView.adapter = messageAdapter
@@ -106,21 +108,15 @@ class ChatActivity : AppCompatActivity() {
             startActivity(splashIntent)
         }
 
-
         checkChatRoomId()
-        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
-            if (isChatRoomEnded) {
-                readyToFind = false
-                toggleFind()
-            } else {
-                readyToFind = true
-                toggleFind()
-
-            }
-        }
 
         loadMessages(chatRoomId)
 
+        btnHeart.setOnClickListener{
+            sendMessage(chatRoomId, "system", currentUserId.toString(), "Bạn đã nhấn yêu thích, nếu đối phương đồng ý thì bạn sẽ chia sẻ thông tin (tuổi, giới tính, username)")
+            sendMessage(chatRoomId, "system", receiverId, "Đối phương thích bạn, nếu bạn cũng vậy hãy nhấn tim để chia sẻ thông tin gồm (username, tuổi, giới tính)")
+            shareMoreInformation()
+        }
 
         binding.btnRandom.setOnClickListener{
             if(currentUserId!=null){
@@ -128,7 +124,6 @@ class ChatActivity : AppCompatActivity() {
                 isFindByLocation(currentUserId,false)
             }
             readyToFind = true
-            toggleFind()
             showMessage("Đang tìm kiếm...")
             findRandomUserForChat()
         }
@@ -136,8 +131,6 @@ class ChatActivity : AppCompatActivity() {
 
             endChat(chatRoomId) { success ->
                 if (success) {
-                    readyToFind = false
-                    toggleFind()
                 } else {
                     Log.e("EndChat", "Failed to end chat.")
                 }
@@ -153,44 +146,59 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun toggleFind(){
-        val slideUp = TranslateAnimation(0f, 0f, binding.btnRandom.height.toFloat(), 0f)
-        val slideDown = TranslateAnimation(0f, 0f, 0f, binding.btnRandom.height.toFloat())
-        slideDown.duration = 50
-        slideUp.duration = 500
-        if(!readyToFind){
-            binding.btnRandom.startAnimation(slideUp)
-            binding.btnRandom.visibility = View.VISIBLE
-            checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
-                if (!isChatRoomchatting) {
-                    // If chatting, hide the "Tìm" button
-                    binding.btnRandom.visibility = View.GONE
+    private fun shareMoreInformation() {
+        val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
+        val heartRef = chatRoomRef.child("heart")
+
+        // Đánh dấu người dùng hiện tại đã nhấn nút tim
+        heartRef.child(currentUserId!!).setValue(true)
+
+        // Kiểm tra xem cả hai người dùng đã nhấn tim hay chưa
+        heartRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.childrenCount.toInt() == 2) {
+                    // Cả hai người dùng đã nhấn nút tim, chia sẻ thông tin
+                    sendMessage(chatRoomId, "system", currentUserId, "Thông tin đã được chia sẻ.")
+                    sendMessage(chatRoomId, "system", receiverId, "Thông tin đã được chia sẻ.")
+                    shareUserInfo(currentUserId, receiverId)
+                    shareUserInfo(receiverId, currentUserId)
                 }
             }
-        }
-        else{
-            binding.btnRandom.startAnimation(slideDown)
-            binding.btnRandom.visibility = View.GONE
-        }
-        readyToFind = !readyToFind
 
-
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("shareMoreInformation", "Error: ${databaseError.message}")
+            }
+        })
     }
+    private fun shareUserInfo(shareFromUserId: String, shareToUserId: String) {
+        usersRef.child(shareFromUserId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val username = snapshot.child("username").getValue(String::class.java) ?: "Unknown"
+                val gender = snapshot.child("gender").getValue(String::class.java) ?: "Unknown"
+                val age = snapshot.child("age").getValue(String::class.java) ?: "Unknown"
 
+                val info = "Username: $username, Gender: $gender, Age: $age"
+                sendMessage(chatRoomId, "system", shareToUserId, info)
+            }
 
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("shareUserInfo", "Error: ${databaseError.message}")
+            }
+        })
+    }
     private fun toggleOptions() {
         val btnEndChat: Button = findViewById(R.id.btnEndChat)
-        val btnheart: Button = findViewById(R.id.btnheart)
-        val slideUp = TranslateAnimation(0f, 0f, btnheart.height.toFloat(), 0f)
+        val slideUp = TranslateAnimation(0f, 0f, btnHeart.height.toFloat(), 0f)
         slideUp.duration = 500
 
-        val slideDown = TranslateAnimation(0f, 0f, 0f, btnheart.height.toFloat())
+        val slideDown = TranslateAnimation(0f, 0f, 0f, btnHeart.height.toFloat())
         slideDown.duration = 50
-
         if (!optionsVisible) {
             btnEndChat.startAnimation(slideUp)
-            btnheart.startAnimation((slideUp))
-            btnheart.visibility = View.VISIBLE
+            btnHeart.startAnimation((slideUp))
+            btnHeart.visibility = View.VISIBLE
+            btnRandom.startAnimation(slideUp)
+            btnRandom.visibility = View.VISIBLE
             btnEndChat.visibility = View.VISIBLE
             checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
                 if (!isChatRoomchatting) {
@@ -198,11 +206,12 @@ class ChatActivity : AppCompatActivity() {
             }
         } else {
             btnEndChat.startAnimation(slideDown)
-            btnheart.startAnimation(slideDown)
-            btnheart.visibility = View.GONE
+            btnHeart.startAnimation(slideDown)
+            btnHeart.visibility = View.GONE
             btnEndChat.visibility = View.GONE
+            btnRandom.startAnimation(slideDown)
+            btnRandom.visibility = View.GONE
         }
-
         optionsVisible = !optionsVisible
     }
     private val timeoutRunnable = object : Runnable {
@@ -210,9 +219,6 @@ class ChatActivity : AppCompatActivity() {
             updateUserStatus(currentUserId.toString(), false)
             isFindByLocation(currentUserId.toString(), false)
                 showMessage("No user found, please try again!")
-                if (!readyToFind) {
-                    toggleFind()
-            }
             handler.removeCallbacks(this)
         }
     }
@@ -261,6 +267,12 @@ class ChatActivity : AppCompatActivity() {
                         currentUserId.toString(),
                         "Bạn đã tham gia chat!!"
                     )
+                    sendMessage(
+                        chatRoomId,
+                        "system",
+                        receiverId,
+                        "Bạn đã tham gia chat!!"
+                    )
                     currentUserId?.let { updateUserStatus(it, false) }
                     receiverId?.let { updateUserStatus(it, false) }
                 } else {
@@ -269,9 +281,6 @@ class ChatActivity : AppCompatActivity() {
             else {
             }
         }
-    }
-    private fun deg2rad(deg: Double): Double {
-        return deg * (Math.PI / 180)
     }
 
     private fun updateUserStatus(userId: String, ready: Boolean) {
@@ -295,7 +304,6 @@ class ChatActivity : AppCompatActivity() {
 
         val user1Reference = user1.id?.let { usersRef.child(it) }
         user1Reference?.child("chatRoom")?.setValue(chatRoomId)
-
         val user2Reference = user2.id?.let { usersRef.child(it) }
         user2Reference?.child("chatRoom")?.setValue(chatRoomId)
         return chatRoomId
@@ -303,85 +311,59 @@ class ChatActivity : AppCompatActivity() {
 
     private fun loadMessages(chatRoomId: String) {
         var filter : Boolean
-
         val messagesRef = chatRoomsRef.child(chatRoomId).child("messages")
-
-
-
         if(currentUserId != null) {
             usersRef.child(currentUserId!!).get().addOnSuccessListener {
                 filter = it.child("filter").value as Boolean
-
-                //loadMessage
                 messagesRef.addValueEventListener(object : ValueEventListener {
                     @SuppressLint("NotifyDataSetChanged")
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val newMessages = snapshot.children.mapNotNull { msgSnapshot ->
-                            val messageId =
-                                msgSnapshot.child("messageId").getValue(String::class.java)
-                            val senderId =
-                                msgSnapshot.child("senderId").getValue(String::class.java)
-                            val receiverId =
-                                msgSnapshot.child("receiverId").getValue(String::class.java)
-                            val encryptedMessage =
-                                msgSnapshot.child("content").getValue(String::class.java)
-                            val encryptedKey =
-                                msgSnapshot.child("encryptKey").getValue(String::class.java)
-                            val timestamp =
-                                msgSnapshot.child("timestamp").getValue(Long::class.java)
+                            val messageId = msgSnapshot.child("messageId").getValue(String::class.java)
+                            val senderId = msgSnapshot.child("senderId").getValue(String::class.java)
+                            val receiverId = msgSnapshot.child("receiverId").getValue(String::class.java)
 
-                            // Decrypt the message using the key
-                            var decryptedMessage =
-                                encryptedMessage?.let {
-                                    encryptedKey?.let { it1 ->
-                                        EncryptionUtils.decrypt(
-                                            it,
-                                            EncryptionUtils.getKeyFromString(it1)
-                                        )
+                            // Check if the current user is the sender or receiver
+                            if (senderId == currentUserId || receiverId == currentUserId) {
+                                val encryptedMessage = msgSnapshot.child("content").getValue(String::class.java)
+                                val encryptedKey = msgSnapshot.child("encryptKey").getValue(String::class.java)
+                                val timestamp = msgSnapshot.child("timestamp").getValue(Long::class.java)
+
+                                // Decrypt the message
+                                var decryptedMessage = encryptedMessage?.let {
+                                    encryptedKey?.let { key ->
+                                        EncryptionUtils.decrypt(it, EncryptionUtils.getKeyFromString(key))
                                     }
                                 }
-                            var message123 = decryptedMessage
-                            if (filter == true) {
-                                message123 = badwords.filterBadWords(decryptedMessage)
-                            }
 
-                            // Create a new Message object with the decrypted content
-                            messageId?.let {
-                                senderId?.let { it1 ->
-                                    receiverId?.let { it2 ->
-                                        message123?.let { it3 ->
-                                            timestamp?.let { it4 ->
-                                                Message(
-                                                    it,
-                                                    it1,
-                                                    it2,
-                                                    it3,
-                                                    encryptedKey ?: "",
-                                                    it4
-                                                )
+                                // Apply the filter for bad words if needed
+                                if (filter) {
+                                    decryptedMessage = badwords.filterBadWords(decryptedMessage)
+                                }
+
+                                messageId?.let {
+                                    senderId?.let { sid ->
+                                        receiverId?.let { rid ->
+                                            decryptedMessage?.let { msg ->
+                                                timestamp?.let { time ->
+                                                    Message(it, sid, rid, msg, encryptedKey ?: "", time)
+                                                }
                                             }
                                         }
                                     }
                                 }
+                            } else {
+                                null
                             }
                         }
 
                         messageList?.clear()
-                        newMessages?.let { messageList?.addAll(it) }
+                        newMessages.let { messageList?.addAll(it) }
 
                         messageAdapter.notifyDataSetChanged()
                         messageRecyclerView.scrollToPosition(messageList!!.size - 1)
 
                         if (newMessages.isNotEmpty()) {
-                            checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
-                                if (isChatRoomEnded) {
-                                    readyToFind = false
-                                    toggleFind()
-                                } else {
-                                    readyToFind = true
-                                    toggleFind()
-                                }
-                            }
                             val lastMessage = newMessages.last()
                             if (lastMessage.senderId != currentUserId) {
                                 lastMessage.content?.let { showNotification("New Message", it) }
@@ -434,7 +416,6 @@ class ChatActivity : AppCompatActivity() {
                 val status = snapshot.getValue(String::class.java)
                 callback.invoke(status == "ended")
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("CheckChatRoomStatus", "Error checking ChatRoom status: ${error.message}")
                 callback.invoke(false)
@@ -459,7 +440,6 @@ class ChatActivity : AppCompatActivity() {
                     } else {
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {
                     Log.e("ChatRoomValue", "Error getting chatRoom value: ${error.message}")
                 }
@@ -475,13 +455,10 @@ class ChatActivity : AppCompatActivity() {
                 val user1Id = snapshot.child("user1Id").getValue(String::class.java)
                 val user2Id = snapshot.child("user2Id").getValue(String::class.java)
                 if (user1Id != "" && user2Id != "" && !user1Id.isNullOrEmpty() && !user2Id.isNullOrEmpty())
-                    receiverId = if (user1Id == currentUserId) ({
-                        user2Id
-                    }).toString() else user1Id.toString()
+                    receiverId = if (user1Id == currentUserId) user2Id ?: "" else user1Id ?: ""
 
                 Log.d("receiver", "User2Id: $receiverId")
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("UsersInChatRoom", "Error checking users in chatRoom: ${error.message}")
             }
@@ -493,6 +470,12 @@ class ChatActivity : AppCompatActivity() {
             this.chatRoomId,
             "system",
             currentUserId.toString(),
+            "Cuộc trò chuyện đã kết thúc!"
+        )
+        sendMessage(
+            this.chatRoomId,
+            "system",
+            receiverId,
             "Cuộc trò chuyện đã kết thúc!"
         )
         val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
@@ -522,20 +505,16 @@ class ChatActivity : AppCompatActivity() {
 
         Log.d("reportMessage", "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId")
 
-
-        // Extract only the necessary properties from the Message object
         val messageMap = mapOf(
             "timestamp" to message.timestamp,
             "content" to message.content
         )
 
-        // Set UID_beReported to the ID of the user being reported
         val report = Reports(senderUserId!!, receiverUserId!!)
 
         val reportRef = FirebaseDatabase.getInstance().getReference("reports").child(chatRoomId).child(message.messageId!!)
         reportRef.setValue(report)
 
-        // Push the messageMap to a different child node under the messageID
         reportRef.child("status").setValue("doing")
         reportRef.child("messageMap").setValue(messageMap)
             .addOnSuccessListener {
@@ -546,7 +525,6 @@ class ChatActivity : AppCompatActivity() {
                 Log.e("reportMessage", "Error adding report: ${it.message}")
             }
     }
-    //Sessions check
     private fun getSessionId(): String? {
         val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
         return sharedPref.getString("sessionID2", null)
@@ -588,16 +566,11 @@ class ChatActivity : AppCompatActivity() {
     private fun signOutAndStartSignInActivity() {
         auth.signOut()
         startActivity(Intent(this, LoginActivity::class.java))
-
-
     }
     private fun handleLogout() {
-        // Tạo Intent để chuyển hướng đến LoginActivity và xóa toàn bộ Activity đã mở trước đó
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
-
-        // Kết thúc Activity hiện tại
         finish()
     }
 
