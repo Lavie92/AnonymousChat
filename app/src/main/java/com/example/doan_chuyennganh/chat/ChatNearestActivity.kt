@@ -266,11 +266,6 @@ class ChatNearestActivity : AppCompatActivity() {
                         handler.removeCallbacks(timeoutRunnable)
                         val nearestUserLocation = nearestUser.location
                         if (nearestUserLocation != null) {
-                            Toast.makeText(
-                                this,
-                                "Chào mừng ${nearestUser.username}, người dùng gần nhất!",
-                                Toast.LENGTH_SHORT
-                            ).show()
                             receiverId = nearestUser.id.toString()
 
                             chatRoomId = currentUser?.toUser()?.let {
