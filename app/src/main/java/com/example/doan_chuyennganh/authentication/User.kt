@@ -11,12 +11,14 @@ data class User(
     val active: Boolean = false,
     val gender: String? = null,
     val ready: Boolean = false,
+
     val filter: Boolean = true,
     val point: Int = 0,
     var chatRoom: String = "",
     var location: MyLocation? = MyLocation(),
     var isFindByLocation: Boolean = false,
-    var isHeart: Boolean = false
+    var isHeart: Boolean = false,
+    val isCall: Boolean = false
 
     )
 fun FirebaseUser.toUser(location: MyLocation? = null): User? {

@@ -1,6 +1,7 @@
 package com.example.doan_chuyennganh.voice_chat
 
 import android.os.Bundle
+import android.text.Editable
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -8,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.User
 import com.google.firebase.auth.FirebaseAuth
+import com.example.doan_chuyennganh.voice_chat.AudioRoom
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -23,13 +26,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var usersRef: DatabaseReference
     private lateinit var yourUserIDTextView: TextView
     private lateinit var yourUserNameTextView: TextView
+    private lateinit var tarGetUserIdTextView: TextInputEditText
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+    private lateinit var waitingDialog: AlertDialog
+    private var currentRoomId: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
 
         usersRef = FirebaseDatabase.getInstance().getReference("users")
-
+        tarGetUserIdTextView = findViewById(R.id.target_user_id)
         yourUserIDTextView = findViewById(R.id.your_user_id)
         yourUserNameTextView = findViewById(R.id.your_user_name)
 
@@ -69,9 +75,9 @@ class MainActivity : AppCompatActivity() {
             callInvitationConfig
         )
     }
-    private fun updateUserStatus(userId: String, ready: Boolean) {
+    private fun updateUserStatus(userId: String, isCall: Boolean) {
         val userRef = usersRef.child(userId)
-        userRef.child("ready").setValue(ready)
+        userRef.child("isCall").setValue(isCall)
     }
     private fun initVoiceButton() {
         val newVoiceCall = findViewById<ZegoSendCallInvitationButton>(R.id.new_voice_call)
@@ -79,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         val clickListener: (View) -> Unit = {
             if (currentUserId != null) {
                 updateUserStatus(currentUserId, true)
+                showWaitingDialog()
                 findRandomActiveUserAndCall(false)
             }
         }
@@ -91,60 +98,106 @@ class MainActivity : AppCompatActivity() {
         val clickListener: (View) -> Unit = {
             if (currentUserId != null) {
                 updateUserStatus(currentUserId, true)
+                showWaitingDialog()
                 findRandomActiveUserAndCall(true)
             }
         }
         newVideoCall.setOnClickListener(clickListener)
     }
-
-
     private fun findRandomActiveUserAndCall(isVideoCall: Boolean) {
-        usersRef.orderByChild("ready").equalTo(true).addListenerForSingleValueEvent(object : ValueEventListener {
+        currentUserId?.let { userId ->
+            updateUserStatus(userId, true)
+            usersRef.orderByChild("isCall").equalTo(true)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val activeUsers = snapshot.children.mapNotNull { it.getValue(User::class.java) }
+                        val eligibleUsers = activeUsers.filter { it.id != userId }
+                        if (eligibleUsers.isNotEmpty()) {
+                            val randomActiveUser = eligibleUsers.random()
+                            tarGetUserIdTextView.text = Editable.Factory.getInstance().newEditable(randomActiveUser.id)
+
+                            val roomId = createAudioRoom(User(userId, ""), randomActiveUser)
+                            startCallWithUser(randomActiveUser, isVideoCall, roomId)
+                        } else {
+                            // No match found, show some UI indication or log
+                        }
+                    }
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle error, update UI or log
+                    }
+                })
+        }
+    }
+
+
+    private fun showWaitingDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Waiting")
+        builder.setMessage("Waiting for another user to join the call...")
+        builder.setCancelable(false)
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+            if (currentUserId != null) {
+                updateUserStatus(currentUserId, false)
+            }
+            currentRoomId?.let { endAudioRoom(it) }
+        }
+        waitingDialog = builder.create()
+        waitingDialog.show()
+    }
+
+
+    private fun createAudioRoom(user1: User, user2: User): String {
+        val roomId = UUID.randomUUID().toString()
+        currentRoomId = roomId
+        if (user1.id != user2.id) {
+            val audioRoom = AudioRoom(user1.id!!, user2.id!!, "calling")
+            val roomRef = FirebaseDatabase.getInstance().getReference("audioRooms").child(roomId)
+            roomRef.setValue(audioRoom.toMap())
+        }
+
+        return roomId
+    }
+
+
+
+
+
+    private fun endAudioRoom(roomId: String) {
+        if (roomId.isNullOrEmpty()) {
+            return
+        }
+        val roomRef = FirebaseDatabase.getInstance().getReference("audioRooms").child(roomId)
+        roomRef.child("status").setValue("ended")
+
+        roomRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val readyUsers = snapshot.children.mapNotNull { it.getValue(User::class.java) }
-                    .filter { it.id != FirebaseAuth.getInstance().currentUser?.uid && it.ready }
-
-                if (readyUsers.isNotEmpty()) {
-                    val randomReadyUser = readyUsers.random()
-                    val currentUser = FirebaseAuth.getInstance().currentUser?.let { firebaseUser ->
-                        User(firebaseUser.uid, firebaseUser.displayName ?: "")
-                    }
-
-                    if (currentUser != null) {
-                        val roomId = createAudioRoom(currentUser, randomReadyUser)
-                        startCallWithUser(randomReadyUser, isVideoCall, roomId)
-                    }
-                } else {
+                val audioRoom = snapshot.getValue(AudioRoom::class.java)
+                audioRoom?.let {
+                    updateUserStatus(it.user1Id, false)
+                    updateUserStatus(it.user2Id, false)
                 }
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
-                // Xử lý lỗi
+
             }
         })
     }
-    private fun createAudioRoom(user1: User, user2: User): String {
-        val roomId = UUID.randomUUID().toString()
-        val audioRoom = user1.id?.let { user2.id?.let { it1 -> AudioRoom(it, it1, "calling") } }
-        val roomRef = FirebaseDatabase.getInstance().getReference("audioRooms").child(roomId)
-        roomRef.setValue(audioRoom)
-        return roomId
-    }
-    class AudioRoom(var user1Id: String, var user2Id: String, var status: String)
-
-    private fun endAudioRoom(roomId: String) {
-        val roomRef = FirebaseDatabase.getInstance().getReference("audioRooms").child(roomId)
-        roomRef.child("status").setValue("ended")
-    }
     private fun startCallWithUser(user: User, isVideoCall: Boolean, roomId: String) {
-        val users: MutableList<ZegoUIKitUser> = mutableListOf(ZegoUIKitUser(user.id!!, user.username!!))
+        val users = mutableListOf(ZegoUIKitUser(user.id!!, user.username!!))
         val callButton = if (isVideoCall) findViewById<ZegoSendCallInvitationButton>(R.id.new_video_call)
         else findViewById<ZegoSendCallInvitationButton>(R.id.new_voice_call)
         callButton.setInvitees(users)
-        updateUserStatus(user.id!!, false)
-        FirebaseAuth.getInstance().currentUser?.uid?.let { updateUserStatus(it, false) }
 
+        updateUserStatus(user.id!!, false)
+        FirebaseAuth.getInstance().currentUser?.uid?.let { currentUserId ->
+            updateUserStatus(currentUserId, false)
+        }
     }
+
+
+
+
 
     private fun showLogoutDialog() {
         val builder = AlertDialog.Builder(this)
