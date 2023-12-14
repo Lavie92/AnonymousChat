@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -23,8 +24,8 @@
         android:layout_marginTop="16dp"
         android:text="Your UserID:"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/user_home_page"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_home_page" />
 
     <TextView
         android:id="@+id/your_user_name"
@@ -33,8 +34,8 @@
         android:layout_marginTop="8dp"
         android:text="Your UserName:"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/your_user_id"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/your_user_id" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/target_user_id_layout"
@@ -42,16 +43,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Enter Invitee's UserID"
-        app:layout_constraintTop_toBottomOf="@id/your_user_name"
+        android:hint=" UserID"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/your_user_name">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
             android:id="@+id/target_user_id"
-            android:visibility="gone"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+      />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
@@ -90,4 +91,16 @@
         app:layout_constraintHorizontal_bias="0.906"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linearLayout2" />
+
+    <Button
+        android:id="@+id/btn_find_user"
+        android:layout_width="375dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="56dp"
+        android:text="Tìm"
+        app:layout_constraintBottom_toTopOf="@+id/user_logout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 </androidx.constraintlayout.widget.ConstraintLayout>
