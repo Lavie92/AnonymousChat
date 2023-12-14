@@ -13,7 +13,8 @@ data class User(
     val ready: Boolean = false,
     val filter: Boolean = true,
     val point: Int = 0,
-    var chatRoom: String = "",
+    var randomChatRoom: String = "",
+    var nearestChatRoom: String = "",
     var location: MyLocation? = MyLocation(),
     var isFindByLocation: Boolean = false,
     )
@@ -23,7 +24,6 @@ fun FirebaseUser.toUser(location: MyLocation? = null): User? {
             id = uid,
             email = email,
             location = location
-
         )
     }
 }

@@ -47,6 +47,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -54,8 +56,6 @@ import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
 class ChatActivity : AppCompatActivity() {
-    private lateinit var menuLayout: LinearLayout
-
     private var optionsVisible = false
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
@@ -71,7 +71,6 @@ class ChatActivity : AppCompatActivity() {
     private val currentUser = FirebaseAuth.getInstance().currentUser
     val badwords = filterBadwords()
     private val handler = Handler()
-    private var readyToFind = false
     private  lateinit var databaseReferences: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var btnHeart:Button
@@ -107,28 +106,18 @@ class ChatActivity : AppCompatActivity() {
             splashIntent.putExtra("source_activity", "toMain")
             startActivity(splashIntent)
         }
-
         checkChatRoomId()
-
-        loadMessages(chatRoomId)
-
         btnHeart.setOnClickListener{
             sendMessage(chatRoomId, "system", currentUserId.toString(), "Bạn đã nhấn yêu thích, nếu đối phương đồng ý thì bạn sẽ chia sẻ thông tin (tuổi, giới tính, username)")
             sendMessage(chatRoomId, "system", receiverId, "Đối phương thích bạn, nếu bạn cũng vậy hãy nhấn tim để chia sẻ thông tin gồm (username, tuổi, giới tính)")
             shareMoreInformation()
         }
-
-        binding.btnRandom.setOnClickListener{
-            if(currentUserId!=null){
-                updateUserStatus(currentUserId,true)
-                isFindByLocation(currentUserId,false)
-            }
-            readyToFind = true
-            showMessage("Đang tìm kiếm...")
+        btnRandom.setOnClickListener{
             findRandomUserForChat()
         }
         btnEndChat.setOnClickListener {
-
+            updateUserStatus(currentUserId.toString(), false)
+            updateUserStatus(receiverId, false)
             endChat(chatRoomId) { success ->
                 if (success) {
                 } else {
@@ -149,15 +138,11 @@ class ChatActivity : AppCompatActivity() {
     private fun shareMoreInformation() {
         val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
         val heartRef = chatRoomRef.child("heart")
-
-        // Đánh dấu người dùng hiện tại đã nhấn nút tim
         heartRef.child(currentUserId!!).setValue(true)
-
-        // Kiểm tra xem cả hai người dùng đã nhấn tim hay chưa
         heartRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                updatePoints(receiverId)
                 if (snapshot.childrenCount.toInt() == 2) {
-                    // Cả hai người dùng đã nhấn nút tim, chia sẻ thông tin
                     sendMessage(chatRoomId, "system", currentUserId, "Thông tin đã được chia sẻ.")
                     sendMessage(chatRoomId, "system", receiverId, "Thông tin đã được chia sẻ.")
                     shareUserInfo(currentUserId, receiverId)
@@ -170,14 +155,34 @@ class ChatActivity : AppCompatActivity() {
             }
         })
     }
+
+    private fun updatePoints(userId: String) {
+        val userPointRef = usersRef.child(userId).child("point")
+        userPointRef.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                var points = mutableData.getValue(Int::class.java)
+                if (points == null) {
+                    points = 0
+                }
+                if (points < 100) {
+                    mutableData.value = points + 5
+                }
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
+                Log.d("updatePoints", "Points updated: $databaseError")
+            }
+        })
+    }
+
     private fun shareUserInfo(shareFromUserId: String, shareToUserId: String) {
         usersRef.child(shareFromUserId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val username = snapshot.child("username").getValue(String::class.java) ?: "Unknown"
                 val gender = snapshot.child("gender").getValue(String::class.java) ?: "Unknown"
                 val age = snapshot.child("age").getValue(String::class.java) ?: "Unknown"
-
-                val info = "Username: $username, Gender: $gender, Age: $age"
+                val info = " Thông tin của người ấy: Username: $username, Giới tính: $gender, Tuổi: $age"
                 sendMessage(chatRoomId, "system", shareToUserId, info)
             }
 
@@ -214,13 +219,10 @@ class ChatActivity : AppCompatActivity() {
         }
         optionsVisible = !optionsVisible
     }
-    private val timeoutRunnable = object : Runnable {
-        override fun run() {
-            updateUserStatus(currentUserId.toString(), false)
-            isFindByLocation(currentUserId.toString(), false)
-                showMessage("No user found, please try again!")
-            handler.removeCallbacks(this)
-        }
+    private val timeoutRunnable = Runnable {
+        updateUserStatus(currentUserId.toString(), false)
+        isFindByLocation(currentUserId.toString(), false)
+        showNotification("Không tìm thấy người nào", "Vui lòng thử lại sau")
     }
 
 
@@ -246,41 +248,39 @@ class ChatActivity : AppCompatActivity() {
         checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
             if (isChatRoomEnded) {
                 removeMessage(chatRoomId)
+                usersRef.child(currentUserId.toString()).child("randomChatRoom").setValue("")
+                    .addOnCompleteListener {
+                        if(currentUserId != null){
+                            updateUserStatus(currentUserId,true)
+                            isFindByLocation(currentUserId,false)
+                        }
+                        showMessage("Đang tìm kiếm...")
+                    }
             }
         }
+
         handler.postDelayed(timeoutRunnable, 15000)
+
         usersRef.get().addOnSuccessListener { snapshot ->
             val allUsers = snapshot.children.map {
                 it.getValue(User::class.java)!!
             }
                 .filter { it.ready && it.id != currentUserId }
+
             if (allUsers.isNotEmpty()) {
+                handler.removeCallbacks(timeoutRunnable)
                 val randomUser = allUsers.random()
-                if (randomUser.id != currentUserId) {
-                    handler.removeCallbacks(timeoutRunnable)
-                    receiverId = randomUser.id.toString()
-                    chatRoomId =
-                        currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
-                    sendMessage(
-                        chatRoomId,
-                        "system",
-                        currentUserId.toString(),
-                        "Bạn đã tham gia chat!!"
-                    )
-                    sendMessage(
-                        chatRoomId,
-                        "system",
-                        receiverId,
-                        "Bạn đã tham gia chat!!"
-                    )
-                    currentUserId?.let { updateUserStatus(it, false) }
-                    receiverId?.let { updateUserStatus(it, false) }
-                } else {
-                }
-            }
-            else {
+                receiverId = randomUser.id.toString()
+                chatRoomId = currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
+                sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId)
+                currentUserId?.let { updateUserStatus(it, false) }
             }
         }
+    }
+
+    private fun sendInitialMessages(chatRoomId: String, senderId: String, receiverId: String) {
+        sendMessage(chatRoomId, "system", senderId, "Bạn đã tham gia chat!!")
+        sendMessage(chatRoomId, "system", receiverId, "Bạn đã tham gia chat!!")
     }
 
     private fun updateUserStatus(userId: String, ready: Boolean) {
@@ -295,17 +295,17 @@ class ChatActivity : AppCompatActivity() {
 
     private fun createChatRoom(user1: User, user2: User): String {
         chatRoomId = UUID.randomUUID().toString()
-        user1.chatRoom = chatRoomId
-        user2.chatRoom = chatRoomId
+        user1.randomChatRoom = chatRoomId
+        user2.randomChatRoom = chatRoomId
         val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
         chatRoomRef.child("user1Id").setValue(user1.id)
         chatRoomRef.child("user2Id").setValue(user2.id)
         chatRoomRef.child("status").setValue("chatting")
 
         val user1Reference = user1.id?.let { usersRef.child(it) }
-        user1Reference?.child("chatRoom")?.setValue(chatRoomId)
+        user1Reference?.child("randomChatRoom")?.setValue(chatRoomId)
         val user2Reference = user2.id?.let { usersRef.child(it) }
-        user2Reference?.child("chatRoom")?.setValue(chatRoomId)
+        user2Reference?.child("randomChatRoom")?.setValue(chatRoomId)
         return chatRoomId
     }
 
@@ -430,7 +430,7 @@ class ChatActivity : AppCompatActivity() {
         if (currentUserId != null) {
             val userRef = usersRef.child(currentUserId)
 
-            userRef.child("chatRoom").addValueEventListener(object : ValueEventListener {
+            userRef.child("randomChatRoom").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatRoomValue = snapshot.getValue(String::class.java).toString()
                     if (chatRoomValue != null) {
@@ -489,9 +489,8 @@ class ChatActivity : AppCompatActivity() {
         val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
         chatRoomRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                usersRef.child(currentUserId.toString()).child("chatRoom").setValue("")
+                usersRef.child(currentUserId.toString()).child("randomChatRoom").setValue("")
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("EndChat", "Error getting chatRoom info: ${error.message}")
             }

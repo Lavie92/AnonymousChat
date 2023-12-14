@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         val auth = Firebase.auth
         val user = auth.currentUser
         ivStartChat = binding.ivStartChat
-        //ivFindNearUser = binding.ivFindNearUser
         binding.layoutRandomChat.setOnClickListener {
             val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
             splashIntent.putExtra("source_activity", "toChatRandom")

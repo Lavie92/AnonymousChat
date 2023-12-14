@@ -46,6 +46,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -57,16 +59,16 @@ class ChatNearestActivity : AppCompatActivity() {
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
     private lateinit var sendButton: ImageView
+    private lateinit var btnRandom: Button
     private lateinit var binding: ActivityChatNearestBinding
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var usersRef: DatabaseReference
-    private lateinit var chatRoomsRef: DatabaseReference
+    private lateinit var nearestChatRoomRef: DatabaseReference
     private var chatRoomId: String = ""
     private var messageList: ArrayList<Message>? = null
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     private var receiverId: String = ""
     private val currentUser = FirebaseAuth.getInstance().currentUser
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     val badwords = filterBadwords()
     private lateinit var popupMenu: PopupMenu
     private val handler = Handler()
@@ -74,7 +76,7 @@ class ChatNearestActivity : AppCompatActivity() {
     private var optionsVisible = false
     private lateinit var auth: FirebaseAuth
     private  lateinit var databaseReferences: DatabaseReference
-
+    private  lateinit var btnHeart: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,12 +86,14 @@ class ChatNearestActivity : AppCompatActivity() {
 
         checkSession()
 
-        chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
+        nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom")
         usersRef = FirebaseDatabase.getInstance().getReference("users")
         messageRecyclerView = binding.rcMessage
         messageBox = binding.messageBox
         sendButton = binding.ivSend
+        btnRandom = binding.btnRandom
         messageList = ArrayList()
+        btnHeart = binding.btnHeart
         messageAdapter = MessageAdapter(this, messageList!!)
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -99,16 +103,10 @@ class ChatNearestActivity : AppCompatActivity() {
         btnShowOptions.setOnClickListener {
             toggleOptions()
         }
-
         binding.btnBack.setOnClickListener{
             val splashIntent = Intent(this@ChatNearestActivity, SplashScreenActivity::class.java)
             splashIntent.putExtra("source_activity", "toMain")
             startActivity(splashIntent)        }
-
-//        btnStartChat.setOnClickListener {
-//            showPopupMenu(btnStartChat)
-//        }
-
         checkChatRoomId()
         checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
             if (isChatRoomEnded) {
@@ -121,11 +119,7 @@ class ChatNearestActivity : AppCompatActivity() {
             }
         }
 
-        loadMessages(chatRoomId)
-
-        //
-
-        binding.btnNearest.setOnClickListener{
+        btnRandom.setOnClickListener{
             readyToFind = true
             toggleFind()
             findNearestUserForChat()
@@ -152,26 +146,89 @@ class ChatNearestActivity : AppCompatActivity() {
                 messageBox.text.clear()
             }
         }
+        btnHeart.setOnClickListener{
+            sendMessage(chatRoomId, "system", currentUserId.toString(), "Bạn đã nhấn yêu thích, nếu đối phương đồng ý thì bạn sẽ chia sẻ thông tin (tuổi, giới tính, username)")
+            sendMessage(chatRoomId, "system", receiverId, "Đối phương thích bạn, nếu bạn cũng vậy hãy nhấn tim để chia sẻ thông tin gồm (username, tuổi, giới tính)")
+            shareMoreInformation()
+        }
     }
 
+    private fun shareMoreInformation() {
+        val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
+        val heartRef = chatRoomRef.child("heart")
+        heartRef.child(currentUserId!!).setValue(true)
+        heartRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                updatePoints(receiverId)
+                if (snapshot.childrenCount.toInt() == 2) {
+                    sendMessage(chatRoomId, "system", currentUserId, "Thông tin đã được chia sẻ.")
+                    sendMessage(chatRoomId, "system", receiverId, "Thông tin đã được chia sẻ.")
+                    shareUserInfo(currentUserId, receiverId)
+                    shareUserInfo(receiverId, currentUserId)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("shareMoreInformation", "Error: ${databaseError.message}")
+            }
+        })
+    }
+
+    private fun shareUserInfo(shareFromUserId: String, shareToUserId: String) {
+        usersRef.child(shareFromUserId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val username = snapshot.child("username").getValue(String::class.java) ?: "Unknown"
+                val gender = snapshot.child("gender").getValue(String::class.java) ?: "Unknown"
+                val age = snapshot.child("age").getValue(String::class.java) ?: "Unknown"
+                val info = " Thông tin của người ấy: Username: $username, Giới tính: $gender, Tuổi: $age"
+                sendMessage(chatRoomId, "system", shareToUserId, info)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("shareUserInfo", "Error: ${databaseError.message}")
+            }
+        })
+    }
+
+    private fun updatePoints(userId: String) {
+        val userPointRef = usersRef.child(userId).child("point")
+        userPointRef.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                var points = mutableData.getValue(Int::class.java)
+                if (points == null) {
+                    points = 0
+                }
+                if (points < 100) {
+                    mutableData.value = points + 5
+                }
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
+                Log.d("updatePoints", "Points updated: $databaseError")
+            }
+        })
+    }
+
+
     private fun toggleFind(){
-        val slideUp = TranslateAnimation(0f, 0f, binding.btnNearest.height.toFloat(), 0f)
-        val slideDown = TranslateAnimation(0f, 0f, 0f, binding.btnNearest.height.toFloat())
+        val slideUp = TranslateAnimation(0f, 0f, binding.btnRandom.height.toFloat(), 0f)
+        val slideDown = TranslateAnimation(0f, 0f, 0f, binding.btnRandom.height.toFloat())
         slideDown.duration = 50
         slideUp.duration = 500
         if(!readyToFind){
-            binding.btnNearest.startAnimation(slideUp)
-            binding.btnNearest.visibility = View.VISIBLE
+            binding.btnRandom.startAnimation(slideUp)
+            binding.btnRandom.visibility = View.VISIBLE
             checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
                 if (!isChatRoomchatting) {
                     // If chatting, hide the "Tìm" button
-                    binding.btnNearest.visibility = View.GONE
+                    binding.btnRandom.visibility = View.GONE
                 }
             }
         }
         else{
-            binding.btnNearest.startAnimation(slideDown)
-            binding.btnNearest.visibility = View.GONE
+            binding.btnRandom.startAnimation(slideDown)
+            binding.btnRandom.visibility = View.GONE
         }
         readyToFind = !readyToFind
 
@@ -181,32 +238,30 @@ class ChatNearestActivity : AppCompatActivity() {
 
     private fun toggleOptions() {
         val btnEndChat: Button = findViewById(R.id.btnEndChat)
-        val btnheart: Button = findViewById(R.id.btnheart)
-        val slideUp = TranslateAnimation(0f, 0f, btnheart.height.toFloat(), 0f)
+        val slideUp = TranslateAnimation(0f, 0f, btnHeart.height.toFloat(), 0f)
         slideUp.duration = 500
 
-        val slideDown = TranslateAnimation(0f, 0f, 0f, btnheart.height.toFloat())
+        val slideDown = TranslateAnimation(0f, 0f, 0f, btnHeart.height.toFloat())
         slideDown.duration = 50
-
         if (!optionsVisible) {
-            // Show options (slide up)
             btnEndChat.startAnimation(slideUp)
-            btnheart.startAnimation((slideUp))
-            btnheart.visibility = View.VISIBLE
+            btnHeart.startAnimation((slideUp))
+            btnHeart.visibility = View.VISIBLE
+            btnRandom.startAnimation(slideUp)
+            btnRandom.visibility = View.VISIBLE
             btnEndChat.visibility = View.VISIBLE
             checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
                 if (!isChatRoomchatting) {
-                    // If chatting, hide the "Tìm" button
                 }
             }
         } else {
-            // Hide options (slide down)
             btnEndChat.startAnimation(slideDown)
-            btnheart.startAnimation(slideDown)
-            btnheart.visibility = View.GONE
+            btnHeart.startAnimation(slideDown)
+            btnHeart.visibility = View.GONE
             btnEndChat.visibility = View.GONE
+            btnRandom.startAnimation(slideDown)
+            btnRandom.visibility = View.GONE
         }
-
         optionsVisible = !optionsVisible
     }
 
@@ -225,11 +280,11 @@ class ChatNearestActivity : AppCompatActivity() {
                 Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
             }
         }
-        Toast.makeText(this, "Finding...", Toast.LENGTH_SHORT).show()
         if (currentUserId != null) {
             isFindByLocation(currentUserId, true)
             updateUserStatus(currentUserId, false)
         }
+        showMessage("Đang tìm kiếm...")
         //set timeout
         handler.postDelayed(timeoutRunnable, 30000)
 
@@ -238,10 +293,15 @@ class ChatNearestActivity : AppCompatActivity() {
             setCurrentUserLocation()!!
             getCurrentUserLocationFromFirebase { currentUserLocation ->
                 if (currentUserLocation != null) {
-                    val allUsers = snapshot.children.map {
-                        val user = it.getValue(User::class.java)!!
-                        user.isFindByLocation = it.child("isFindByLocation").getValue(Boolean::class.java) ?: false
-                        user
+                    val allUsers = snapshot.children.mapNotNull {
+                        try {
+                            val user = it.getValue(User::class.java)!!
+                            user.isFindByLocation = it.child("isFindByLocation").getValue(Boolean::class.java) ?: false
+                            user
+                        } catch (e: Exception) {
+                            Log.e("FirebaseError", "Error converting to User object", e)
+                            null
+                        }
                     }.filter { it.isFindByLocation && it.id != currentUserId }
 
                     var nearestUser: User? = null
@@ -254,7 +314,7 @@ class ChatNearestActivity : AppCompatActivity() {
                                 userLocation.latitude,
                                 userLocation.longitude
                             )
-                            if (distance <= 100.0) {
+                            if (distance <= 100) {
                                 nearestUser = user
                                 distanceUser = BigDecimal(distance).setScale(2, RoundingMode.HALF_EVEN).toDouble()
                             }
@@ -262,7 +322,6 @@ class ChatNearestActivity : AppCompatActivity() {
                     }
 
                     if (nearestUser != null) {
-                        //ìf user available, remove timeout
                         handler.removeCallbacks(timeoutRunnable)
                         val nearestUserLocation = nearestUser.location
                         if (nearestUserLocation != null) {
@@ -274,12 +333,7 @@ class ChatNearestActivity : AppCompatActivity() {
                                     nearestUser
                                 )
                             }.toString()
-                            sendMessage(
-                                chatRoomId,
-                                "system",
-                                currentUserId.toString(),
-                                "người dùng gần nhất! đã tham gia chat!! với ${distanceUser} km"
-                            )
+                            sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId, distanceUser )
                             currentUserId?.let { updateUserStatus(it, false) }
                             receiverId?.let { updateUserStatus(it, false) }
                             currentUserId?.let { isFindByLocation(it, false) }
@@ -288,7 +342,6 @@ class ChatNearestActivity : AppCompatActivity() {
                             Toast.makeText(this, "Không thể lấy vị trí của người dùng gần nhất.", Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        Toast.makeText(this, "Không tìm thấy người dùng nào.", Toast.LENGTH_SHORT).show()
                     }
 
                 } else {
@@ -296,6 +349,10 @@ class ChatNearestActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    private fun sendInitialMessages(chatRoomId: String, senderId: String, receiverId: String, distanceUser: Double) {
+        sendMessage(chatRoomId, "system", senderId, "người dùng gần nhất đã tham gia chat với khoảng cách ${distanceUser} km")
+        sendMessage(chatRoomId, "system", receiverId, "người dùng gần nhất đã tham gia chat với khoảng cách ${distanceUser} km")
     }
     private fun getCurrentUserLocationFromFirebase(callback: (MyLocation?) -> Unit) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
@@ -350,18 +407,18 @@ class ChatNearestActivity : AppCompatActivity() {
 
     private fun createChatRoom(user1: User, user2: User): String {
         chatRoomId = UUID.randomUUID().toString()
-        user1.chatRoom = chatRoomId
-        user2.chatRoom = chatRoomId
-        val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
-        chatRoomRef.child("user1Id").setValue(user1.id)
-        chatRoomRef.child("user2Id").setValue(user2.id)
-        chatRoomRef.child("status").setValue("chatting")
+        user1.nearestChatRoom = chatRoomId
+        user2.nearestChatRoom = chatRoomId
+        nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
+        nearestChatRoomRef.child("user1Id").setValue(user1.id)
+        nearestChatRoomRef.child("user2Id").setValue(user2.id)
+        nearestChatRoomRef.child("status").setValue("chatting")
 
         val user1Reference = user1.id?.let { usersRef.child(it) }
-        user1Reference?.child("chatRoom")?.setValue(chatRoomId)
+        user1Reference?.child("nearestChatRoom")?.setValue(chatRoomId)
 
         val user2Reference = user2.id?.let { usersRef.child(it) }
-        user2Reference?.child("chatRoom")?.setValue(chatRoomId)
+        user2Reference?.child("nearestChatRoom")?.setValue(chatRoomId)
         return chatRoomId
     }
 
@@ -399,88 +456,63 @@ class ChatNearestActivity : AppCompatActivity() {
 
     private fun loadMessages(chatRoomId: String) {
         var filter : Boolean
-
-        val messagesRef = chatRoomsRef.child(chatRoomId).child("messages")
-
-
-
+        val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom")
+        val messagesRef = nearestChatRoomRef.child(chatRoomId).child("messages")
         if(currentUserId != null) {
             usersRef.child(currentUserId!!).get().addOnSuccessListener {
                 filter = it.child("filter").value as Boolean
-
-                //loadMessage
                 messagesRef.addValueEventListener(object : ValueEventListener {
                     @SuppressLint("NotifyDataSetChanged")
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val newMessages = snapshot.children.mapNotNull { msgSnapshot ->
-                            val messageId =
-                                msgSnapshot.child("messageId").getValue(String::class.java)
-                            val senderId =
-                                msgSnapshot.child("senderId").getValue(String::class.java)
-                            val receiverId =
-                                msgSnapshot.child("receiverId").getValue(String::class.java)
-                            val encryptedMessage =
-                                msgSnapshot.child("content").getValue(String::class.java)
-                            val encryptedKey =
-                                msgSnapshot.child("encryptKey").getValue(String::class.java)
-                            val timestamp =
-                                msgSnapshot.child("timestamp").getValue(Long::class.java)
+                            val messageId = msgSnapshot.child("messageId").getValue(String::class.java)
+                            val senderId = msgSnapshot.child("senderId").getValue(String::class.java)
+                            val receiverId = msgSnapshot.child("receiverId").getValue(String::class.java)
 
-                            // Decrypt the message using the key
-                            var decryptedMessage =
-                                encryptedMessage?.let {
-                                    encryptedKey?.let { it1 ->
-                                        EncryptionUtils.decrypt(
-                                            it,
-                                            EncryptionUtils.getKeyFromString(it1)
-                                        )
+                            // Check if the current user is the sender or receiver
+                            if (senderId == currentUserId || receiverId == currentUserId) {
+                                val encryptedMessage = msgSnapshot.child("content").getValue(String::class.java)
+                                val encryptedKey = msgSnapshot.child("encryptKey").getValue(String::class.java)
+                                val timestamp = msgSnapshot.child("timestamp").getValue(Long::class.java)
+
+                                // Decrypt the message
+                                var decryptedMessage = encryptedMessage?.let {
+                                    encryptedKey?.let { key ->
+                                        EncryptionUtils.decrypt(it, EncryptionUtils.getKeyFromString(key))
                                     }
                                 }
-                            var message123 = decryptedMessage
-                            if (filter == true) {
-                                message123 = badwords.filterBadWords(decryptedMessage)
-                            }
 
-                            // Create a new Message object with the decrypted content
-                            messageId?.let {
-                                senderId?.let { it1 ->
-                                    receiverId?.let { it2 ->
-                                        message123?.let { it3 ->
-                                            timestamp?.let { it4 ->
-                                                Message(
-                                                    it,
-                                                    it1,
-                                                    it2,
-                                                    it3,
-                                                    encryptedKey ?: "",
-                                                    it4
-                                                )
+                                // Apply the filter for bad words if needed
+                                if (filter) {
+                                    decryptedMessage = badwords.filterBadWords(decryptedMessage)
+                                }
+
+                                messageId?.let {
+                                    senderId?.let { sid ->
+                                        receiverId?.let { rid ->
+                                            decryptedMessage?.let { msg ->
+                                                timestamp?.let { time ->
+                                                    Message(it, sid, rid, msg, encryptedKey ?: "", time)
+                                                }
                                             }
                                         }
                                     }
                                 }
+                            } else {
+                                null
                             }
                         }
 
                         messageList?.clear()
-                        newMessages?.let { messageList?.addAll(it) }
+                        newMessages.let { messageList?.addAll(it) }
 
                         messageAdapter.notifyDataSetChanged()
                         messageRecyclerView.scrollToPosition(messageList!!.size - 1)
 
                         if (newMessages.isNotEmpty()) {
-                            checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
-                                if (isChatRoomEnded) {
-                                    readyToFind = false
-                                    toggleFind()
-                                } else {
-                                    readyToFind = true
-                                    toggleFind()
-                                }
-                            }
                             val lastMessage = newMessages.last()
                             if (lastMessage.senderId != currentUserId) {
-                                lastMessage.content?.let { showNotification("New Message", it) }
+                                lastMessage.content?.let { showNotification("Bạn có tin nhắn mới", it) }
                             }
                         }
                     }
@@ -491,6 +523,22 @@ class ChatNearestActivity : AppCompatActivity() {
                 })
             }
         }
+    }
+
+    private fun showMessage(message: String) {
+        val systemMessage = Message(
+            UUID.randomUUID().toString(),
+            "system",
+            currentUserId ?: "",
+            message,
+            "",
+            System.currentTimeMillis()
+        )
+
+        messageList?.add(systemMessage)
+        messageAdapter.notifyDataSetChanged()
+
+        messageRecyclerView.scrollToPosition(messageList!!.size - 1)
     }
 
     private fun showNotification(title: String, content: String) {
@@ -513,8 +561,8 @@ class ChatNearestActivity : AppCompatActivity() {
                 val timestamp = System.currentTimeMillis()
                 val messageId = UUID.randomUUID().toString()
                 val message = Message(messageId, senderId, receiverId, encryptedMessage, encryptedKey, timestamp)
-                chatRoomsRef.child(chatRoomId).child("messages")
-                    .push().setValue(message)
+                var nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
+                    nearestChatRoomRef.child("messages").push().setValue(message)
             } else {
                 Toast.makeText(this, "Bạn cần tìm người chat trước!", Toast.LENGTH_SHORT).show()
                 Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
@@ -524,8 +572,8 @@ class ChatNearestActivity : AppCompatActivity() {
 
 
     private fun checkChatRoomStatus(chatRoomId: String, callback: (Boolean) -> Unit) {
-        val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
-        chatRoomRef.child("status").addListenerForSingleValueEvent(object : ValueEventListener {
+        val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
+        nearestChatRoomRef.child("status").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val status = snapshot.getValue(String::class.java)
                 callback.invoke(status == "ended")
@@ -545,7 +593,7 @@ class ChatNearestActivity : AppCompatActivity() {
         if (currentUserId != null) {
             val userRef = usersRef.child(currentUserId)
 
-            userRef.child("chatRoom").addValueEventListener(object : ValueEventListener {
+            userRef.child("nearestChatRoom").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatRoomValue = snapshot.getValue(String::class.java).toString()
                     if (chatRoomValue != null) {
@@ -557,7 +605,6 @@ class ChatNearestActivity : AppCompatActivity() {
                         Log.d("ChatRoomValue", "Chat Room is null")
                     }
                 }
-
                 override fun onCancelled(error: DatabaseError) {
                     Log.e("ChatRoomValue", "Error getting chatRoom value: ${error.message}")
                 }
@@ -566,16 +613,15 @@ class ChatNearestActivity : AppCompatActivity() {
     }
 
     private fun checkUsersInChatRoom(chatRoomId: String) {
-        val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
+        val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
 
-        chatRoomRef.addValueEventListener(object : ValueEventListener {
+        nearestChatRoomRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user1Id = snapshot.child("user1Id").getValue(String::class.java)
                 val user2Id = snapshot.child("user2Id").getValue(String::class.java)
                 if (user1Id != "" && user2Id != "" && !user1Id.isNullOrEmpty() && !user2Id.isNullOrEmpty())
-                    receiverId = if (user1Id == currentUserId) ({
-                        user2Id
-                    }).toString() else user1Id.toString()
+                    receiverId = if (user1Id == currentUserId) user2Id ?: "" else user1Id ?: ""
+
 
                 Log.d("receiver", "User2Id: $receiverId")
             }
@@ -593,22 +639,24 @@ class ChatNearestActivity : AppCompatActivity() {
             currentUserId.toString(),
             "Cuộc trò chuyện đã kết thúc!"
         )
-        val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
-        chatRoomRef.child("status").setValue("ended")
+        sendMessage(
+            this.chatRoomId,
+            "system",
+            receiverId,
+            "Cuộc trò chuyện đã kết thúc!"
+        )
+        val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
+        nearestChatRoomRef.child("status").setValue("ended")
             .addOnCompleteListener { task ->
                 callback.invoke(task.isSuccessful)
             }
     }
 
     private fun removeMessage(chatRoomId: String) {
-        val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
-        chatRoomRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
+        nearestChatRoomRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val user1Id = snapshot.child("user1Id").getValue(String::class.java)
-                val user2Id = snapshot.child("user2Id").getValue(String::class.java)
-                val otherUserId = if (user1Id == currentUserId) user2Id else user1Id
-                usersRef.child(otherUserId.toString()).child("chatRoom").setValue("")
-                usersRef.child(currentUserId.toString()).child("chatRoom").setValue("")
+                usersRef.child(currentUserId.toString()).child("nearestChatRoom").setValue("")
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -631,13 +679,11 @@ class ChatNearestActivity : AppCompatActivity() {
             "content" to message.content
         )
 
-        // Set UID_beReported to the ID of the user being reported
         val report = Reports(senderUserId!!, receiverUserId!!)
 
         val reportRef = FirebaseDatabase.getInstance().getReference("reports").child(chatRoomId).child(message.messageId!!)
         reportRef.setValue(report)
 
-        // Push the messageMap to a different child node under the messageID
         reportRef.child("status").setValue("doing")
         reportRef.child("messageMap").setValue(messageMap)
             .addOnSuccessListener {
@@ -648,7 +694,6 @@ class ChatNearestActivity : AppCompatActivity() {
                 Log.e("reportMessage", "Error adding report: ${it.message}")
             }
     }
-    //Sessions check
     private fun getSessionId(): String? {
         val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
         return sharedPref.getString("sessionID2", null)
