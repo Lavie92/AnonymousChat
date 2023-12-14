@@ -20,18 +20,29 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val ITEM_RECEIVE = 1
     val ITEM_SENT = 2
+    val ITEM_SYSTEM = 3
     private var isReported: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             1 -> {
-                val view: View = LayoutInflater.from(context).inflate(R.layout.item_message_receive, parent, false)
+                val view: View = LayoutInflater.from(context)
+                    .inflate(R.layout.item_message_receive, parent, false)
                 ReceiveViewHolder(view)
             }
+
             2 -> {
-                val view: View = LayoutInflater.from(context).inflate(R.layout.item_message_sent, parent, false)
+                val view: View =
+                    LayoutInflater.from(context).inflate(R.layout.item_message_sent, parent, false)
                 SentViewHolder(view)
             }
+
+            3 -> {
+                val view: View =
+                    LayoutInflater.from(context).inflate(R.layout.item_system, parent, false)
+                SystemViewHolder(view)
+            }
+
             else -> throw IllegalArgumentException("Invalid viewType: $viewType")
         }
     }
@@ -44,7 +55,7 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentMessage = messageList[position]
         val messageText = currentMessage.getMessageText()
-        var lastMessageTimestamp :Long = 0
+        var lastMessageTimestamp: Long = 0
 
         when (holder) {
             is SentViewHolder -> {
@@ -56,8 +67,17 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
 
                 }
             }
+
             is ReceiveViewHolder -> {
                 holder.receiveMessage.text = messageText
+                if (currentMessage.timestamp != lastMessageTimestamp) {
+                    holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
+                } else {
+                    holder.tvSentTime.text = ""
+                }
+            }
+            is SystemViewHolder -> {
+                holder.systemMessage.text = messageText
                 if (currentMessage.timestamp != lastMessageTimestamp) {
                     holder.tvSentTime.text = DateFormat.format("hh:mm aa", currentMessage.timestamp)
                 } else {
@@ -80,6 +100,7 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
                     }
                 })
             }
+
             is ReceiveViewHolder -> {
                 holder.receiveMessage.text = messageText
             }
@@ -89,16 +110,18 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
                 holder.sentMessage.text = messageText
                 holder.sentMessage.setBackgroundResource(if (isReported) R.drawable.bg_reported_message else R.drawable.bg_message)
             }
+
             is ReceiveViewHolder -> {
                 holder.receiveMessage.text = messageText
                 holder.receiveMessage.setBackgroundResource(if (isReported) R.drawable.bg_reported_message else R.drawable.bg_message)
             }
         }
     }
+
     private fun showOptionsDialog(currentMessage: Message) {
         val optionsDialog = AlertDialog.Builder(context)
             .setTitle("Message Options")
-            .setItems(arrayOf("Report", "Copy","Delete")) { _, which ->
+            .setItems(arrayOf("Report", "Copy", "Delete")) { _, which ->
                 when (which) {
 //                    0 -> reportMessage(currentMessage)
                     0 -> reportMessage(currentMessage, context)
@@ -116,6 +139,7 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
         val db = FirebaseFirestore.getInstance()
         currentMessage.senderId?.let { db.collection("messages").document(it).delete() }
     }
+
     private fun reportMessage(message: Message, context: Context? = null) {
         if (context is ChatActivity) {
             context.reportMessage(message)
@@ -128,14 +152,18 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
         val db = FirebaseFirestore.getInstance()
         currentMessage.senderId?.let { db.collection("messages").document(it).delete() }
     }
+
     override fun getItemViewType(position: Int): Int {
         val currentMessage = messageList[position]
         if (FirebaseAuth.getInstance().currentUser?.uid.equals(currentMessage.senderId)) {
             return ITEM_SENT
+        } else if (currentMessage.senderId.equals( "system")) {
+            return ITEM_SYSTEM
         } else {
             return ITEM_RECEIVE
         }
     }
+
     class SentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val sentMessage = itemView.findViewById<TextView>(R.id.tvSentMessage)
         val tvSentTime = itemView.findViewById<TextView>(R.id.tvSentTime)
@@ -145,5 +173,9 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
     class ReceiveViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receiveMessage = itemView.findViewById<TextView>(R.id.tvReceiveMessage)
         val tvSentTime = itemView.findViewById<TextView>(R.id.tvReceiveTime)
+    }
+    class SystemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val systemMessage = itemView.findViewById<TextView>(R.id.tvSystemMessage)
+        val tvSentTime = itemView.findViewById<TextView>(R.id.tvSystemTime)
     }
 }

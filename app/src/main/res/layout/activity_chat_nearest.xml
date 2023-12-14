@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".chat.ChatNearestActivity">
+    tools:context=".chat.ChatActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navigation"
@@ -60,7 +60,7 @@
             android:orientation="vertical">
             <Button
                 android:layout_marginLeft="2dp"
-                android:id="@+id/btnheart"
+                android:id="@+id/btnHeart"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_gravity="center"
@@ -80,13 +80,25 @@
                 android:text="Kết Thúc"
                 />
 
+            <Button
+                android:id="@+id/btnRandom"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:visibility="gone"
+                android:background="@drawable/message_background_receive"
+                android:text="Lẹt gô"
+                />
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btnShowOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="6dp"
-                android:onClick="showOptionsPopup"
+                android:contentDescription="@string/app_name"
                 app:backgroundTint="@color/purple_200"
                 app:srcCompat="@drawable/baseline_add_24" />
 
@@ -99,7 +111,7 @@
             android:layout_height="50dp"
             android:layout_weight="10"
             android:background="@drawable/message_box_background"
-            android:hint="@string/greeting"
+            android:hint="hello"
             android:maxLines="2"
             android:paddingLeft="10dp"
             android:singleLine="false"
@@ -113,35 +125,5 @@
             android:paddingLeft="10dp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/btnNearest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/rcMessage"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="46dp"
-        android:background="@drawable/border_chat"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/imgRandom2"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/chat" />
-
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_weight="1"
-            android:fontFamily="monospace"
-            android:gravity="end"
-            android:text="Lẹt gô"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
 
 </RelativeLayout>
