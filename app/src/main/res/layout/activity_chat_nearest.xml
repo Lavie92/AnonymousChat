@@ -91,6 +91,17 @@
                 android:background="@drawable/message_background_receive"
                 android:text="Lẹt gô"
                 />
+            <ImageView
+                android:id="@+id/ivSendImage"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="5dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_weight="10"
+                android:visibility="gone"
+                android:src="@drawable/send_image"
+                android:background="@drawable/message_background_receive"
+                />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btnShowOptions"
