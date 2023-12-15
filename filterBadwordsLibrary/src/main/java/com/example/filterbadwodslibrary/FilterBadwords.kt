@@ -1,8 +1,9 @@
 package com.example.filterbadwodslibrary
 
+import opennlp.tools.stemmer.PorterStemmer
 import opennlp.tools.tokenize.TokenizerME
 import opennlp.tools.tokenize.TokenizerModel
-import opennlp.tools.stemmer.PorterStemmer
+
 class filterBadwords {
 
 
@@ -53,30 +54,34 @@ class filterBadwords {
             "me cha nha may", "mả cha mày", "mả cha nhà mày", "ma cha may", "ma cha nha may", "mả mẹ", "mả cha", "kệ mẹ", "kệ mịe", "kệ mịa", "kệ mje", "kệ mja", "ke me", "ke mie", "ke mia",
             "ke mja", "ke mje", "bỏ mẹ", "bỏ mịa", "bỏ mịe", "bỏ mja", "bỏ mje", "bo me", "bo mia", "bo mie", "bo mje", "bo mja", "chetme", "chet me", "chết mẹ", "chết mịa", "chết mja",
             "chết mịe", "chết mie", "chet mia", "chet mie", "chet mja", "chet mje", "thấy mẹ", "thấy mịe", "thấy mịa", "thay me", "thay mie", "thay mia", "tổ cha", "bà cha mày", "cmn", "cmnl",
-            "tiên sư nhà mày", "tiên sư bố", "tổ sư")
+            "tiên sư nhà mày", "tiên sư bố", "tổ sư","dick")
     }
 
+    fun removeSpecialCharactersInWords(input: String): String? {
+        // Loại bỏ các ký tự đặc biệt giữa các chữ cái
+        return input.replace("(\\p{L})[.,~`'^](\\p{L})".toRegex(), "$1$2")
+    }
     fun filterBadWords(text: String?): String? {
-        if(text != null){
-            // Tokenize và chuyển về chữ thường
+        if (text != null) {
             val tokens = tokenizer.tokenize(text)
-            val lowercaseTokens = tokens.map { it.toLowerCase() }
+            var processedText = text
 
-            // Stemming các từ
-            val stemmedTokens = lowercaseTokens.map { stemmer.stem(it) }
+            tokens.forEach { token ->
+                // Loại bỏ các ký tự đặc biệt từ token
+                val cleanedToken = removeSpecialCharactersInWords(token)
 
-            // Thay thế từ xấu bằng '*'
-            val filteredText = stemmedTokens.fold(text) { acc, token ->
-                if (badWords.contains(token)) {
-                    acc.replace(token, "*".repeat(token.length), ignoreCase = true)
-                } else {
-                    acc
+                // Chuyển token đã làm sạch về chữ thường và stem
+                val stemmedCleanedToken = stemmer.stem(cleanedToken!!.toLowerCase())
+
+                // Kiểm tra nếu token là từ xấu
+                if (badWords.contains(stemmedCleanedToken)) {
+                    // Thay thế token gốc trong văn bản bằng dấu '*'
+                    processedText = processedText!!.replace(Regex("\\b$token\\b", RegexOption.IGNORE_CASE), "*".repeat(token.length))
                 }
             }
-            return filteredText
-        }
-        else
+            return processedText
+        } else {
             return null
-
+        }
     }
 }
