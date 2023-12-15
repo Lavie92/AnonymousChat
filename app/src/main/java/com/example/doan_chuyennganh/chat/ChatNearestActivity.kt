@@ -472,6 +472,7 @@ class ChatNearestActivity : AppCompatActivity() {
                             // Check if the current user is the sender or receiver
                             if (senderId == currentUserId || receiverId == currentUserId) {
                                 val encryptedMessage = msgSnapshot.child("content").getValue(String::class.java)
+                                val type = msgSnapshot.child("type").getValue(String::class.java)
                                 val encryptedKey = msgSnapshot.child("encryptKey").getValue(String::class.java)
                                 val timestamp = msgSnapshot.child("timestamp").getValue(Long::class.java)
 
@@ -492,7 +493,10 @@ class ChatNearestActivity : AppCompatActivity() {
                                         receiverId?.let { rid ->
                                             decryptedMessage?.let { msg ->
                                                 timestamp?.let { time ->
-                                                    Message(it, sid, rid, msg, encryptedKey ?: "", time)
+                                                    type?.let { it1 ->
+                                                        Message(it, sid, rid, msg,
+                                                            it1, encryptedKey ?: "", time)
+                                                    }
                                                 }
                                             }
                                         }
@@ -531,6 +535,7 @@ class ChatNearestActivity : AppCompatActivity() {
             "system",
             currentUserId ?: "",
             message,
+            "text",
             "",
             System.currentTimeMillis()
         )
@@ -560,7 +565,7 @@ class ChatNearestActivity : AppCompatActivity() {
             if (!isChatRoomEnded) {
                 val timestamp = System.currentTimeMillis()
                 val messageId = UUID.randomUUID().toString()
-                val message = Message(messageId, senderId, receiverId, encryptedMessage, encryptedKey, timestamp)
+                val message = Message(messageId, senderId, receiverId, encryptedMessage, "text",  encryptedKey, timestamp)
                 var nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
                     nearestChatRoomRef.child("messages").push().setValue(message)
             } else {
