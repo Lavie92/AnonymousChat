@@ -313,42 +313,36 @@ private fun showMessage(message: String) {
     messageRecyclerView.scrollToPosition(messageList!!.size - 1)
 }
 
-private fun findRandomUserForChat() {
-    chatRoomId = ""
-    receiverId = ""
-    checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
-        if (isChatRoomEnded) {
-            removeMessage(chatRoomId)
-            usersRef.child(currentUserId.toString()).child("randomChatRoom").setValue("")
-                .addOnCompleteListener {
-                    if (currentUserId != null) {
-                        updateUserStatus(currentUserId, true)
-                        isFindByLocation(currentUserId, false)
-                    }
-                    showMessage("Đang tìm kiếm...")
-                }
+    private fun findRandomUserForChat() {
+        chatRoomId = ""
+        receiverId = ""
+        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+            if (isChatRoomEnded) {
+                removeMessage(chatRoomId)
+            }
+        }
+        if (currentUserId != null) {
+            updateUserStatus(currentUserId, true)
+        }
+        showMessage("Đang tìm kiếm...")
+        handler.postDelayed(timeoutRunnable, 15000)
+
+        usersRef.get().addOnSuccessListener { snapshot ->
+            val allUsers = snapshot.children.map {
+                it.getValue(User::class.java)!!
+            }
+                .filter { it.ready && it.id != currentUserId }
+
+            if (allUsers.isNotEmpty()) {
+                handler.removeCallbacks(timeoutRunnable)
+                val randomUser = allUsers.random()
+                receiverId = randomUser.id.toString()
+                chatRoomId = currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
+                sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId)
+                currentUserId?.let { updateUserStatus(it, false) }
+            }
         }
     }
-
-    handler.postDelayed(timeoutRunnable, 15000)
-
-    usersRef.get().addOnSuccessListener { snapshot ->
-        val allUsers = snapshot.children.map {
-            it.getValue(User::class.java)!!
-        }
-            .filter { it.ready && it.id != currentUserId }
-
-        if (allUsers.isNotEmpty()) {
-            handler.removeCallbacks(timeoutRunnable)
-            val randomUser = allUsers.random()
-            receiverId = randomUser.id.toString()
-            chatRoomId = currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
-            sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId)
-            currentUserId?.let { updateUserStatus(it, false) }
-        }
-    }
-}
-
 private fun sendInitialMessages(chatRoomId: String, senderId: String, receiverId: String) {
     sendMessage(chatRoomId, "system", senderId, "Bạn đã tham gia chat!!")
     sendMessage(chatRoomId, "system", receiverId, "Bạn đã tham gia chat!!")
