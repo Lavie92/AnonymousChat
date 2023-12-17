@@ -48,7 +48,7 @@ class ChatActivity : AppCompatActivity() {
     private var optionsVisible = false
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
-    private lateinit var sendButton: ImageView
+    private lateinit var btnSend: ImageView
     private lateinit var binding: ActivityChatBinding
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var usersRef: DatabaseReference
@@ -82,7 +82,7 @@ class ChatActivity : AppCompatActivity() {
         usersRef = FirebaseDatabase.getInstance().getReference("users")
         messageRecyclerView = binding.rcMessage
         messageBox = binding.messageBox
-        sendButton = binding.ivSend
+        btnSend = binding.ivSend
         btnHeart = binding.btnHeart
         btnRandom = binding.btnRandom
         ivSendImage = binding.ivSendImage
@@ -123,7 +123,9 @@ class ChatActivity : AppCompatActivity() {
         }
         btnEndChat.setOnClickListener {
             updateUserStatus(currentUserId.toString(), false)
-            updateUserStatus(receiverId, false)
+            if (receiverId.isNotEmpty()) {
+                updateUserStatus(receiverId, false)
+            }
             endChat(chatRoomId) { success ->
                 if (success) {
                 } else {
@@ -132,7 +134,7 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
-        sendButton.setOnClickListener {
+        btnSend.setOnClickListener {
             val messageText = messageBox.text.toString().trim()
             if (messageText.isNotEmpty() && currentUserId != null && chatRoomId.isNotEmpty()) {
                 sendMessage(chatRoomId, currentUserId, receiverId, messageText)
@@ -160,8 +162,6 @@ class ChatActivity : AppCompatActivity() {
 
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             val selectedImageUri: Uri = data.data ?: return
-
-            // Gọi hàm uploadImageToFirebaseStorage khi người dùng đã chọn ảnh
             uploadImageToFirebaseStorage(selectedImageUri)
         }
     }
@@ -313,36 +313,37 @@ private fun showMessage(message: String) {
     messageRecyclerView.scrollToPosition(messageList!!.size - 1)
 }
 
-    private fun findRandomUserForChat() {
-        chatRoomId = ""
-        receiverId = ""
-        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
-            if (isChatRoomEnded) {
-                removeMessage(chatRoomId)
-            }
-        }
-        if (currentUserId != null) {
-            updateUserStatus(currentUserId, true)
-        }
-        showMessage("Đang tìm kiếm...")
-        handler.postDelayed(timeoutRunnable, 15000)
-
-        usersRef.get().addOnSuccessListener { snapshot ->
-            val allUsers = snapshot.children.map {
-                it.getValue(User::class.java)!!
-            }
-                .filter { it.ready && it.id != currentUserId }
-
-            if (allUsers.isNotEmpty()) {
-                handler.removeCallbacks(timeoutRunnable)
-                val randomUser = allUsers.random()
-                receiverId = randomUser.id.toString()
-                chatRoomId = currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
-                sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId)
-                currentUserId?.let { updateUserStatus(it, false) }
-            }
+private fun findRandomUserForChat() {
+    chatRoomId = ""
+    receiverId = ""
+    checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+        if (isChatRoomEnded) {
+            removeMessage(chatRoomId)
         }
     }
+    if (currentUserId != null) {
+        updateUserStatus(currentUserId, true)
+    }
+    showMessage("Đang tìm kiếm...")
+    handler.postDelayed(timeoutRunnable, 15000)
+
+    usersRef.get().addOnSuccessListener { snapshot ->
+        val allUsers = snapshot.children.map {
+            it.getValue(User::class.java)!!
+        }
+            .filter { it.ready && it.id != currentUserId }
+
+        if (allUsers.isNotEmpty()) {
+            handler.removeCallbacks(timeoutRunnable)
+            val randomUser = allUsers.random()
+            receiverId = randomUser.id.toString()
+            chatRoomId = currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
+            sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId)
+            currentUserId?.let { updateUserStatus(it, false) }
+        }
+    }
+}
+
 private fun sendInitialMessages(chatRoomId: String, senderId: String, receiverId: String) {
     sendMessage(chatRoomId, "system", senderId, "Bạn đã tham gia chat!!")
     sendMessage(chatRoomId, "system", receiverId, "Bạn đã tham gia chat!!")

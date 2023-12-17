@@ -2,6 +2,7 @@ package com.example.doan_chuyennganh.chat
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.provider.Telephony.Mms.Sent
 import android.text.format.DateFormat
@@ -13,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.doan_chuyennganh.FullImageActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.encryptimport.BlurTransformation
 import com.example.doan_chuyennganh.report.Reports
@@ -119,6 +121,15 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
                             if (isNSFW) {
                                 val blurredBitmap = BlurTransformation(context).transform(copiedBitmap)
                                 holder.ivReceiveMessage.setImageBitmap(blurredBitmap)
+                                holder.ivReceiveMessage.setOnClickListener {
+                                    // Show the original image in full view
+                                    imageUrl?.let { it1 -> showFullImage(it1) }
+                                }
+                            }
+                            else {
+                                holder.ivReceiveMessage.setOnClickListener {
+                                    imageUrl?.let { it1 -> showFullImage(it1) }
+                                }
                             }
                         }
                     }
@@ -147,10 +158,8 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
             is ReceiveViewHolder -> {
                 holder.receiveMessage.text = messageText
 
-                // Set the OnLongClickListener
                 holder.receiveMessage.setOnLongClickListener(object : View.OnLongClickListener {
                     override fun onLongClick(v: View?): Boolean {
-                        // Show options dialog here
                         showOptionsDialog(currentMessage)
                         return true
                     }
@@ -174,6 +183,11 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
         }
     }
 
+    private fun showFullImage(imageUrl: String) {
+        val intent = Intent(context, FullImageActivity::class.java)
+        intent.putExtra("image_url", imageUrl)
+        context.startActivity(intent)
+    }
     private fun showOptionsDialog(currentMessage: Message) {
         val optionsDialog = AlertDialog.Builder(context)
             .setTitle("Message Options")
