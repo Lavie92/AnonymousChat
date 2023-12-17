@@ -12,7 +12,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -49,9 +48,7 @@
         <activity
             android:name=".voice_chat.MainActivity"
             android:exported="false" />
-        <activity
-            android:name=".voice_chat.VoiceChatActivity"
-            android:exported="false" />
+
         <activity
             android:name=".authentication.NotificationActivity"
             android:exported="false" />

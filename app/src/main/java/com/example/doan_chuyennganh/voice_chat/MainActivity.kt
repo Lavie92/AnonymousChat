@@ -25,8 +25,8 @@ class MainActivity : AppCompatActivity() {
     var binding: ActivityMain2Binding? = null
     var auth: FirebaseAuth? = null
     var database: FirebaseDatabase? = null
-    var coins: Long = 500
-    var permissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+    private var coins: Long = 500
+    private var permissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     private val requestCode = 1
     var user: User? = null
 //    var progress: KProgressHUD? = null
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMain2Binding.inflate(layoutInflater)
-        setContentView(binding!!.getRoot())
+        setContentView(binding!!.root)
 //        MobileAds.initialize(this, object : OnInitializationCompleteListener() {
 //            fun onInitializationComplete(initializationStatus: InitializationStatus?) {}
 //        })
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                     user = snapshot.getValue(User::class.java)
                     if (user != null) {
                         val coins = user!!.coins
-                        binding!!.coins.setText(getString(R.string.coins_display, coins))
+                        binding!!.coins.text = getString(R.string.coins_display, coins)
 //                        Glide.with(this@MainActivity)
 //                            .load(user.getProfile())
 //                            .into<Target<Drawable>>(binding!!.profilePicture)
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onCancelled(error: DatabaseError) {}
             })
-        binding!!.findButton.setOnClickListener(View.OnClickListener {
+        binding!!.findButton.setOnClickListener {
             if (isPermissionsGranted()) {
                 database!!.reference.child("users")
                     .child(currentUser.uid)
@@ -84,18 +84,18 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "Insufficient Coins", Toast.LENGTH_SHORT).show()
             }
             askPermissions()
-        })
-        binding!!.rewardBtn.setOnClickListener(View.OnClickListener {
+        }
+        binding!!.rewardBtn.setOnClickListener {
 //            startActivity(
 //                Intent(
 //                    this@MainActivity,
 //                    RewardActivity::class.java
 //                )
 //            )
-        })
+        }
     }
 
-    fun askPermissions() {
+    private fun askPermissions() {
         ActivityCompat.requestPermissions(this, permissions, requestCode)
     }
 

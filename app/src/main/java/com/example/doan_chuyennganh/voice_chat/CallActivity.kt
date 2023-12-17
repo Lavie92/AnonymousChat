@@ -32,15 +32,11 @@ class CallActivity : AppCompatActivity() {
     var auth: FirebaseAuth? = null
     var username: String? = ""
     private var friendsUsername: String? = ""
-
     private var isPeerConnected = false
-
     private var firebaseRef: DatabaseReference? = null
-
     private var isAudio = true
     private var isVideo = true
     private var createdBy: String? = null
-
     private var pageExit = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +51,7 @@ class CallActivity : AppCompatActivity() {
         createdBy = intent.getStringExtra("createdBy")
         friendsUsername = incoming
         setupWebView()
-        binding!!.micBtn.setOnClickListener(View.OnClickListener {
+        binding!!.micBtn.setOnClickListener {
             isAudio = !isAudio
             callJavaScriptFunction("javascript:toggleAudio(\"$isAudio\")")
             if (isAudio) {
@@ -63,8 +59,8 @@ class CallActivity : AppCompatActivity() {
             } else {
                 binding!!.micBtn.setImageResource(R.drawable.btn_mute_normal)
             }
-        })
-        binding!!.videoBtn.setOnClickListener(View.OnClickListener {
+        }
+        binding!!.videoBtn.setOnClickListener {
             isVideo = !isVideo
             callJavaScriptFunction("javascript:toggleVideo(\"$isVideo\")")
             if (isVideo) {
@@ -72,8 +68,8 @@ class CallActivity : AppCompatActivity() {
             } else {
                 binding!!.videoBtn.setImageResource(R.drawable.btn_video_muted)
             }
-        })
-        binding!!.endCall.setOnClickListener(View.OnClickListener { finish() })
+        }
+        binding!!.endCall.setOnClickListener { finish() }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -111,15 +107,16 @@ class CallActivity : AppCompatActivity() {
             binding?.loadingGroup?.visibility = View.GONE
             binding?.controls?.visibility = View.VISIBLE
             FirebaseDatabase.getInstance().reference
-                .child("profiles")
+                .child("users")
                 .child(friendsUsername!!)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val user: User? = snapshot.getValue(User::class.java)
-//                        Glide.with(this@CallActivity).load(user.getProfile())
-//                            .into<Target<Drawable>>(binding?.profile)
-//                        binding?.name.setText(user.getName())
-//                        binding?.city.setText(user.getCity())
+                        if (user != null) {
+                            Glide.with(this@CallActivity).load(user.username)
+
+                        }
+
                     }
 
                     override fun onCancelled(error: DatabaseError) {}
@@ -128,15 +125,16 @@ class CallActivity : AppCompatActivity() {
             Handler().postDelayed({
                 friendsUsername = createdBy
                 FirebaseDatabase.getInstance().reference
-                    .child("profiles")
+                    .child("users")
                     .child(friendsUsername!!)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val user: User? = snapshot.getValue(User::class.java)
-//                            Glide.with(this@CallActivity).load(user.getProfile())
-//                                .into<Target<Drawable>>(binding.profile)
-//                            binding.name.setText(user.getName())
-//                            binding.city.setText(user.getCity())
+                            if (user != null) {
+                                Glide.with(this@CallActivity).load(user.username)
+                            }
+
+//
                         }
 
                         override fun onCancelled(error: DatabaseError) {}
@@ -190,11 +188,11 @@ class CallActivity : AppCompatActivity() {
     }
 
     fun callJavaScriptFunction(function: String?) {
-        binding?.webView?.post(Runnable {
+        binding?.webView?.post {
             if (function != null) {
                 binding?.webView!!.evaluateJavascript(function, null)
             }
-        })
+        }
     }
 
     private fun getUniqueId(): String {
