@@ -6,13 +6,13 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="SERIAL_NUMBER" />
-            <value value="adb-0837525259003190-3mHNXv._adb-tls-connect._tcp" />
+            <type value="VIRTUAL_DEVICE_PATH" />
+            <value value="C:\Users\lavie\.android\avd\Pixel_7.avd" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-12-15T08:14:24.121476Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-12-18T12:55:27.520528300Z" />
     <multipleDevicesSelectedInDropDown value="true" />
     <runningDeviceTargetsSelectedWithDialog>
       <Target>
@@ -29,7 +29,7 @@
         <deviceKey>
           <Key>
             <type value="SERIAL_NUMBER" />
-            <value value="adb-0837525259003190-3mHNXv._adb-tls-connect._tcp" />
+            <value value="adb-0837525259003190-uTGnal._adb-tls-connect._tcp" />
           </Key>
         </deviceKey>
       </Target>

@@ -7,40 +7,32 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.MenuInflater
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
-import com.example.doan_chuyennganh.databinding.ActivityChatBinding
-import com.example.doan_chuyennganh.databinding.ActivityChatNearestBinding
+import com.example.doan_chuyennganh.databinding.ActivityCountryMatchingBinding
 import com.example.doan_chuyennganh.encrypt.EncryptionUtils
 import com.example.doan_chuyennganh.layout.SplashScreenActivity
 import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
 import com.example.doan_chuyennganh.report.Reports
 import com.example.filterbadwodslibrary.filterBadwords
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -52,29 +44,28 @@ import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import java.math.BigDecimal
-import java.math.RoundingMode
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
 import java.util.UUID
-import java.util.concurrent.CompletableFuture
 private const val STORAGE_PATH = "images/"
 
-class ChatNearestActivity : AppCompatActivity() {
+class CountryMatchingActivity : AppCompatActivity() {
 
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
     private lateinit var sendButton: ImageView
     private lateinit var btnRandom: Button
-    private lateinit var binding: ActivityChatNearestBinding
+    private lateinit var binding: ActivityCountryMatchingBinding
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var usersRef: DatabaseReference
-    private lateinit var nearestChatRoomRef: DatabaseReference
+    private lateinit var countryMatchingChatRoomRef: DatabaseReference
     private var chatRoomId: String = ""
     private var messageList: ArrayList<Message>? = null
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     private var receiverId: String = ""
     private val currentUser = FirebaseAuth.getInstance().currentUser
     val badwords = filterBadwords()
-    private lateinit var popupMenu: PopupMenu
     private val handler = Handler()
     private var readyToFind = false
     private var optionsVisible = false
@@ -84,19 +75,17 @@ class ChatNearestActivity : AppCompatActivity() {
     private  lateinit var btnHeart: Button
     private val storageRef: StorageReference = FirebaseStorage.getInstance().reference
 
-    companion object {
-        const val REQUEST_CODE = 1
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityChatNearestBinding.inflate(layoutInflater)
+        binding = ActivityCountryMatchingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
 
         checkSession()
 
-        nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom")
+        countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms")
         usersRef = FirebaseDatabase.getInstance().getReference("users")
+
         messageRecyclerView = binding.rcMessage
         messageBox = binding.messageBox
         sendButton = binding.ivSend
@@ -112,8 +101,9 @@ class ChatNearestActivity : AppCompatActivity() {
         btnShowOptions.setOnClickListener {
             toggleOptions()
         }
-        binding.btnBack.setOnClickListener{
-            val splashIntent = Intent(this@ChatNearestActivity, SplashScreenActivity::class.java)
+        val btnBack = binding.btnBack
+        btnBack.setOnClickListener{
+            val splashIntent = Intent(this, SplashScreenActivity::class.java)
             splashIntent.putExtra("source_activity", "toMain")
             startActivity(splashIntent)        }
         checkChatRoomId()
@@ -127,33 +117,21 @@ class ChatNearestActivity : AppCompatActivity() {
 
             }
         }
-        btnSendImage = binding.ivSendImage
-        btnRandom.setOnClickListener{
-            readyToFind = true
-            toggleFind()
-            findNearestUserForChat()
-        }
-        //
-
-        btnEndChat.setOnClickListener {
-
-            endChat(chatRoomId) { success ->
-                if (success) {
-                    readyToFind = false
-                    toggleFind()
-                } else {
-                    // Handle the case where ending the chat was not successful
-                    Log.e("EndChat", "Failed to end chat.")
-                }
-            }
-        }
-
+//        getCountrySelected()
         sendButton.setOnClickListener {
             val messageText = messageBox.text.toString().trim()
             if (messageText.isNotEmpty() && currentUserId != null && chatRoomId.isNotEmpty()) {
                 sendMessage(chatRoomId, currentUserId, receiverId, messageText)
                 messageBox.text.clear()
             }
+        }
+
+        btnSendImage = binding.ivSendImage
+
+        btnRandom.setOnClickListener{
+            readyToFind = true
+            toggleFind()
+            findInternationalUser()
         }
         btnHeart.setOnClickListener{
             sendMessage(chatRoomId, "system", currentUserId.toString(), "Bạn đã nhấn yêu thích, nếu đối phương đồng ý thì bạn sẽ chia sẻ thông tin (tuổi, giới tính, username)")
@@ -163,7 +141,17 @@ class ChatNearestActivity : AppCompatActivity() {
         btnSendImage.setOnClickListener {
             showImagePickerDialog()
         }
+        btnEndChat.setOnClickListener {
+
+            endChat(chatRoomId) { success ->
+                if (success) {
+                    readyToFind = false
+                    toggleFind()
+                }
+            }
+        }
     }
+
 
     private fun showImagePickerDialog() {
         val intent = Intent()
@@ -186,7 +174,7 @@ class ChatNearestActivity : AppCompatActivity() {
         val imageRef = storageRef.child("$STORAGE_PATH$imageName.jpg")
 
         imageRef.putFile(imageUri)
-            .addOnSuccessListener { taskSnapshot ->
+            .addOnSuccessListener {
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageUrl = uri.toString()
                     handleImageUploadSuccess(imageUrl)
@@ -205,15 +193,16 @@ class ChatNearestActivity : AppCompatActivity() {
         val type = "image"
         val message =
             Message(messageId, currentUserId.toString(), receiverId, encryptedMessage, type, encryptedKey, timestamp)
-        nearestChatRoomRef.child(chatRoomId).child("messages")
+        countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms")
+        countryMatchingChatRoomRef.child(chatRoomId).child("messages")
             .push().setValue(message)
         Toast.makeText(this, "Ảnh đã được gửi", Toast.LENGTH_SHORT).show()
     }
 
     private fun shareMoreInformation() {
-        if (!chatRoomId.isNullOrEmpty()) {
-            val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
-            val heartRef = chatRoomRef.child("heart")
+        if (chatRoomId.isNotEmpty()) {
+            val countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
+            val heartRef = countryMatchingChatRoomRef.child("heart")
             heartRef.child(currentUserId!!).setValue(true)
             heartRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -226,7 +215,6 @@ class ChatNearestActivity : AppCompatActivity() {
                     }
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
-                    Log.e("shareMoreInformation", "Error: ${databaseError.message}")
                 }
             })
         }
@@ -243,7 +231,6 @@ class ChatNearestActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.e("shareUserInfo", "Error: ${databaseError.message}")
             }
         })
     }
@@ -263,7 +250,6 @@ class ChatNearestActivity : AppCompatActivity() {
             }
 
             override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
-                Log.d("updatePoints", "Points updated: $databaseError")
             }
         })
     }
@@ -279,7 +265,6 @@ class ChatNearestActivity : AppCompatActivity() {
             binding.btnRandom.visibility = View.VISIBLE
             checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
                 if (!isChatRoomchatting) {
-                    // If chatting, hide the "Tìm" button
                     binding.btnRandom.visibility = View.GONE
                 }
             }
@@ -311,118 +296,160 @@ class ChatNearestActivity : AppCompatActivity() {
             btnRandom.visibility = View.VISIBLE
             btnEndChat.visibility = View.VISIBLE
             checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
-                if (!isChatRoomchatting) {
+                if (isChatRoomchatting) {
+                    btnEndChat.startAnimation(slideDown)
+                    btnHeart.startAnimation(slideDown)
+                    btnHeart.visibility = View.GONE
+                    btnEndChat.visibility = View.GONE
+                    btnRandom.startAnimation(slideDown)
+                    btnRandom.visibility = View.GONE
+                    btnSendImage.startAnimation(slideDown)
+                    btnSendImage.visibility = View.GONE
                 }
             }
-        } else {
-            btnEndChat.startAnimation(slideDown)
-            btnHeart.startAnimation(slideDown)
-            btnHeart.visibility = View.GONE
-            btnEndChat.visibility = View.GONE
-            btnRandom.startAnimation(slideDown)
-            btnRandom.visibility = View.GONE
-            btnSendImage.startAnimation(slideDown)
-            btnSendImage.visibility = View.GONE
         }
         optionsVisible = !optionsVisible
     }
 
+    private class FetchCountryNameTask : AsyncTask<Double, Void, String?>() {
+
+        override fun doInBackground(vararg params: Double?): String? {
+            val latitude = params[0]
+            val longitude = params[1]
+
+            val url =
+                "https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude"
+
+            val request = Request.Builder().url(url).build()
+
+            try {
+                val response = OkHttpClient().newCall(request).execute()
+
+                if (response.isSuccessful) {
+                    val responseData = response.body?.string()
+                    val json = JSONObject(responseData)
+                    return json.getJSONObject("address").getString("country_code")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+    }
+
+
+
     private val timeoutRunnable = Runnable {
-        isFindByLocation(currentUserId.toString(), false)
+        isCountryMatching(currentUserId.toString(), false)
         Toast.makeText(this, "No user found. Please try again.", Toast.LENGTH_SHORT).show()
     }
-    private fun findNearestUserForChat() {
+
+
+    private fun findInternationalUser() {
         chatRoomId = ""
         receiverId = ""
         checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
             if (isChatRoomEnded) {
                 removeMessage(chatRoomId)
-            } else {
-                Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
             }
         }
+
         if (currentUserId != null) {
-            isFindByLocation(currentUserId, true)
+            isCountryMatching(currentUserId, true)
         }
+
         showMessage("Đang tìm kiếm...")
-        //set timeout
+        // Set timeout
         handler.postDelayed(timeoutRunnable, 30000)
 
-        var distanceUser = 0.0
         usersRef.get().addOnSuccessListener { snapshot ->
-            setCurrentUserLocation()!!
+            setCurrentUserLocation()
+
             getCurrentUserLocationFromFirebase { currentUserLocation ->
                 if (currentUserLocation != null) {
-                    val allUsers = snapshot.children.mapNotNull {
-                        try {
-                            val user = it.getValue(User::class.java)!!
-                            user.isFindByLocation = it.child("isFindByLocation").getValue(Boolean::class.java) ?: false
-                            user
-                        } catch (e: Exception) {
-                            Log.e("FirebaseError", "Error converting to User object", e)
-                            null
-                        }
-                    }.filter { it.isFindByLocation && it.id != currentUserId }
+                    val fetchCountryNameTask = FetchCountryNameTask()
+                    val lat = currentUserLocation.latitude
+                    val lon = currentUserLocation.longitude
 
-                    var nearestUser: User? = null
-                    for (user in allUsers) {
-                        val userLocation = user.location
-                        if (userLocation != null) {
-                            val distance = calculateDistance(
-                                currentUserLocation.latitude,
-                                currentUserLocation.longitude,
-                                userLocation.latitude,
-                                userLocation.longitude
-                            )
-                            if (distance >= 0) {
-                                nearestUser = user
-                                distanceUser = BigDecimal(distance).setScale(2, RoundingMode.HALF_EVEN).toDouble()
-                            }
-                        }
-                    }
+                    fetchCountryNameTask.execute(lat, lon)
+                    val currentCountry: String? = fetchCountryNameTask.get()
 
-                    if (nearestUser != null) {
-                        handler.removeCallbacks(timeoutRunnable)
-                        val nearestUserLocation = nearestUser.location
-                        if (nearestUserLocation != null) {
-                            receiverId = nearestUser.id.toString()
-
-                            chatRoomId = currentUser?.toUser()?.let {
-                                createChatRoom(
-                                    it,
-                                    nearestUser
-                                )
-                            }.toString()
-                            sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId, distanceUser )
-                            currentUserId?.let { isFindByLocation(it, false) }
-                            receiverId?.let { isFindByLocation(it, false) }
-                        } else {
-                            Toast.makeText(this, "Không thể lấy vị trí của người dùng gần nhất.", Toast.LENGTH_SHORT).show()
-                        }
+                    if (currentCountry != null) {
+                        usersRef.child(currentUserId.toString()).child("Country").setValue(currentCountry)
                     } else {
+                        showMessage("Bạn không thể lấy được vị trí")
                     }
+                    val matchingUsers = mutableListOf<User>()
 
-                } else {
-                    Log.e("UserLocation", "Failed to get user location from Firebase.")
+                    for (userSnapshot in snapshot.children) {
+                        try {
+                            val user = userSnapshot.getValue(User::class.java)!!
+
+                            user.id?.let { userId ->
+                                getCountryFromFirebase(userId) { country ->
+                                    if (country != currentCountry) {
+                                        user.isCountryMatching =
+                                            userSnapshot.child("isCountryMatching")
+                                                .getValue(Boolean::class.java) ?: false
+                                        if (user.isCountryMatching) {
+                                            matchingUsers.add(user)
+                                            val countryMatchingUser = matchingUsers.random()
+                                            receiverId = countryMatchingUser.id.toString()
+                                            currentUser?.toUser(currentUserLocation)
+                                                ?.let { createChatRoom(it, countryMatchingUser) }
+                                            country?.let {
+                                                currentCountry?.let { it1 ->
+                                                    sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId,
+                                                        it,
+                                                        it1
+                                                    )
+                                                }
+                                                isCountryMatching(currentUserId.toString(), false)
+                                                isCountryMatching(receiverId, false)
+                                            }
+                                            handler.removeCallbacks(timeoutRunnable)
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                        }
+                    }
                 }
             }
         }
     }
-    private fun sendInitialMessages(chatRoomId: String, senderId: String, receiverId: String, distanceUser: Double) {
-        sendMessage(chatRoomId, "system", senderId, "người dùng gần nhất đã tham gia chat với khoảng cách ${distanceUser} km")
-        sendMessage(chatRoomId, "system", receiverId, "người dùng gần nhất đã tham gia chat với khoảng cách ${distanceUser} km")
+    private fun sendInitialMessages(chatRoomId: String, senderId: String, receiverId: String, user1Country: String, user2Country: String) {
+        sendMessage(chatRoomId, "system", senderId, "người dùng ở $user1Country đã tham gia chat")
+        sendMessage(chatRoomId, "system", receiverId, "người dùng ở $user2Country đã tham gia chat")
     }
+
+    private fun getCountryFromFirebase(userId: String, callback: (String?) -> Unit) {
+        val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val country = snapshot.child("Country").getValue(String::class.java)
+                callback(country)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback(null)
+            }
+        })
+    }
+
+
     private fun getCurrentUserLocationFromFirebase(callback: (MyLocation?) -> Unit) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUserId != null) {
-            usersRef.child(currentUserId).addListenerForSingleValueEvent(object : ValueEventListener {
+            usersRef.child(currentUserId).addListenerForSingleValueEvent(object :
+                ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val currentUserLocation = snapshot.child("location").getValue(MyLocation::class.java)
                     callback(currentUserLocation)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("getCurrentUserLocationFromFirebase", "Error getting user location: ${error.message}")
                     callback(null)
                 }
             })
@@ -431,58 +458,34 @@ class ChatNearestActivity : AppCompatActivity() {
         }
     }
 
-    private fun calculateDistance(
-        lat1: Double,
-        lon1: Double,
-        lat2: Double,
-        lon2: Double
-    ): Double {
-        val R = 6371 // Radius of the earth in km
-        val dLat = deg2rad(lat2 - lat1)  // deg2rad below
-        val dLon = deg2rad(lon2 - lon1)
-        val a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        val distance = R * c
-        return distance
-    }
 
-    private fun deg2rad(deg: Double): Double {
-        return deg * (Math.PI / 180)
-    }
-
-    //    private fun updateUserStatus(userId: String, ready: Boolean) {
-//        val userRef = usersRef.child(userId)
-//        userRef.child("ready").setValue(ready)
-//    }
-    private fun isFindByLocation(userId: String, isFindByLocation: Boolean) {
+    private fun isCountryMatching(userId: String, isCountryMatching: Boolean) {
         val userRef = usersRef.child(userId)
-        userRef.child("isFindByLocation").setValue(isFindByLocation)
+        userRef.child("isCountryMatching").setValue(isCountryMatching)
     }
 
 
     private fun createChatRoom(user1: User, user2: User): String {
         chatRoomId = UUID.randomUUID().toString()
-        user1.nearestChatRoom = chatRoomId
-        user2.nearestChatRoom = chatRoomId
-        nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
-        nearestChatRoomRef.child("user1Id").setValue(user1.id)
-        nearestChatRoomRef.child("user2Id").setValue(user2.id)
-        nearestChatRoomRef.child("status").setValue("chatting")
+        user1.countryMatchingRoom = chatRoomId
+        user2.countryMatchingRoom = chatRoomId
+
+        countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms").child(chatRoomId)
+        countryMatchingChatRoomRef.child("user1Id").setValue(user1.id)
+        countryMatchingChatRoomRef.child("user2Id").setValue(user2.id)
+        countryMatchingChatRoomRef.child("status").setValue("chatting")
 
         val user1Reference = user1.id?.let { usersRef.child(it) }
-        user1Reference?.child("nearestChatRoom")?.setValue(chatRoomId)
+        user1Reference?.child("countryMatchingRoom")?.setValue(chatRoomId)
 
         val user2Reference = user2.id?.let { usersRef.child(it) }
-        user2Reference?.child("nearestChatRoom")?.setValue(chatRoomId)
+        user2Reference?.child("countryMatchingRoom")?.setValue(chatRoomId)
         return chatRoomId
     }
 
-    private fun setCurrentUserLocation(): MyLocation? {
+    private fun setCurrentUserLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        var userLocation = MyLocation()
+        var userLocation: MyLocation
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED
         ) {
@@ -499,7 +502,6 @@ class ChatNearestActivity : AppCompatActivity() {
                 1
             )
         }
-        return userLocation
     }
 
 
@@ -514,10 +516,10 @@ class ChatNearestActivity : AppCompatActivity() {
 
     private fun loadMessages(chatRoomId: String) {
         var filter : Boolean
-        val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom")
-        val messagesRef = nearestChatRoomRef.child(chatRoomId).child("messages")
+        countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms")
+        val messagesRef = countryMatchingChatRoomRef.child(chatRoomId).child("messages")
         if(currentUserId != null) {
-            usersRef.child(currentUserId!!).get().addOnSuccessListener {
+            usersRef.child(currentUserId).get().addOnSuccessListener { it ->
                 filter = it.child("filter").value as Boolean
                 messagesRef.addValueEventListener(object : ValueEventListener {
                     @SuppressLint("NotifyDataSetChanged")
@@ -566,7 +568,7 @@ class ChatNearestActivity : AppCompatActivity() {
                         }
 
                         messageList?.clear()
-                        newMessages.let { messageList?.addAll(it) }
+                        newMessages.let {messageList?.addAll(it) }
 
                         messageAdapter.notifyDataSetChanged()
                         messageRecyclerView.scrollToPosition(messageList!!.size - 1)
@@ -580,13 +582,13 @@ class ChatNearestActivity : AppCompatActivity() {
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Log.e("loadMessages", "Error loading messages: ${error.message}")
                     }
                 })
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(message: String) {
         val systemMessage = Message(
             UUID.randomUUID().toString(),
@@ -624,11 +626,10 @@ class ChatNearestActivity : AppCompatActivity() {
                 val timestamp = System.currentTimeMillis()
                 val messageId = UUID.randomUUID().toString()
                 val message = Message(messageId, senderId, receiverId, encryptedMessage, "text",  encryptedKey, timestamp)
-                nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
-                nearestChatRoomRef.child("messages").push().setValue(message)
+                countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms").child(chatRoomId)
+                countryMatchingChatRoomRef.child("messages").push().setValue(message)
             } else {
                 Toast.makeText(this, "Bạn cần tìm người chat trước!", Toast.LENGTH_SHORT).show()
-                Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
             }
         }
     }
@@ -636,14 +637,15 @@ class ChatNearestActivity : AppCompatActivity() {
 
     private fun checkChatRoomStatus(chatRoomId: String, callback: (Boolean) -> Unit) {
         if (chatRoomId.isNotEmpty()) {
-            val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
-            nearestChatRoomRef.child("status").addListenerForSingleValueEvent(object : ValueEventListener {
+            val countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms").child(chatRoomId)
+            countryMatchingChatRoomRef.child("status").addListenerForSingleValueEvent(object :
+                ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val status = snapshot.getValue(String::class.java)
                     callback.invoke(status == "ended")
                 }
+
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("CheckChatRoomStatus", "Error checking ChatRoom status: ${error.message}")
                     callback.invoke(false)
                 }
             })
@@ -653,45 +655,36 @@ class ChatNearestActivity : AppCompatActivity() {
     private fun checkChatRoomId() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         val usersRef = FirebaseDatabase.getInstance().getReference("users")
-        var chatRoomValue = ""
+        var chatRoomValue: String
         if (currentUserId != null) {
             val userRef = usersRef.child(currentUserId)
 
-            userRef.child("nearestChatRoom").addValueEventListener(object : ValueEventListener {
+            userRef.child("countryMatchingRoom").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatRoomValue = snapshot.getValue(String::class.java).toString()
-                    if (chatRoomValue != null) {
-                        checkUsersInChatRoom(chatRoomValue)
-                        chatRoomId = chatRoomValue
-                        loadMessages(chatRoomId)
-                        Log.d("ChatRoomValue", "Chat Room: $chatRoomValue")
-                    } else {
-                        Log.d("ChatRoomValue", "Chat Room is null")
-                    }
+                    checkUsersInChatRoom(chatRoomValue)
+                    chatRoomId = chatRoomValue
+                    loadMessages(chatRoomId)
                 }
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("ChatRoomValue", "Error getting chatRoom value: ${error.message}")
                 }
             })
         }
     }
 
     private fun checkUsersInChatRoom(chatRoomId: String) {
-        val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
+        val countryMatchingcountryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms").child(chatRoomId)
 
-        nearestChatRoomRef.addValueEventListener(object : ValueEventListener {
+        countryMatchingcountryMatchingChatRoomRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user1Id = snapshot.child("user1Id").getValue(String::class.java)
                 val user2Id = snapshot.child("user2Id").getValue(String::class.java)
                 if (user1Id != "" && user2Id != "" && !user1Id.isNullOrEmpty() && !user2Id.isNullOrEmpty())
-                    receiverId = if (user1Id == currentUserId) user2Id ?: "" else user1Id ?: ""
+                    receiverId = if (user1Id == currentUserId) user2Id else user1Id
 
-
-                Log.d("receiver", "User2Id: $receiverId")
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("UsersInChatRoom", "Error checking users in chatRoom: ${error.message}")
             }
         })
     }
@@ -709,9 +702,9 @@ class ChatNearestActivity : AppCompatActivity() {
             receiverId,
             "Cuộc trò chuyện đã kết thúc!"
         )
-        if (!chatRoomId.isNullOrEmpty()) {
-            val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
-            nearestChatRoomRef.child("status").setValue("ended")
+        if (chatRoomId.isNotEmpty()) {
+            val countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms").child(chatRoomId)
+            countryMatchingChatRoomRef.child("status").setValue("ended")
                 .addOnCompleteListener { task ->
                     callback.invoke(task.isSuccessful)
                 }
@@ -719,14 +712,13 @@ class ChatNearestActivity : AppCompatActivity() {
     }
 
     private fun removeMessage(chatRoomId: String) {
-        val nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom").child(chatRoomId)
-        nearestChatRoomRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        val countryMatchingChatRoomRef = FirebaseDatabase.getInstance().getReference("CountryMatchingRooms").child(chatRoomId)
+        countryMatchingChatRoomRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                usersRef.child(currentUserId.toString()).child("nearestChatRoom").setValue("")
+                usersRef.child(currentUserId.toString()).child("CountryMatchingRoom").setValue("")
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("EndChat", "Error getting chatRoom info: ${error.message}")
             }
         })
     }
@@ -735,11 +727,6 @@ class ChatNearestActivity : AppCompatActivity() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         val receiverUserId = currentUserId
         val senderUserId = message.senderId
-
-        Log.d("reportMessage", "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId")
-
-
-        // Extract only the necessary properties from the Message object
         val messageMap = mapOf(
             "timestamp" to message.timestamp,
             "content" to message.content
@@ -757,7 +744,6 @@ class ChatNearestActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Error adding report: ${it.message}", Toast.LENGTH_SHORT).show()
-                Log.e("reportMessage", "Error adding report: ${it.message}")
             }
     }
     private fun getSessionId(): String? {
@@ -813,5 +799,4 @@ class ChatNearestActivity : AppCompatActivity() {
         // Kết thúc Activity hiện tại
         finish()
     }
-
 }

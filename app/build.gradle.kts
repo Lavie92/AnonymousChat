@@ -49,11 +49,24 @@ android {
 }
 
 dependencies {
+
+    //Identify sensitive image
     implementation("com.google.firebase:firebase-ml-vision:24.1.0")
     implementation ("com.google.android.gms:play-services-vision:20.1.3")
     implementation("com.google.firebase:firebase-ml-vision-automl:18.0.6")
     implementation("com.google.firebase:firebase-ml-model-interpreter:22.0.4")
     implementation ("com.github.nipunru:nsfw-detector-android:1.0.0")
+
+    //use get location from lat and lon
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
+    //get all country in the world
+    implementation ("com.hbb20:ccp:2.5.2")
+
+    //MyMemory
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
 
     implementation ("com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+")
     implementation ("com.github.ZEGOCLOUD:zego_uikit_signaling_plugin_android:+")
