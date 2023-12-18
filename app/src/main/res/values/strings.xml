@@ -41,6 +41,6 @@
 
     <string name="greeting">Tớ chào cậu!</string>
 
-
+    <string name="coins_display">You have: %1$d</string>
 </resources>
 
