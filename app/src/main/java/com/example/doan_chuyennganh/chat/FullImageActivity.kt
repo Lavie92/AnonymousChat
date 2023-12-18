@@ -1,8 +1,9 @@
-package com.example.doan_chuyennganh
+package com.example.doan_chuyennganh.chat
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
+import com.example.doan_chuyennganh.R
 import com.squareup.picasso.Picasso
 
 class FullImageActivity : AppCompatActivity() {

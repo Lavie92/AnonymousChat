@@ -11,8 +11,11 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -28,21 +31,16 @@
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
         <activity
-            android:name=".voice_chat.CallActivity"
+            android:name=".chat.CountryMatchingActivity"
             android:exported="false" />
         <activity
-            android:name=".voice_chat.ConnectingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".voice_chat.WelcomeActivity"
-            android:exported="false" >
-    \
-        </activity>
-        <activity
-            android:name=".FullImageActivity"
+            android:name=".chat.FullImageActivity"
             android:exported="false" />
         <activity
             android:name=".voice_chat.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".voice_chat.VoiceChatActivity"
             android:exported="false" />
 
         <activity

@@ -61,6 +61,11 @@ class MainActivity : AppCompatActivity() {
             splashIntent.putExtra("source_activity", "toChatAI")
             startActivity(splashIntent)
         }
+        binding.layoutCountryMatch.setOnClickListener{
+            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toCountryMatch")
+            startActivity(splashIntent)
+        }
 
 
 

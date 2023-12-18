@@ -84,6 +84,17 @@ dependencies {
     implementation("androidx.databinding:databinding-runtime:8.2.0")
     implementation (platform("com.google.firebase:firebase-bom:30.3.0"))
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
+
+    //use get location from lat and lon
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
+    //get all country in the world
+    implementation ("com.hbb20:ccp:2.5.2")
+
+    //MyMemory
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
     testImplementation("junit:junit:4.13.2")
     implementation ("com.google.firebase:firebase-analytics")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

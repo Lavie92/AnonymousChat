@@ -13,6 +13,7 @@ import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.BannedActivity
 import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.chat.ChatNearestActivity
+import com.example.doan_chuyennganh.chat.CountryMatchingActivity
 import com.example.doan_chuyennganh.chatAI.ChatbotActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -71,6 +72,11 @@ class SplashScreenActivity : AppCompatActivity() {
                 } else if (sourceActivity != null && sourceActivity == "toChatNearest") {
 
                     val chatIntent = Intent(this@SplashScreenActivity, ChatNearestActivity::class.java)
+                    startActivity(chatIntent)
+                    finish()
+                }else if (sourceActivity != null && sourceActivity == "toCountryMatch") {
+
+                    val chatIntent = Intent(this@SplashScreenActivity, CountryMatchingActivity::class.java)
                     startActivity(chatIntent)
                     finish()
                 }
