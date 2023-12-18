@@ -39,9 +39,9 @@
         <activity
             android:name=".voice_chat.MainActivity"
             android:exported="false" />
-        <activity
-            android:name=".voice_chat.VoiceChatActivity"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".voice_chat.VoiceChatActivity"-->
+<!--            android:exported="false" />-->
 
         <activity
             android:name=".authentication.NotificationActivity"
