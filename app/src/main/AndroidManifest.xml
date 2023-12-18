@@ -15,10 +15,10 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
-    <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -37,11 +37,14 @@
             android:name=".chat.FullImageActivity"
             android:exported="false" />
         <activity
-            android:name=".voice_chat.MainActivity"
+            android:name=".voice_chat.VoiceChatActivity"
             android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".voice_chat.VoiceChatActivity"-->
-<!--            android:exported="false" />-->
+        <activity
+            android:name=".voice_chat.ConnectingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".voice_chat.CallActivity"
+            android:exported="false" />
 
         <activity
             android:name=".authentication.NotificationActivity"

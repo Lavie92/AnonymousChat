@@ -1,7 +1,6 @@
 package com.example.doan_chuyennganh.chat
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -21,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.R
+import com.example.doan_chuyennganh.adapter.MessageAdapter
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
 import com.example.doan_chuyennganh.databinding.ActivityChatBinding

@@ -1,4 +1,4 @@
-package com.example.doan_chuyennganh.chat
+package com.example.doan_chuyennganh.adapter
 
 import android.app.AlertDialog
 import android.content.Context
@@ -12,8 +12,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.doan_chuyennganh.myMemory.ResponseData
 import com.example.doan_chuyennganh.R
+import com.example.doan_chuyennganh.chat.ChatActivity
+import com.example.doan_chuyennganh.chat.ChatNearestActivity
+import com.example.doan_chuyennganh.chat.FullImageActivity
+import com.example.doan_chuyennganh.chat.Message
 import com.example.doan_chuyennganh.encryptimport.BlurTransformation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

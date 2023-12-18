@@ -10,10 +10,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.MenuInflater
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.Button
@@ -22,15 +19,13 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.R
+import com.example.doan_chuyennganh.adapter.MessageAdapter
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.authentication.toUser
-import com.example.doan_chuyennganh.databinding.ActivityChatBinding
 import com.example.doan_chuyennganh.databinding.ActivityChatNearestBinding
 import com.example.doan_chuyennganh.encrypt.EncryptionUtils
 import com.example.doan_chuyennganh.layout.SplashScreenActivity
@@ -38,9 +33,7 @@ import com.example.doan_chuyennganh.location.MyLocation
 import com.example.doan_chuyennganh.notification.NotificationService
 import com.example.doan_chuyennganh.report.Reports
 import com.example.filterbadwodslibrary.filterBadwords
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -55,7 +48,7 @@ import com.google.firebase.storage.StorageReference
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.UUID
-import java.util.concurrent.CompletableFuture
+
 private const val STORAGE_PATH = "images/"
 
 class ChatNearestActivity : AppCompatActivity() {

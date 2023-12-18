@@ -9,7 +9,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.doan_chuyennganh.chatAI.MessageAdapter
+import com.example.doan_chuyennganh.adapter.AIChatAdapter
 import com.example.doan_chuyennganh.databinding.ActivityChatbotBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -30,7 +30,7 @@ class ChatbotActivity : AppCompatActivity() {
     lateinit var messageEditText:EditText
     lateinit var sendButton:ImageButton
     lateinit var messageList:MutableList<Message>
-    lateinit var messageAdapter: MessageAdapter
+    lateinit var AIChatAdapter: AIChatAdapter
     val client =  OkHttpClient.Builder().readTimeout(120, TimeUnit.SECONDS).build();
 
 
@@ -45,8 +45,8 @@ class ChatbotActivity : AppCompatActivity() {
         welcomeText = binding.welcomeText
         messageEditText = binding.messageEditText
         sendButton = binding.sendBt
-        messageAdapter = MessageAdapter(messageList)
-        recyclerView.adapter = messageAdapter
+        AIChatAdapter = AIChatAdapter(messageList)
+        recyclerView.adapter = AIChatAdapter
         val layoutManger = LinearLayoutManager(this)
         layoutManger.stackFromEnd = true
         recyclerView.layoutManager = layoutManger
@@ -63,8 +63,8 @@ class ChatbotActivity : AppCompatActivity() {
     private fun addToChat(message: String, sentBy: String) {
         runOnUiThread{
             messageList.add(Message(message,sentBy))
-            messageAdapter.notifyDataSetChanged()
-            recyclerView.smoothScrollToPosition(messageAdapter.itemCount)
+            AIChatAdapter.notifyDataSetChanged()
+            recyclerView.smoothScrollToPosition(AIChatAdapter.itemCount)
         }
 
     }
