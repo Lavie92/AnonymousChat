@@ -28,8 +28,16 @@
         android:text="Game not started"
         android:letterSpacing="0.04"
         android:textColor="#009688"/>
-
-
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/score_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Score: 0 - 0"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"/>
     <GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,21 +112,31 @@
 
 
     </GridLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_margin="20dp"
-        android:text="Start game"
-        android:id="@+id/start_game_btn"/>
+        android:orientation="horizontal">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:text="Start game"
+            android:id="@+id/start_game_btn"
+            android:layout_weight="1" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:text="END GAME"
+            android:id="@+id/end_game_btn"
+            android:layout_weight="1" />
 
-
-
-
-
+    </LinearLayout>
 
 
 </LinearLayout>
