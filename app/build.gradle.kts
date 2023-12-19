@@ -1,3 +1,5 @@
+import java.util.regex.Pattern.compile
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -94,14 +96,20 @@ dependencies {
     //MyMemory
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(fileTree(mapOf(
+        "dir" to "lib",
+        "include" to listOf("*.aar", "*.jar")
+    )))
 
     testImplementation("junit:junit:4.13.2")
     implementation ("com.google.firebase:firebase-analytics")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation ("com.google.android.material:material:1.9.0")
-
+    implementation("commons-codec:commons-codec:1.14")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.paypal.checkout:android-sdk:1.2.0")
+
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 
 }

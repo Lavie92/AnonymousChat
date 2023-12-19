@@ -42,5 +42,14 @@
     <string name="greeting">Tớ chào cậu!</string>
 
     <string name="coins_display">You have: %1$d</string>
+
+    <string name="lbl_sotien">Số Tiền</string>
+    <string name="lbl_donhang">DEMO</string>
+    <string name="btn_create_order">Tạo Đơn Hàng</string>
+    <string name="txt_amount_init">1000</string>
+    <string name="txt_amount_hint">1000</string>
+    <string name="btn_pay">Thanh Toán</string>
+    <string name="lbl_zptranstoken">zptranstoken</string>
+    <string name="to_webview">To WebView</string>
 </resources>
 
