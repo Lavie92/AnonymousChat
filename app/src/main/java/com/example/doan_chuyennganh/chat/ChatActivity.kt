@@ -142,12 +142,14 @@ class ChatActivity : AppCompatActivity() {
             }
         }
         ivSendImage.setOnClickListener {
-
+//            val imageUris: List<Uri> = getImageUrisFromDevice(this)
+//            showImagePicker(this, imageUris)
             showImagePickerDialog()
         }
 
 
     }
+
 
     private fun showImagePickerDialog() {
         val intent = Intent()
