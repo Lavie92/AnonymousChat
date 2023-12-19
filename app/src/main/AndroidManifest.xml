@@ -35,12 +35,12 @@
             android:exported="false" />
         <activity
             android:name=".voice_chat.WelcomeActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false" >
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".FullImageActivity"
@@ -88,19 +88,22 @@
             android:name=".authentication.ForgotPassActivity"
             android:exported="false" />
         <activity
+            android:name=".tictactoe.GameActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" /> <!-- <activity -->
         <!-- android:name=".chat.ChatActivity" -->
         <!-- android:exported="false"/> -->
         <!-- </activity> -->
         <activity
-            android:name=".layout.StartActivity"
-            android:exported="false">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            android:name=".tictactoe.TictactoeActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data
