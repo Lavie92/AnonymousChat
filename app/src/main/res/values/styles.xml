@@ -13,4 +13,8 @@
 		<item name="android:progressDrawable">@drawable/circle</item>
 	</style>
 
+	<style name="CustomProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
+		<!-- Định nghĩa các thuộc tính tùy chỉnh ở đây -->
+		<item name="android:progressDrawable">@drawable/custom_progress_bar</item>
+	</style>
 </resources>

@@ -1,6 +1,5 @@
 package com.example.doan_chuyennganh
 
-import android.R
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -16,24 +15,19 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import com.example.doan_chuyennganh.achievement.AchievementsActivity
 import com.example.doan_chuyennganh.active.SharedPreferencesManager
 import com.example.doan_chuyennganh.authentication.NotificationActivity
 import com.example.doan_chuyennganh.authentication.SettingActivity
 import com.example.doan_chuyennganh.databinding.ActivityProfileBinding
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.userProfileChangeRequest
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.text.ParseException
@@ -66,7 +60,7 @@ class ProfileActivity : AppCompatActivity() {
         databaseReferences = FirebaseDatabase.getInstance().getReference("users")
 
         sharedPreferencesManager = SharedPreferencesManager(this)
-        checkSession()
+        //checkSession()
         binding.btnBack.setOnClickListener{
             onBackPressed()
         }
@@ -116,6 +110,9 @@ class ProfileActivity : AppCompatActivity() {
         binding.btnNoti.setOnClickListener{
             startActivity(Intent(this, NotificationActivity::class.java))
 
+        }
+        binding.btnAchie.setOnClickListener{
+            startActivity(Intent(this, AchievementsActivity::class.java))
         }
 
             binding.btnSave.setOnClickListener{
@@ -585,26 +582,26 @@ class ProfileActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
         return sharedPref.getString("sessionID2", null)
     }
-    private fun checkSession() {
-        val sessionId = getSessionId()
-        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
-        val user = auth.currentUser
-        user?.let {
-            databaseReferences.child(it.uid).child("session")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val currentSessionID = snapshot.value as String?
-                        if(sessionId != currentSessionID){
-                            showCheckSession()
-                        }
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // Handle error
-                    }
-                })
-        }
-    }
+//    private fun checkSession() {
+//        val sessionId = getSessionId()
+//        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
+//        val user = auth.currentUser
+//        user?.let {
+//            databaseReferences.child(it.uid).child("session")
+//                .addListenerForSingleValueEvent(object : ValueEventListener {
+//                    override fun onDataChange(snapshot: DataSnapshot) {
+//                        val currentSessionID = snapshot.value as String?
+//                        if(sessionId != currentSessionID){
+//                            showCheckSession()
+//                        }
+//                    }
+//
+//                    override fun onCancelled(databaseError: DatabaseError) {
+//                        // Handle error
+//                    }
+//                })
+//        }
+//    }
     private fun showCheckSession() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Thông báo!")

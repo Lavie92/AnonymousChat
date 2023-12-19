@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
+import com.example.doan_chuyennganh.exchanges.PaymentsActivity
 import com.example.doan_chuyennganh.layout.SplashScreenActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -76,7 +77,22 @@ class MainActivity : AppCompatActivity() {
 
         this.auth = FirebaseAuth.getInstance()
 
+        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
+        databaseReferences.child(auth.currentUser!!.uid).get().addOnSuccessListener {
+            if(it.exists()){
+                val userCoins = it.child("coins").value
+                binding.txtCoins.text = userCoins.toString()
 
+            }else{
+                Toast.makeText(this,"Error!",Toast.LENGTH_SHORT).show()
+
+            }
+
+        }
+
+        binding.paymentBox.setOnClickListener{
+            startActivity(Intent(this@MainActivity, PaymentsActivity::class.java))
+        }
         //Load Screen to check Active
         checkSession()
         checkActive()
