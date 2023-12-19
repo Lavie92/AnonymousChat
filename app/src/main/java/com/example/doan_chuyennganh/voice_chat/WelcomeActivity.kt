@@ -21,7 +21,7 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     fun goToNextActivity() {
-        startActivity(Intent(this@WelcomeActivity, MainActivity::class.java))
+        startActivity(Intent(this@WelcomeActivity, VoiceChatActivity::class.java))
         finish()
     }
 }

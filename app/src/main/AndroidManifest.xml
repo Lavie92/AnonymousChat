@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -16,9 +15,10 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:name=".exchanges.paypal.App"
@@ -38,10 +38,15 @@
             android:name=".chat.FullImageActivity"
             android:exported="false" />
         <activity
-            android:name=".voice_chat.MainActivity"
-            android:exported="false" /> <!-- <activity -->
-        <!-- android:name=".voice_chat.VoiceChatActivity" -->
-        <!-- android:exported="false" /> -->
+            android:name=".voice_chat.VoiceChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".voice_chat.ConnectingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".voice_chat.CallActivity"
+            android:exported="false" />
+
         <activity
             android:name=".authentication.NotificationActivity"
             android:exported="false" />
@@ -79,16 +84,10 @@
             android:name=".authentication.ForgotPassActivity"
             android:exported="false" />
         <activity
-            android:name=".layout.StartActivity"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
-            android:exported="false" /> <!-- <activity -->
-        <!-- android:name=".chat.ChatActivity" -->
-        <!-- android:exported="false"/> -->
-        <!-- </activity> -->
-        <activity
-            android:name=".exchanges.PaymentsActivity"
+            android:name=".layout.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

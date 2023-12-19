@@ -1,4 +1,4 @@
-package com.example.doan_chuyennganh.chatAI
+package com.example.doan_chuyennganh.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +7,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.doan_chuyennganh.R
+import com.example.doan_chuyennganh.chatAI.Message
 
-class MessageAdapter(
+class AIChatAdapter(
     var messageList :List<Message>
-):RecyclerView.Adapter<MessageAdapter.MesgViewHolder>()
+):RecyclerView.Adapter<AIChatAdapter.MesgViewHolder>()
 {
     inner class MesgViewHolder(var v: View):RecyclerView.ViewHolder(v){
         val leftChatView = v.findViewById<LinearLayout>(R.id.left_chat_view)

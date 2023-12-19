@@ -3,26 +3,22 @@ package com.example.doan_chuyennganh.voice_chat
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.authentication.User
-import com.example.doan_chuyennganh.databinding.ActivityMain2Binding
+import com.example.doan_chuyennganh.databinding.ActivityVoiceChatBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class MainActivity : AppCompatActivity() {
-    var binding: ActivityMain2Binding? = null
+class VoiceChatActivity : AppCompatActivity() {
+    var binding: ActivityVoiceChatBinding? = null
     var auth: FirebaseAuth? = null
     var database: FirebaseDatabase? = null
     private var coins: Long = 500
@@ -33,14 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMain2Binding.inflate(layoutInflater)
+        binding = ActivityVoiceChatBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-//        MobileAds.initialize(this, object : OnInitializationCompleteListener() {
-//            fun onInitializationComplete(initializationStatus: InitializationStatus?) {}
-//        })
-//        progress = KProgressHUD.create(this)
-//        progress.setDimAmount(0.5f)
-//        progress.show()
+
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
         val currentUser = auth!!.currentUser
@@ -61,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                         // For example, show an error message or log the error
                         Log.e("MainActivity", "User data is null.")
                         Toast.makeText(
-                            this@MainActivity,
+                            this@VoiceChatActivity,
                             "Error: User data not found.",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -76,12 +67,12 @@ class MainActivity : AppCompatActivity() {
                     .child(currentUser.uid)
                     .child("coins")
                     .setValue(coins)
-                val intent = Intent(this@MainActivity, ConnectingActivity::class.java)
+                val intent = Intent(this@VoiceChatActivity, ConnectingActivity::class.java)
 //                intent.putExtra("profile", user.getProfile())
                 startActivity(intent)
-                startActivity(Intent(this@MainActivity, ConnectingActivity::class.java))
+                startActivity(Intent(this@VoiceChatActivity, ConnectingActivity::class.java))
             } else {
-                Toast.makeText(this@MainActivity, "Insufficient Coins", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@VoiceChatActivity, "Insufficient Coins", Toast.LENGTH_SHORT).show()
             }
             askPermissions()
         }
