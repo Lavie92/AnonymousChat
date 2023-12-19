@@ -1,4 +1,3 @@
-import java.util.regex.Pattern.compile
 
 plugins {
     id("com.android.application")
@@ -38,6 +37,7 @@ android {
 
     buildFeatures{
         viewBinding = true
+        buildConfig = true
     }
 
     kotlinOptions {
