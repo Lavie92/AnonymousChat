@@ -51,6 +51,9 @@
             android:name=".authentication.NotificationActivity"
             android:exported="false" />
         <activity
+            android:name=".exchanges.PaymentsActivity"
+            android:exported="false" />
+        <activity
             android:name=".chat.ChatNearestActivity"
             android:exported="false" />
         <activity
