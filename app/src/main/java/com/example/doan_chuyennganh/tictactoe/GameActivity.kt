@@ -54,8 +54,12 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
             setUI()
         }
         binding.endGameBtn.setOnClickListener {
+            gameModel?.gameId?.let { gameId ->
+                FirebaseDatabase.getInstance().getReference("games/$gameId/gameStatus")
+                    .setValue(GameStatus.PLAYER_EXITED.name)
+            }
             resetScores()
-            finish() // Đóng activity hiện tại và quay trở lại activity trước đó
+            finish()
         }
 
 
@@ -67,8 +71,15 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val game = snapshot.getValue(GameModel::class.java)
                     game?.let {
-                        gameModel = it
-                        setUI()
+                        if (it.gameStatus.name == "PLAYER_EXITED" && it.player2Id != FirebaseAuth.getInstance().currentUser?.uid) {
+                            Toast.makeText(this@GameActivity, "The other player has exited the game.", Toast.LENGTH_LONG).show()
+                            finish()
+                        } else if (it.gameStatus.name == "JOINED" && it.player2Id != null && it.player2Id != FirebaseAuth.getInstance().currentUser?.uid) {
+                            Toast.makeText(this@GameActivity, "A new player has joined the game!", Toast.LENGTH_LONG).show()
+                        } else {
+                            gameModel = it
+                            setUI()
+                        }
                     }
                 }
 
@@ -97,6 +108,7 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                 GameStatus.CREATED, GameStatus.JOINED -> "Waiting for game to start."
                 GameStatus.INPROGRESS -> "Game in progress."
                 GameStatus.FINISHED -> "Game finished."
+                else -> ({}).toString()
             }
 
             // Show start button if game is not yet in progress

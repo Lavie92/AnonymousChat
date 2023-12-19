@@ -16,6 +16,7 @@ data class GameModel (
 
 
 enum class GameStatus{
+    PLAYER_EXITED,
     CREATED,
     JOINED,
     INPROGRESS,

@@ -15,7 +15,8 @@
               </deviceKey>
             </Target>
           </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2023-12-19T18:45:32.822138400Z" />
+          <timeTargetWasSelectedWithDropDown value="2023-12-19T18:49:53.131370300Z" />
+          <multipleDevicesSelectedInDropDown value="true" />
           <runningDeviceTargetsSelectedWithDialog>
             <Target>
               <type value="RUNNING_DEVICE_TARGET" />
@@ -23,15 +24,6 @@
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
                   <value value="C:\Users\An\.android\avd\Pixel_7_Pro_API_30.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="SERIAL_NUMBER" />
-                  <value value="52006087bc8e65ed" />
                 </Key>
               </deviceKey>
             </Target>
