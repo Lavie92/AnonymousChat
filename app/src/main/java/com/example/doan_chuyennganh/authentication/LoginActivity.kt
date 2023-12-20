@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -112,7 +113,17 @@ public class LoginActivity : AppCompatActivity() {
             signIn()
         }
         //
+        val focusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                v.alpha = 1.0f // Đậm lên khi focus
+            } else {
+                v.alpha = 0.5f // Mờ đi khi không focus
+            }
+        }
 
+        binding.loginEmail.setOnFocusChangeListener(focusChangeListener)
+        binding.loginPassword.setOnFocusChangeListener(focusChangeListener)
+        binding.btnLogin.setOnFocusChangeListener(focusChangeListener)
     }
 
 

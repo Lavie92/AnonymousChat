@@ -4,12 +4,12 @@
 
     <string name="app_name">Anonymous Chat</string>
     <string name="ek_img_content">ExportKit Image</string>
-    <string name="hello__welcome_back_string">Hello, Welcome Back</string>
-    <string name="happy_to_see_you_again__to_use_your_account_please_login_first__string">Happy to see you again, to use your account please login first.</string>
+    <string name="hello__welcome_back_string">Xin chào</string>
+    <string name="happy_to_see_you_again__to_use_your_account_please_login_first__string">Rất vui được gặp lại bạn, vui lòng đăng nhập để sử dụng.</string>
     <string name="email_address_string">Email Address</string>
     <string name="password_string">Password</string>
     <string name="or_login_with_string">Or Login with</string>
-    <string name="forgot_password_string">Forgot Password</string>
+    <string name="forgot_password_string">Quên mật khẩu?</string>
     <string name="login_string">Login</string>
 
 
