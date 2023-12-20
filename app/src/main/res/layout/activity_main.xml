@@ -47,57 +47,10 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/choice1" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/paymentBox"
-        android:layout_width="156dp"
-        android:layout_height="66dp"
-        android:layout_marginStart="246dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="9dp"
-        android:background="@drawable/pay_button"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView10"
-            android:layout_width="62dp"
-            android:layout_height="59dp"
-            android:layout_marginBottom="15dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/txtCoins"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/chest" />
 
-        <TextView
-            android:id="@+id/txtCoins"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:fontFamily="@font/press_start_2p"
-            android:text="100"
-            android:textColor="@color/gold_background"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView10"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:fontFamily="@font/press_start_2p"
-            android:text="coins"
-            android:textColor="@color/gold_background"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView10" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        app:lottie_rawRes="@raw/cat2" />
 
     <LinearLayout
         android:id="@+id/linearLayout5"
@@ -106,14 +59,17 @@
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:orientation="vertical"
+        android:visibility="visible"
         android:weightSum="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <LinearLayout
             android:layout_width="10dp"
             android:layout_height="10dp">
+
             <TextView
                 android:id="@+id/coins"
                 android:layout_width="wrap_content"
@@ -344,6 +300,51 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/paymentBox"
+            android:layout_width="156dp"
+            android:layout_height="66dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/pay_button"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="62dp"
+                android:layout_height="59dp"
+                android:layout_marginBottom="15dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/txtCoins"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/chest" />
+
+            <TextView
+                android:id="@+id/txtCoins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="@font/press_start_2p"
+                android:text="100"
+                android:textColor="@color/gold_background"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView10"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="@font/press_start_2p"
+                android:text="coins"
+                android:textColor="@color/gold_background"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView10" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <ImageView
             android:id="@+id/btnSetting"
             android:layout_width="407dp"
@@ -352,6 +353,7 @@
             android:layout_weight="2"
             android:contentDescription="combined_shape_ek2"
             android:src="@drawable/setting" />
+
     </LinearLayout>
 
 

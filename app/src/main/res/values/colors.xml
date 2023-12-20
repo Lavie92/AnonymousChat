@@ -45,6 +45,7 @@
 
 
 	<color name="notifications_ek2_color">#303535</color>
+	<color name="lightyellow">#ffb780</color>
 	<color name="base_color">#771F98</color>
 	<color name="james_gmail_com_color">#6F8BA4</color>
 	<color name="ai">#feddd4</color>
