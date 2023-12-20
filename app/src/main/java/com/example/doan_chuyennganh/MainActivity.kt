@@ -118,6 +118,29 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+    private fun updateUsersCoin(userId: String, coin: Int) {
+        val userRef = FirebaseDatabase.getInstance().getReference("users/$userId")
+
+        // Lấy thông tin hiện tại của người dùng
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Giả sử bạn có trường 'coins' trong object của người dùng
+                val currentCoins = dataSnapshot.child("coins").getValue(Double::class.java) ?: 0.0
+                val newCoinValue = currentCoins - coin
+
+                // Cập nhật số dư mới
+                userRef.child("coins").setValue(newCoinValue)
+                    .addOnSuccessListener {
+                    }
+                    .addOnFailureListener {
+                    }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+    }
+
     //Sessions check
     private fun getSessionId(): String? {
         val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)

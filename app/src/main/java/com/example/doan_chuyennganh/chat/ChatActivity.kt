@@ -216,7 +216,7 @@ class ChatActivity : AppCompatActivity() {
         chatRoomsRef.child(chatRoomId).child("messages")
             .push().setValue(message)
         Toast.makeText(this, "Ảnh đã được gửi", Toast.LENGTH_SHORT).show()
-        updateUsersCoin(currentUserId!!,5)
+        updateUsersCoin(currentUserId!!,3)
     }
 
     private fun shareMoreInformation() {

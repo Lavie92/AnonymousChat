@@ -6,11 +6,19 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.doan_chuyennganh.databinding.ActivityGameBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+
 class GameActivity : AppCompatActivity(),View.OnClickListener {
     lateinit var binding: ActivityGameBinding
     private var gameModel : GameModel? = null
+    lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.auth = FirebaseAuth.getInstance()
 
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -77,8 +85,12 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                 }
                 GameStatus.FINISHED -> {
                     if (winner.isNotEmpty()) {
-                        if (currentUserIsPlayer1 == (winner == "X")) "You won"
-                        else "Opponent won"
+                        if (currentUserIsPlayer1 == (winner == "X")) {
+                            updateUsersCoin(auth.currentUser!!.uid,5)
+                            "You won"
+                        } else {
+                            "Opponent won"
+                        }
                     } else "It's a draw!"
                 }
             }
@@ -161,6 +173,28 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
             }
 
         }
+    }
+    private fun updateUsersCoin(userId: String, coin: Int) {
+        val userRef = FirebaseDatabase.getInstance().getReference("users/$userId")
+
+        // Lấy thông tin hiện tại của người dùng
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Giả sử bạn có trường 'coins' trong object của người dùng
+                val currentCoins = dataSnapshot.child("coins").getValue(Double::class.java) ?: 0.0
+                val newCoinValue = currentCoins + coin
+
+                // Cập nhật số dư mới
+                userRef.child("coins").setValue(newCoinValue)
+                    .addOnSuccessListener {
+                    }
+                    .addOnFailureListener {
+                    }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
     }
 }
 //package np.com.bimalkafle.tictactoeonline

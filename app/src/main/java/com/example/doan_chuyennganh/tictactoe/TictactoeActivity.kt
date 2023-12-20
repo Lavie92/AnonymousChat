@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.doan_chuyennganh.databinding.ActivityTictactoeBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class TictactoeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTictactoeBinding
@@ -44,6 +47,8 @@ class TictactoeActivity : AppCompatActivity() {
                         val game = dataSnapshot.children.first()
                         val gameId = game.key!!
                         updateGameSessionWithSecondPlayer(gameId, userId)
+                        updateUsersCoin(currentUserID,2)
+
                     } else {
                         // Không có trò chơi nào, tạo trò chơi mới
                         createNewGame(userId)
@@ -75,6 +80,28 @@ class TictactoeActivity : AppCompatActivity() {
             putExtra("GAME_ID", gameId)
         }
         startActivity(intent)
+    }
+    private fun updateUsersCoin(userId: String, coin: Int) {
+        val userRef = FirebaseDatabase.getInstance().getReference("users/$userId")
+
+        // Lấy thông tin hiện tại của người dùng
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Giả sử bạn có trường 'coins' trong object của người dùng
+                val currentCoins = dataSnapshot.child("coins").getValue(Double::class.java) ?: 0.0
+                val newCoinValue = currentCoins - coin
+
+                // Cập nhật số dư mới
+                userRef.child("coins").setValue(newCoinValue)
+                    .addOnSuccessListener {
+                    }
+                    .addOnFailureListener {
+                    }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
     }
 }
 //package np.com.bimalkafle.tictactoeonline
