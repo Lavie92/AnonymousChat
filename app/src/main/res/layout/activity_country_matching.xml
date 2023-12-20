@@ -88,20 +88,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="10"
-                android:visibility="gone"
+                 android:visibility="gone"
                 android:background="@drawable/message_background_receive"
                 android:text="Lẹt gô"
                 />
             <ImageView
                 android:id="@+id/ivSendImage"
                 android:layout_marginTop="8dp"
-                android:layout_marginLeft="5dp"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_weight="10"
+                android:layout_marginLeft="20dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:visibility="gone"
-                android:src="@drawable/send_image"
-                android:background="@drawable/message_background_receive"
+
+                android:src="@drawable/picture"
+
                 />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

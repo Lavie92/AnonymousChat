@@ -47,6 +47,7 @@
         android:background="@drawable/user_bg"
         android:orientation="horizontal"
         android:paddingTop="5dp"
+        android:visibility="gone"
         android:paddingBottom="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">

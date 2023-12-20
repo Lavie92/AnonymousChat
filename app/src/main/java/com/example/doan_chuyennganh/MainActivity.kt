@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         val auth = Firebase.auth
         val user = auth.currentUser
-        ivStartChat = binding.ivStartChat
+
         binding.layoutRandomChat.setOnClickListener {
             val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
             splashIntent.putExtra("source_activity", "toChatRandom")
@@ -70,6 +70,11 @@ class MainActivity : AppCompatActivity() {
         binding.layoutVoiceChat.setOnClickListener{
             val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
             splashIntent.putExtra("source_activity", "toVoiceChat")
+            startActivity(splashIntent)
+        }
+        binding.layoutTicTacToe.setOnClickListener{
+            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
+            splashIntent.putExtra("source_activity", "toGame")
             startActivity(splashIntent)
         }
 

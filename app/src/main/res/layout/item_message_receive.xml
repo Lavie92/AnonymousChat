@@ -23,12 +23,11 @@
             android:textSize="18sp" />
         <TextView
             android:id="@+id/tvTranslate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:maxWidth="250dp"
             android:padding="10dp"
-            android:text="trans"
-            android:background="@drawable/message_background_system"
+            android:background="@drawable/translate"
             android:layout_toRightOf="@id/tvReceiveMessage"
             android:textColor="#B9000000"
             android:textSize="18sp" />
