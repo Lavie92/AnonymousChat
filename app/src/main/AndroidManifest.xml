@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -15,13 +16,15 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <application
-        android:name=".exchanges.paypal.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -31,6 +34,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoAn_ChuyenNganh"
         tools:targetApi="31">
+
+        <activity
+            android:name=".authentication.PayHistoryActivity"
+            android:exported="false" />
         <activity
             android:name=".chat.CountryMatchingActivity"
             android:exported="false" />
@@ -54,12 +61,15 @@
             android:exported="false" />
         <activity
             android:name=".exchanges.PaymentsActivity"
+            android:launchMode="singleTask"
             android:exported="false" />
         <activity
             android:name=".chat.ChatNearestActivity"
             android:exported="false" />
         <activity
             android:name=".authentication.BannedActivity"
+            android:exported="false" />
+        <activity android:name=".achievement.AchievementsActivity"
             android:exported="false" />
         <activity
             android:name=".layout.SplashScreenActivity"
@@ -93,7 +103,14 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="demozpdk" android:host="app" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".layout.StartActivity"
             android:exported="true">
@@ -102,12 +119,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="com.example.doanchuyennganh" android:host="paypalpay" />
-            </intent-filter>
+
         </activity>
 
         <meta-data

@@ -3,28 +3,26 @@ package com.example.doan_chuyennganh.exchanges
 import PaymentMethodDialogFragment
 import android.app.AlertDialog
 import android.content.DialogInterface
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.doan_chuyennganh.MainActivity
 import com.example.doan_chuyennganh.databinding.ActivityPaymentsBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.paypal.checkout.approve.OnApprove
-import com.paypal.checkout.createorder.CreateOrder
-import com.paypal.checkout.createorder.CurrencyCode
-import com.paypal.checkout.createorder.OrderIntent
-import com.paypal.checkout.createorder.UserAction
-import com.paypal.checkout.order.Amount
-import com.paypal.checkout.order.OrderRequest
-import com.paypal.checkout.order.AppContext
-import com.paypal.checkout.order.PurchaseUnit
 import vn.zalopay.sdk.Environment
 import vn.zalopay.sdk.ZaloPayError
 import vn.zalopay.sdk.ZaloPaySDK
 import vn.zalopay.sdk.listeners.PayOrderListener
+import java.util.UUID
+
+
 class PaymentsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPaymentsBinding
     private val currentUser = FirebaseAuth.getInstance().currentUser
@@ -39,32 +37,8 @@ class PaymentsActivity : AppCompatActivity() {
 
         val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
-        ZaloPaySDK.init(2553, Environment.SANDBOX)
+        ZaloPaySDK.init(2554, Environment.SANDBOX)
 
-        //Paypal Init
-        binding.paymentButtonContainer.setup(
-            createOrder =
-            CreateOrder { createOrderActions ->
-                val order =
-                    OrderRequest(
-                        intent = OrderIntent.CAPTURE,
-                        appContext = AppContext(userAction = UserAction.PAY_NOW),
-                        purchaseUnitList =
-                        listOf(
-                            PurchaseUnit(
-                                amount =
-                                Amount(currencyCode = CurrencyCode.USD, value = "10.00")
-                            )
-                        )
-                    )
-                createOrderActions.create(order)
-            },
-            onApprove =
-            OnApprove { approval ->
-                approval.orderActions.capture { captureOrderResult ->
-                }
-            }
-        )
 
 
         binding.pay10k.setOnClickListener{
@@ -83,108 +57,98 @@ class PaymentsActivity : AppCompatActivity() {
     }
 
     // Hàm thực hiện tạo order và xử lý kết quả
-    fun processOrder(method:String, amount: String, coin:Int) {
+    fun processOrder(method: String, amount: String, coin: Int) {
         when (method) {
             "ZaloPay" -> {
+                // Tạo transactionId
+                val transactionId = generateTransactionId()
+
+                // Tạo đơn hàng với trạng thái 'pending'
+                createPendingOrder(transactionId, amount)
+
+                // Tiếp tục với quá trình thanh toán
                 val orderApi = CreateOrderZalo()
                 try {
                     val data = orderApi.createOrder(amount)
                     val code = data.getString("return_code")
                     if (code == "1") {
                         val token = data.getString("zp_trans_token")
+
                         // Gọi hàm thanh toán của ZaloPay SDK
-                        payWithZaloPay(token, amount, coin)
+                        payWithZaloPay(token, amount, coin, transactionId)
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
         }
-
     }
 
-    private fun payWithZaloPay(token:String, amount:String, coin: Int){
+    private fun createPendingOrder(transactionId: String, amount: String) {
+        val transaction = Transactions(
+            transactionId = transactionId,
+            userId = currentUser!!.uid,
+            amount = amount.toLong(),
+            transactionType = "ZaloPay",
+            status = "Pending",
+            createdAt = System.currentTimeMillis()
+        )
+        saveTransactionToDatabase(transaction)
+    }
+
+
+
+    private fun payWithZaloPay(token: String, amount: String, coin: Int, transactionId: String) {
+        updateOrderStatus(transactionId, "Success")
+        updateUsersCoin(currentUser!!.uid, coin)
         ZaloPaySDK.getInstance()
             .payOrder(this@PaymentsActivity, token, "demozpdk://app", object : PayOrderListener {
-                override fun onPaymentSucceeded(
-                    transactionId: String,
-                    transToken: String,
-                    appTransID: String
-                ) {
-                    runOnUiThread {
-                        AlertDialog.Builder(this@PaymentsActivity)
-                            .setTitle("Payment Success")
-                            .setMessage("TransactionId: $transactionId - TransToken: $transToken")
-                            .setPositiveButton("OK", null)
-                            .setNegativeButton("Cancel", null).show()
-
-                        // Tạo một instance của Transactions class với thông tin cần thiết
-                        val transaction = Transactions(
-                            transactionId = transactionId,
-                            userId = currentUser!!.uid,
-                            amount = amount.toDouble() ,
-                            transactionType = "ZaloPay",
-                            status = "Success",
-                            completedAt = System.currentTimeMillis()
-                        )
-
-                        // Lưu transaction vào Realtime Database
-                        saveTransactionToDatabase(transaction)
-                        updateUsersCoin(currentUser.uid,coin)
-                    }
+                override fun onPaymentSucceeded(s: String, transToken: String, appTransID: String) {
                 }
 
                 override fun onPaymentCanceled(zpTransToken: String, appTransID: String) {
-                    AlertDialog.Builder(this@PaymentsActivity)
-                        .setTitle("User Cancel Payment")
-                        .setMessage(String.format("zpTransToken: %s \n", zpTransToken))
-                        .setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                            override fun onClick(dialog: DialogInterface, which: Int) {}
-                        })
-                        .setNegativeButton("Cancel", null).show()
+                    showAlertDialog("User Cancel Payment", "zpTransToken: $zpTransToken")
                 }
 
-                override fun onPaymentError(
-                    zaloPayError: ZaloPayError,
-                    zpTransToken: String,
-                    appTransID: String
-                ) {
-                    AlertDialog.Builder(this@PaymentsActivity)
-                        .setTitle("Payment Fail")
-                        .setMessage(
-                            String.format(
-                                "ZaloPayErrorCode: %s \nTransToken: %s",
-                                zaloPayError.toString(),
-                                zpTransToken
-                            )
-                        )
-                        .setPositiveButton("OK", object : DialogInterface.OnClickListener {
-                            override fun onClick(dialog: DialogInterface, which: Int) {}
-                        })
-                        .setNegativeButton("Cancel", null).show()
+                override fun onPaymentError(zaloPayError: ZaloPayError, zpTransToken: String, appTransID: String) {
+                    showAlertDialog("Payment Fail", "ZaloPayErrorCode: ${zaloPayError.toString()} \nTransToken: $zpTransToken")
                 }
             })
     }
 
-    private fun payWithPayPal(){
-
+    private fun showAlertDialog(title: String, message: String) {
+        runOnUiThread {
+            AlertDialog.Builder(this@PaymentsActivity)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
     }
+
+    private fun updateOrderStatus(transactionId: String, status: String) {
+        val orderRef = FirebaseDatabase.getInstance().getReference("transactions/$transactionId")
+        orderRef.child("status").setValue(status)
+        orderRef.child("completedAt").setValue(System.currentTimeMillis())
+    }
+
 
     private fun saveTransactionToDatabase(transaction: Transactions) {
-        // Lấy instance của FirebaseDatabase
-        val database = FirebaseDatabase.getInstance()
-        // Tạo một tham chiếu đến nút "transactions" trong cơ sở dữ liệu
-        val ref = database.getReference("transactions")
+        if (transaction.transactionId.isBlank()) {
+            Toast.makeText(this, "Transaction ID không hợp lệ", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        // Lưu transaction sử dụng transactionId như là khóa
+        val ref = FirebaseDatabase.getInstance().getReference("transactions")
         ref.child(transaction.transactionId).setValue(transaction)
             .addOnSuccessListener {
-                // Xử lý nếu lưu thành công
             }
             .addOnFailureListener {
-                // Xử lý nếu có lỗi
             }
     }
+
+
     private fun updateUsersCoin(userId: String, coin: Int) {
         val userRef = FirebaseDatabase.getInstance().getReference("users/$userId")
 
@@ -207,6 +171,16 @@ class PaymentsActivity : AppCompatActivity() {
             }
         })
     }
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        ZaloPaySDK.getInstance().onResult(intent)
+    }
+    fun generateTransactionId(): String {
+        return UUID.randomUUID().toString()
+    }
+    override fun onBackPressed() {
+        startActivity(Intent(this, MainActivity::class.java))
+        super.onBackPressed()
 
-
+    }
 }

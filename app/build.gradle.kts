@@ -110,7 +110,6 @@ dependencies {
     implementation ("com.google.android.material:material:1.9.0")
     implementation("commons-codec:commons-codec:1.14")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
-    implementation("com.paypal.checkout:android-sdk:1.2.0")
 
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation ("com.mikhaellopez:circularimageview:4.3.1")
