@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/bg_blur" />
@@ -137,10 +138,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:background="@drawable/_bg__frame_1_ek1_shape"
         android:text="Find"
+        android:textColor="@color/_bg__frame_2_ek2_color"
         app:backgroundTint="@color/green"
-        app:cornerRadius="20dp"
+        app:cornerRadius="60dp"
         app:layout_constraintEnd_toEndOf="@+id/textView7"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 

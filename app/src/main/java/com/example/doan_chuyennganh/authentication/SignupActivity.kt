@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import android.view.View
 import android.widget.Toast
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.databinding.ActivitySignupBinding
@@ -60,6 +61,17 @@ class SignupActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
+        val focusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                v.alpha = 1.0f // Đậm lên khi focus
+            } else {
+                v.alpha = 0.5f // Mờ đi khi không focus
+            }
+        }
+        binding.edtEmail.setOnFocusChangeListener(focusChangeListener)
+        binding.edtPassword.setOnFocusChangeListener(focusChangeListener)
+        binding.edtConfirmPassword.setOnFocusChangeListener(focusChangeListener)
+        binding.btnSignup.setOnFocusChangeListener(focusChangeListener)
 
     }
     private fun signUp(email: String?, password: String?) {

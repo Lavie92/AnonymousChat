@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="#404C1F9E"
     android:layout_height="match_parent">
     <!--
     /*
@@ -19,18 +20,31 @@
      */
     -->
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/login"
+        tools:layout_editor_absoluteY="53dp" />
+
     <TextView
         android:id="@+id/hello__welcome_back"
         android:layout_width="301dp"
         android:layout_height="63dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/roboto_bold"
         android:gravity="center"
         android:text="@string/hello__welcome_back_string"
-        android:textColor="@color/hello__welcome_back_color"
-        android:textSize="24sp"
+        android:textColor="@color/_bg__frame_2_ek2_color"
+        android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.145"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,11 +53,11 @@
         android:layout_width="273dp"
         android:layout_height="219dp"
         android:layout_marginStart="204dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="dayflow_sitting"
         android:src="@drawable/dayflow_sitting"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.136"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,25 +67,15 @@
         android:layout_height="56.5dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
+        android:fontFamily="@font/roboto_light"
         android:text="@string/happy_to_see_you_again__to_use_your_account_please_login_first__string"
-        android:textColor="@color/hello__welcome_back_color"
+        android:textColor="@color/_bg__frame_2_ek2_color"
         android:textSize="15sp"
         app:layout_constraintEnd_toStartOf="@+id/dayflow_sitting"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hello__welcome_back" />
 
-    <TextView
-        android:id="@+id/or_login_with"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_marginBottom="124dp"
-        android:text="@string/or_login_with_string"
-        android:textColor="@color/hello__welcome_back_color"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/line_1"
-        app:layout_constraintStart_toEndOf="@+id/line_2" />
 
     <TextView
         android:id="@+id/forgot_password2"
@@ -81,7 +85,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:text="@string/forgot_password_string"
-        android:textColor="@color/forgot_password_color"
+        android:textColor="@color/ellipse_1_color"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,22 +93,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.618" />
-
-    <TextView
-        android:id="@+id/textSignup"
-        android:layout_width="182dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="148dp"
-        android:layout_marginEnd="147dp"
-        android:text="You don't have Account?"
-        android:textColor="@color/purple_500"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.424"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.77" />
 
     <!--    <ImageButton-->
 <!--        android:id="@+id/login_button"-->
@@ -118,15 +106,7 @@
 <!--        app:layout_constraintStart_toStartOf="parent"-->
 <!--        app:layout_constraintTop_toBottomOf="@+id/line_1" />-->
 
-    <View
-        android:id="@+id/line_1"
-        android:layout_width="89.01dp"
-        android:layout_height="1dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="140dp"
-        android:background="@drawable/line_1_shape"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <!--    <Button-->
 <!--        android:id="@+id/signInButton"-->
@@ -145,17 +125,25 @@
 <!--        app:layout_constraintTop_toBottomOf="@+id/vector_ek4" />-->
 
 
-    <View
-        android:id="@+id/line_2"
-        android:layout_width="89.01dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginBottom="140dp"
-        android:background="@drawable/line_2_shape"
+    <TextView
+        android:id="@+id/textSignup"
+        android:layout_width="182dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginEnd="147dp"
+        android:text="Bạn chưa có tài khoản?"
+        android:textColor="@color/purple_500"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.424"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.853" />
 
     <Button
+
+        android:alpha="0.7"
         android:id="@+id/btnLogin"
         android:layout_width="107dp"
         android:layout_height="51dp"
@@ -172,6 +160,7 @@
         app:strokeColor="#3F51B5" />
 
     <EditText
+
         android:id="@+id/login_email"
         android:layout_width="360dp"
         android:layout_height="52dp"
@@ -182,6 +171,7 @@
         android:drawableLeft="@drawable/icon_email"
         android:drawablePadding="7dp"
         android:ems="10"
+        android:alpha="0.5"
         android:hint="Email"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -197,6 +187,8 @@
         android:layout_height="52dp"
         android:layout_marginStart="26dp"
         android:layout_marginTop="29dp"
+        android:alpha="0.5"
+
 
         android:layout_marginEnd="25dp"
         android:background="@drawable/rectangle_1_shape"
@@ -214,6 +206,7 @@
         app:layout_constraintVertical_bias="0.544" />
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/signInButton"
         android:layout_width="43dp"
         android:layout_height="27dp"
