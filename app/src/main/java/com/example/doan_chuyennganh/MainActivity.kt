@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import com.example.doan_chuyennganh.authentication.User
 import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.databinding.ActivityMainBinding
@@ -42,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         val auth = Firebase.auth
         val user = auth.currentUser

@@ -13,6 +13,16 @@
         android:layout_height="40dp"
         android:layout_alignParentTop="true">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="135dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Chat Random"
+            android:textSize="23dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="41dp"
@@ -94,12 +104,11 @@
         <ImageView
             android:id="@+id/ivSendImage"
             android:layout_marginTop="8dp"
-            android:layout_marginLeft="5dp"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_weight="10"
+            android:layout_marginLeft="20dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:visibility="gone"
-            android:src="@drawable/send_image"
+            android:src="@drawable/picture"
             android:background="@drawable/message_background_receive"
          />
 

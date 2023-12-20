@@ -13,11 +13,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textStyle="bold"
-        android:textSize="28sp"
         android:layout_margin="8dp"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        android:text="@string/app_name"
+        android:textSize="28sp"
+        android:textStyle="bold" />
 
     <Button
         android:visibility="gone"
@@ -69,14 +69,30 @@
         android:visibility="gone"
         android:hint="Enter game Id"/>
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView4"
+        android:layout_width="match_parent"
+        android:layout_height="422dp"
+        android:elevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.433"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/game" />
+
     <Button
 
+        android:id="@+id/join_online_game_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/join_online_game_btn"
-        android:text="Join Game Online"
         android:layout_margin="8dp"
-        android:padding="8dp"/>
+        android:background="@drawable/_bg__frame_1_ek1_shape"
+        android:padding="8dp"
+        android:text="Join Game Online"
+        android:textColor="@color/_bg__frame_2_ek2_color" />
 
 </LinearLayout>
 

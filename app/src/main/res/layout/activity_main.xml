@@ -4,17 +4,82 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintEnd_toEndOf="@+id/linearLayout5"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/paymentBox"
+            android:layout_width="156dp"
+            android:layout_height="66dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/pay_button"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtCoins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/press_start_2p"
+                android:text="100"
+                android:textColor="@color/gold_background"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/press_start_2p"
+                android:text="coins"
+                android:textColor="@color/gold_background"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/btnSetting"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:contentDescription="combined_shape_ek2"
+            android:src="@drawable/setting" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView4"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:elevation="6dp"
+        android:layout_marginRight="270dp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/treaser" />
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
         android:layout_width="236dp"
         android:layout_height="157dp"
-        android:layout_marginTop="620dp"
         android:elevation="6dp"
-        app:layout_constraintBottom_toBottomOf="@id/linearLayout5"
+        android:layout_marginTop="500dp"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout5"
         app:layout_constraintEnd_toEndOf="@+id/linearLayout5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/linearLayout5"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/cat" />
@@ -32,59 +97,36 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/cat5" />
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView1"
         android:layout_width="224dp"
         android:layout_height="85dp"
-        android:layout_marginBottom="610dp"
         android:layout_marginRight="230dp"
+        android:layout_marginBottom="500dp"
         android:elevation="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout5"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/linearLayout5"
+        app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_rawRes="@raw/choice1" />
-
-
-
-
+        app:lottie_rawRes="@raw/cat2" />
 
 
     <LinearLayout
         android:id="@+id/linearLayout5"
         android:layout_width="412dp"
         android:layout_height="672dp"
-        android:layout_marginTop="8dp"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="visible"
         android:weightSum="5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-        <LinearLayout
-            android:layout_width="10dp"
-            android:layout_height="10dp">
-
-            <TextView
-                android:id="@+id/coins"
-                android:layout_width="wrap_content"
-                android:layout_height="29dp"
-                android:text="You have: 0"
-                android:textColor="@color/black" />
-
-            <ImageView
-                android:id="@+id/coinImage"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginLeft="5dp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_coin" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutRandomChat"
@@ -257,9 +299,9 @@
 
             <ImageView
                 android:id="@+id/imgtictactoe"
-                android:layout_width="90dp"
-                android:layout_height="49dp"
-                android:layout_margin="10dp"
+                android:layout_width="127dp"
+                android:layout_height="63dp"
+
                 android:layout_weight="1"
                 app:srcCompat="@drawable/game" />
 
@@ -278,84 +320,4 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <View
-        android:id="@+id/rectangle_5"
-        android:layout_width="410dp"
-        android:layout_height="76dp"
-        android:background="@drawable/rectangle_5_shape"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout6"
-        android:layout_width="421dp"
-        android:layout_height="65dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/border_text"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/paymentBox"
-            android:layout_width="156dp"
-            android:layout_height="66dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/pay_button"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="62dp"
-                android:layout_height="59dp"
-                android:layout_marginBottom="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/txtCoins"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/chest" />
-
-            <TextView
-                android:id="@+id/txtCoins"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:fontFamily="@font/press_start_2p"
-                android:text="100"
-                android:textColor="@color/gold_background"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView10"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:fontFamily="@font/press_start_2p"
-                android:text="coins"
-                android:textColor="@color/gold_background"
-                android:textSize="10sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView10" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <ImageView
-            android:id="@+id/btnSetting"
-            android:layout_width="407dp"
-            android:layout_height="39dp"
-            android:layout_margin="20dp"
-            android:layout_weight="2"
-            android:contentDescription="combined_shape_ek2"
-            android:src="@drawable/setting" />
-
-    </LinearLayout>
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

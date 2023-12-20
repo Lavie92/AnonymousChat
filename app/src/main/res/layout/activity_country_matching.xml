@@ -12,7 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentTop="true">
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="100dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Chat Another Contry"
+            android:textSize="23dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="41dp"
