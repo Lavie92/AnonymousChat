@@ -87,6 +87,9 @@
             android:name=".authentication.ForgotPassActivity"
             android:exported="false" />
         <activity
+            android:name=".tictactoe.GameActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
