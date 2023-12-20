@@ -21,7 +21,6 @@ class VoiceChatActivity : AppCompatActivity() {
     var binding: ActivityVoiceChatBinding? = null
     var auth: FirebaseAuth? = null
     var database: FirebaseDatabase? = null
-    private var coins: Long = 500
     private var permissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     private val requestCode = 1
     var user: User? = null
@@ -42,7 +41,7 @@ class VoiceChatActivity : AppCompatActivity() {
 //                    progress.dismiss()
                     user = snapshot.getValue(User::class.java)
                     if (user != null) {
-                        val coins = user!!.coins
+                        val coins = snapshot.child("coins").getValue() as Long
                         binding!!.coins.text = getString(R.string.coins_display, coins)
 //                        Glide.with(this@MainActivity)
 //                            .load(user.getProfile())
@@ -63,10 +62,6 @@ class VoiceChatActivity : AppCompatActivity() {
             })
         binding!!.findButton.setOnClickListener {
             if (isPermissionsGranted()) {
-                database!!.reference.child("users")
-                    .child(currentUser.uid)
-                    .child("coins")
-                    .setValue(coins)
                 val intent = Intent(this@VoiceChatActivity, ConnectingActivity::class.java)
                 updateUsersCoin(currentUser.uid,5)
 
