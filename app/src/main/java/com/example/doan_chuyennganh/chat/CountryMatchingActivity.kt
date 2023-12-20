@@ -160,6 +160,28 @@ class CountryMatchingActivity : AppCompatActivity() {
         startActivityForResult(Intent.createChooser(intent, "Chọn ảnh"), ChatActivity.REQUEST_CODE)
     }
 
+    private fun updateUsersCoin(userId: String, coin: Int) {
+        val userRef = FirebaseDatabase.getInstance().getReference("users/$userId")
+
+        // Lấy thông tin hiện tại của người dùng
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // Giả sử bạn có trường 'coins' trong object của người dùng
+                val currentCoins = dataSnapshot.child("coins").getValue(Double::class.java) ?: 0.0
+                val newCoinValue = currentCoins - coin
+
+                // Cập nhật số dư mới
+                userRef.child("coins").setValue(newCoinValue)
+                    .addOnSuccessListener {
+                    }
+                    .addOnFailureListener {
+                    }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        })
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -197,6 +219,8 @@ class CountryMatchingActivity : AppCompatActivity() {
         countryMatchingChatRoomRef.child(chatRoomId).child("messages")
             .push().setValue(message)
         Toast.makeText(this, "Ảnh đã được gửi", Toast.LENGTH_SHORT).show()
+        updateUsersCoin(currentUserId!!,5)
+
     }
 
     private fun shareMoreInformation() {
