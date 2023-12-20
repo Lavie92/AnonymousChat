@@ -15,6 +15,7 @@ import com.example.doan_chuyennganh.chat.ChatActivity
 import com.example.doan_chuyennganh.chat.ChatNearestActivity
 import com.example.doan_chuyennganh.chat.CountryMatchingActivity
 import com.example.doan_chuyennganh.chatAI.ChatbotActivity
+import com.example.doan_chuyennganh.tictactoe.TictactoeActivity
 import com.example.doan_chuyennganh.voice_chat.VoiceChatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -83,6 +84,11 @@ class SplashScreenActivity : AppCompatActivity() {
                 }else if (sourceActivity != null && sourceActivity == "toVoiceChat") {
 
                     val chatIntent = Intent(this@SplashScreenActivity, VoiceChatActivity::class.java)
+                    startActivity(chatIntent)
+                    finish()
+                }else if (sourceActivity != null && sourceActivity == "toGame") {
+
+                    val chatIntent = Intent(this@SplashScreenActivity, TictactoeActivity::class.java)
                     startActivity(chatIntent)
                     finish()
                 }

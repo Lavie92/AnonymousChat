@@ -29,47 +29,51 @@
         android:layout_marginStart="58dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="144dp"
-        android:text="chat with everyone"
+        android:text="chat cùng mọi người"
         android:textColor="@color/hello__welcome_back_color"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hello__welcome_back5" />
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="415dp"
-        android:layout_height="364dp"
-        android:layout_marginBottom="197dp"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView4"
+        android:layout_width="704dp"
+        android:layout_height="325dp"
+        android:elevation="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/dayflow_best_friends" />
-
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="75dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="168dp"
-        android:layout_marginEnd="168dp"
-        android:layout_marginBottom="112dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_rotate" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.433"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/flash" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="168dp"
-        android:layout_marginEnd="149dp"
-        android:layout_marginBottom="76dp"
-        android:text="Loading...."
+        android:layout_marginTop="194dp"
+        android:text="Cat is running...."
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.575"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lottieAnimationView3" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView3"
+        android:layout_width="239dp"
+        android:layout_height="194dp"
+        android:elevation="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintHorizontal_bias="0.593"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.895"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/cat4" />
 </androidx.constraintlayout.widget.ConstraintLayout>
