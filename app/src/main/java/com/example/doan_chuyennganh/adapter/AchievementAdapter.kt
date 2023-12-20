@@ -33,11 +33,22 @@ class AchievementAdapter(
         holder.progressBar.progress = achievement.currentCount
         holder.tvProgress.text = "${achievement.currentCount}/${achievement.goal}"
 
-        // Thiết lập click listener cho mỗi item
+        // Cập nhật UI dựa trên trạng thái đã nhận thưởng
+        if (achievement.isRewardClaimed) {
+            holder.itemView.alpha = 0.5f // Làm mờ item
+            holder.itemView.isEnabled = false // Disable click
+        } else {
+            holder.itemView.alpha = 1.0f
+            holder.itemView.isEnabled = true
+        }
+
         holder.itemView.setOnClickListener {
-            onAchievementClickListener(achievement)
+            if (!achievement.isRewardClaimed) {
+                onAchievementClickListener(achievement)
+            }
         }
     }
+
 
     override fun getItemCount() = achievements.size
 }

@@ -2,30 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/border_random"
     android:orientation="vertical"
     android:padding="16dp">
-    <TextView
-        android:id="@+id/tvAchievementTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp" />
+
+
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:text="123"
+        android:textSize="25dp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="123" />
+
     <TextView
         android:id="@+id/tvProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="4dp"
+        android:text="123" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="@style/CustomProgressBar"
@@ -33,7 +37,6 @@
         android:layout_height="wrap_content"
         android:max="100"
         android:progress="50" />
-
 
 
 </LinearLayout>

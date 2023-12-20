@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.doan_chuyennganh.achievement.AchievementsActivity
 import com.example.doan_chuyennganh.active.SharedPreferencesManager
 import com.example.doan_chuyennganh.authentication.NotificationActivity
+import com.example.doan_chuyennganh.authentication.PayHistoryActivity
 import com.example.doan_chuyennganh.authentication.SettingActivity
 import com.example.doan_chuyennganh.databinding.ActivityProfileBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -113,6 +114,11 @@ class ProfileActivity : AppCompatActivity() {
         }
         binding.btnAchie.setOnClickListener{
             startActivity(Intent(this, AchievementsActivity::class.java))
+        }
+        binding.btnPayment.setOnClickListener{
+            startActivity(Intent(this, PayHistoryActivity::class.java))
+            startActivity(Intent(this, PayHistoryActivity::class.java))
+
         }
 
             binding.btnSave.setOnClickListener{
@@ -248,6 +254,7 @@ class ProfileActivity : AppCompatActivity() {
             showConfirmationDialog()
         }
     else {
+            startActivity(Intent(this, MainActivity::class.java))
             super.onBackPressed()
         }
     }

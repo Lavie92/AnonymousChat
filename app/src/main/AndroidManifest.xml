@@ -25,7 +25,6 @@
         android:maxSdkVersion="32" />
 
     <application
-        android:name=".exchanges.paypal.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -59,6 +58,7 @@
             android:exported="false" />
         <activity
             android:name=".exchanges.PaymentsActivity"
+            android:launchMode="singleTask"
             android:exported="false" />
         <activity
             android:name=".chat.ChatNearestActivity"
@@ -97,7 +97,14 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="demozpdk" android:host="app" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".layout.StartActivity"
             android:exported="true">
@@ -106,21 +113,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="paypalpay"
-                    android:scheme="com.example.doanchuyennganh" />
-            </intent-filter>
         </activity>
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
+
 
 </manifest>

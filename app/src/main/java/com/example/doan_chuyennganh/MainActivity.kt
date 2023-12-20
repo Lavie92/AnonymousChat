@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+
         this.auth = FirebaseAuth.getInstance()
 
         databaseReferences = FirebaseDatabase.getInstance().getReference("users")

@@ -35,7 +35,11 @@ class AchievementsActivity : AppCompatActivity() {
                 val countLogins = snapshot.child("countLogin").getValue(Int::class.java) ?: 0
 
                 achievements.add(Achievements("10 lần chat", "Hoàn thành 10 lần chat", 10, countChats))
+                achievements.add(Achievements("20 lần chat", "Hoàn thành 10 lần đăng nhập", 20, countChats))
+                achievements.add(Achievements("50 lần chat", "Hoàn thành 10 lần đăng nhập", 50, countChats))
                 achievements.add(Achievements("10 lần login", "Hoàn thành 10 lần đăng nhập", 10, countLogins))
+                achievements.add(Achievements("20 lần login", "Hoàn thành 10 lần đăng nhập", 20, countLogins))
+                achievements.add(Achievements("50 lần login", "Hoàn thành 10 lần đăng nhập", 50, countLogins))
                 // Thêm các thành tựu khác...
 
                 setupRecyclerView(achievements)
@@ -79,7 +83,7 @@ class AchievementsActivity : AppCompatActivity() {
 
             override fun onComplete(databaseError: DatabaseError?, committed: Boolean, dataSnapshot: DataSnapshot?) {
                 if (committed) {
-                    Toast.makeText(this@AchievementsActivity, "Phần thưởng đã được cập nhật!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AchievementsActivity, "Bạn đã nhận 10 coins", Toast.LENGTH_SHORT).show()
                 } else {
                     databaseError?.let {
                         Log.e("Firebase", "Cập nhật coin thất bại", it.toException())
@@ -92,6 +96,6 @@ class AchievementsActivity : AppCompatActivity() {
 
     private fun calculateRewardCoins(achievement: Achievements): Int {
         // Tính toán số coin thưởng (ví dụ: mỗi thành tựu đạt được thưởng 50 coins)
-        return 50
+        return 10
     }
 }
