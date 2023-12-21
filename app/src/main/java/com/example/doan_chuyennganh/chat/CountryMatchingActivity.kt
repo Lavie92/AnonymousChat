@@ -320,17 +320,18 @@ class CountryMatchingActivity : AppCompatActivity() {
             btnRandom.visibility = View.VISIBLE
             btnEndChat.visibility = View.VISIBLE
             checkChatRoomStatus(chatRoomId) { isChatRoomchatting ->
-                if (isChatRoomchatting) {
-                    btnEndChat.startAnimation(slideDown)
-                    btnHeart.startAnimation(slideDown)
-                    btnHeart.visibility = View.GONE
-                    btnEndChat.visibility = View.GONE
-                    btnRandom.startAnimation(slideDown)
-                    btnRandom.visibility = View.GONE
-                    btnSendImage.startAnimation(slideDown)
-                    btnSendImage.visibility = View.GONE
+                if (!isChatRoomchatting) {
                 }
             }
+        } else {
+            btnEndChat.startAnimation(slideDown)
+            btnHeart.startAnimation(slideDown)
+            btnHeart.visibility = View.GONE
+            btnEndChat.visibility = View.GONE
+            btnRandom.startAnimation(slideDown)
+            btnRandom.visibility = View.GONE
+            btnSendImage.startAnimation(slideDown)
+            btnSendImage.visibility = View.GONE
         }
         optionsVisible = !optionsVisible
     }

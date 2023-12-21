@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 
 class ChatbotActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatbotBinding
-    val API_KEY ="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"
+    val API_KEY ="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"
     lateinit var recyclerView: RecyclerView
     lateinit var welcomeText :TextView
     lateinit var messageEditText:EditText
