@@ -116,8 +116,9 @@
 
     <LinearLayout
         android:id="@+id/linearLayout5"
-        android:layout_width="412dp"
-        android:layout_height="672dp"
+        android:layout_width="match_parent"
+        android:paddingTop="50dp"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="visible"
@@ -130,7 +131,9 @@
 
         <LinearLayout
             android:id="@+id/layoutRandomChat"
-            android:layout_width="311dp"
+            android:layout_width="match_parent"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
             android:layout_height="70dp"
             android:layout_margin="20dp"
             android:layout_weight="1"
@@ -155,14 +158,14 @@
                 android:fontFamily="monospace"
                 android:gravity="end"
                 android:text="Random Chat"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutNearestChat"
-            android:layout_width="311dp"
+            android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_margin="20dp"
             android:layout_weight="1"
@@ -171,7 +174,7 @@
 
             <ImageView
                 android:id="@+id/imgNearest"
-                android:layout_width="89dp"
+                android:layout_width="82dp"
                 android:layout_height="52dp"
                 android:layout_gravity="top|left"
                 android:layout_margin="10dp"
@@ -187,14 +190,14 @@
                 android:fontFamily="monospace"
                 android:gravity="end"
                 android:text="Nearest Chat"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutCountryMatch"
-            android:layout_width="311dp"
+            android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_margin="20dp"
             android:layout_weight="1"
@@ -218,14 +221,14 @@
                 android:fontFamily="monospace"
                 android:gravity="end"
                 android:text="Country Match"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutAIChat"
-            android:layout_width="311dp"
+            android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_margin="20dp"
             android:layout_weight="1"
@@ -252,14 +255,14 @@
                 android:fontFamily="monospace"
                 android:gravity="end"
                 android:text="AI Chat"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutVoiceChat"
-            android:layout_width="311dp"
+            android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_margin="20dp"
             android:layout_weight="1"
@@ -283,14 +286,14 @@
                 android:fontFamily="monospace"
                 android:gravity="end"
                 android:text="Voice Chat"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layoutTicTacToe"
-            android:layout_width="311dp"
+            android:layout_width="match_parent"
             android:layout_height="63dp"
             android:layout_margin="20dp"
             android:layout_weight="1"
@@ -314,7 +317,7 @@
                 android:fontFamily="monospace"
                 android:gravity="end"
                 android:text="Game"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>

@@ -34,11 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
-    private  lateinit var firebaseDatabase: FirebaseDatabase
     private  lateinit var databaseReferences: DatabaseReference
-    private var ivStartChat: ImageView? = null
-    private var ivFindNearUser: ImageView? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
