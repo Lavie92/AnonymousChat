@@ -78,8 +78,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
         binding = ActivityChatNearestBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-
-        checkSession()
         imageUtils = ImageUtils(this)
         nearestChatRoomRef = FirebaseDatabase.getInstance().getReference("NearestChatRoom")
         usersRef = FirebaseDatabase.getInstance().getReference("users")
@@ -93,7 +91,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(this)
         val btnEndChat: Button = binding.btnEndChat
-
         val btnShowOptions: FloatingActionButton = findViewById(R.id.btnShowOptions)
         btnShowOptions.setOnClickListener {
             toggleOptions()
@@ -111,7 +108,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
             } else {
                 readyToFind = true
                 toggleFind()
-
             }
         }
         btnSendImage = binding.ivSendImage
@@ -519,7 +515,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
                             val receiverId =
                                 msgSnapshot.child("receiverId").getValue(String::class.java)
 
-                            // Check if the current user is the sender or receiver
                             if (senderId == currentUserId || receiverId == currentUserId) {
                                 val encryptedMessage =
                                     msgSnapshot.child("content").getValue(String::class.java)
@@ -529,7 +524,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
                                 val timestamp =
                                     msgSnapshot.child("timestamp").getValue(Long::class.java)
 
-                                // Decrypt the message
                                 var decryptedMessage = encryptedMessage?.let {
                                     encryptedKey?.let { key ->
                                         EncryptionUtils.decrypt(
@@ -539,7 +533,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
                                     }
                                 }
 
-                                // Apply the filter for bad words if needed
                                 if (filter) {
                                     decryptedMessage = badwords.filterBadWords(decryptedMessage)
                                 }
@@ -564,7 +557,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
                                 null
                             }
                         }
-
                         messageList?.clear()
                         newMessages.let { messageList?.addAll(it) }
 
@@ -589,15 +581,14 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
                             }
                         }
                     }
-
                     override fun onCancelled(error: DatabaseError) {
-                        Log.e("loadMessages", "Error loading messages: ${error.message}")
                     }
                 })
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(message: String) {
         val systemMessage = Message(
             UUID.randomUUID().toString(),
@@ -653,7 +644,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
         }
     }
 
-
     private fun checkChatRoomStatus(chatRoomId: String, callback: (Boolean) -> Unit) {
         if (chatRoomId.isNotEmpty()) {
             val nearestChatRoomRef =
@@ -666,10 +656,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Log.e(
-                            "CheckChatRoomStatus",
-                            "Error checking ChatRoom status: ${error.message}"
-                        )
                         callback.invoke(false)
                     }
                 })
@@ -765,25 +751,14 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         val receiverUserId = currentUserId
         val senderUserId = message.senderId
-
-        Log.d(
-            "reportMessage",
-            "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId"
-        )
-
-
-        // Extract only the necessary properties from the Message object
         val messageMap = mapOf(
             "timestamp" to message.timestamp,
             "content" to message.content
         )
-
         val report = Reports(senderUserId!!, receiverUserId!!)
-
         val reportRef = FirebaseDatabase.getInstance().getReference("reports").child(chatRoomId)
             .child(message.messageId!!)
         reportRef.setValue(report)
-
         reportRef.child("status").setValue("doing")
         reportRef.child("messageMap").setValue(messageMap)
             .addOnSuccessListener {
@@ -792,66 +767,6 @@ class ChatNearestActivity : AppCompatActivity(), MessageHandler {
             .addOnFailureListener {
                 Toast.makeText(this, "Error adding report: ${it.message}", Toast.LENGTH_SHORT)
                     .show()
-                Log.e("reportMessage", "Error adding report: ${it.message}")
             }
     }
-
-    private fun getSessionId(): String? {
-        val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
-        return sharedPref.getString("sessionID2", null)
-    }
-
-    private fun checkSession() {
-        val sessionId = getSessionId()
-        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
-        val user = auth.currentUser
-        user?.let {
-            databaseReferences.child(it.uid).child("session")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val currentSessionID = snapshot.value as String?
-                        if (sessionId != currentSessionID) {
-                            showConfirmationDialog()
-                        }
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // Handle error
-                    }
-                })
-        }
-    }
-
-    private fun showConfirmationDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Thông báo!")
-        builder.setMessage("Tài khoản này đang được đăng nhập ở thiết bị khác, vui lòng đăng nhập lại!")
-
-        builder.setPositiveButton("OK") { _: DialogInterface, _: Int ->
-            signOutAndStartSignInActivity()
-            handleLogout()
-            finish()
-        }
-
-
-        builder.show()
-    }
-
-    private fun signOutAndStartSignInActivity() {
-        auth.signOut()
-        startActivity(Intent(this, LoginActivity::class.java))
-
-
-    }
-
-    private fun handleLogout() {
-        // Tạo Intent để chuyển hướng đến LoginActivity và xóa toàn bộ Activity đã mở trước đó
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-
-        // Kết thúc Activity hiện tại
-        finish()
-    }
-
 }

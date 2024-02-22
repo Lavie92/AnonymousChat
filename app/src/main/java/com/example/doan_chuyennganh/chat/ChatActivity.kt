@@ -13,11 +13,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.doan_chuyennganh.LoginActivity
 import com.example.doan_chuyennganh.R
 import com.example.doan_chuyennganh.adapter.MessageAdapter
 import com.example.doan_chuyennganh.authentication.User
@@ -52,7 +50,6 @@ class ChatActivity : AppCompatActivity(), MessageHandler {
     private val currentUser = FirebaseAuth.getInstance().currentUser
     val badwords = filterBadwords()
     private val handler = Handler()
-    private lateinit var databaseReferences: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var btnHeart: Button
     private lateinit var ivSendImage: ImageView
@@ -68,8 +65,6 @@ class ChatActivity : AppCompatActivity(), MessageHandler {
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-
-        checkSession()
         imageUtils = ImageUtils(this)
         chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
         usersRef = FirebaseDatabase.getInstance().getReference("users")
@@ -311,7 +306,6 @@ class ChatActivity : AppCompatActivity(), MessageHandler {
         chatRoomRef.child("user1Id").setValue(user1.id)
         chatRoomRef.child("user2Id").setValue(user2.id)
         chatRoomRef.child("status").setValue("chatting")
-
         val user1Reference = user1.id?.let { usersRef.child(it) }
         user1Reference?.child("randomChatRoom")?.setValue(chatRoomId)
         val user2Reference = user2.id?.let { usersRef.child(it) }
@@ -538,53 +532,4 @@ class ChatActivity : AppCompatActivity(), MessageHandler {
         }
     }
 
-    private fun getSessionId(): String? {
-        val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
-        return sharedPref.getString("sessionID2", null)
-    }
-
-    private fun checkSession() {
-        val sessionId = getSessionId()
-        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
-        val user = auth.currentUser
-        user?.let {
-            databaseReferences.child(it.uid).child("session")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val currentSessionID = snapshot.value as String?
-                        if (sessionId != currentSessionID) {
-                            showConfirmationDialog()
-                        }
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                    }
-                })
-        }
-    }
-
-    private fun showConfirmationDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Thông báo!")
-        builder.setMessage("Tài khoản này đang được đăng nhập ở thiết bị khác, vui lòng đăng nhập lại!")
-
-        builder.setPositiveButton("OK") { _: DialogInterface, _: Int ->
-            signOutAndStartSignInActivity()
-            handleLogout()
-            finish()
-        }
-        builder.show()
-    }
-
-    private fun signOutAndStartSignInActivity() {
-        auth.signOut()
-        startActivity(Intent(this, LoginActivity::class.java))
-    }
-
-    private fun handleLogout() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
 }
