@@ -16,6 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DoAn_ChuyenNganh"
+rootProject.name = "Anonymous Chat"
 include(":app")
 include(":filterBadwordsLibrary")
