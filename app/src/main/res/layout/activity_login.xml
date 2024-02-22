@@ -4,21 +4,6 @@
     android:layout_width="match_parent"
     android:background="#404C1F9E"
     android:layout_height="match_parent">
-    <!--
-    /*
-     *	This content is generated from the API File Info.
-     *	(Alt+Shift+Ctrl+I).
-     *
-     *	@desc
-     *	@file 		login_screen
-     *	@date 		Tuesday 05th of September 2023 01:28:18 PM
-     *	@title 		Page 1
-     *	@author
-     *	@keywords
-     *	@generator 	Export Kit v1.3.figma
-     *
-     */
-    -->
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
@@ -95,37 +80,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.618" />
 
-    <!--    <ImageButton-->
-<!--        android:id="@+id/login_button"-->
-<!--        android:layout_width="33dp"-->
-<!--        android:layout_height="29dp"-->
-<!--        android:layout_marginStart="155dp"-->
-<!--        android:layout_marginTop="52dp"-->
-<!--        android:src="@drawable/xmlid_22_"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.551"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/line_1" />-->
-
-
-
-    <!--    <Button-->
-<!--        android:id="@+id/signInButton"-->
-<!--        android:layout_width="200dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="11dp"-->
-<!--        android:layout_marginTop="14dp"-->
-<!--        android:layout_marginEnd="105dp"-->
-<!--        android:background="@color/blue"-->
-<!--        android:text="Sign up with Google"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:textColor="#5D4037"-->
-<!--        android:textSize="20sp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/imageView"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/vector_ek4" />-->
-
-
     <TextView
         android:id="@+id/textSignup"
         android:layout_width="182dp"
@@ -163,7 +117,7 @@
     <EditText
 
         android:id="@+id/login_email"
-        android:layout_width="360dp"
+        android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginStart="26dp"
 
@@ -184,7 +138,7 @@
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/login_password"
-        android:layout_width="360dp"
+        android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginStart="26dp"
         android:layout_marginTop="29dp"

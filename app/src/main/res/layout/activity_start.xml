@@ -40,11 +40,9 @@
         android:layout_width="206dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="104dp"
         android:background="@drawable/my_button"
         android:shadowColor="#9C27B0"
         android:text="Get Started"
         android:textColor="@color/white"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 </LinearLayout>

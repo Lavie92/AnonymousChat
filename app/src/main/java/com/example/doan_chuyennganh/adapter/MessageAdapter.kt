@@ -108,26 +108,6 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
                 } else {
                     holder.tvSentTime.text = ""
                 }
-                holder.tvTranslate.setOnClickListener {
-                    if (isTranslated) {
-                        holder.tvTranslate.text = "original text"
-                        holder.receiveMessage.text = currentMessage.content.toString()
-                    } else {
-                        performTranslation(
-                            currentMessage.content.toString(),
-                            object : TranslationCallback {
-                                override fun onTranslationResult(translatedText: String) {
-                                    holder.tvTranslate.text = "translated text"
-                                    holder.receiveMessage.text = translatedText
-                                }
-
-                                override fun onTranslationError(errorMessage: String) {
-                                    showToast(errorMessage)
-                                }
-                            })
-                    }
-                    isTranslated = !isTranslated
-                }
             }
 
             is ImageSentViewHolder -> {
@@ -349,7 +329,6 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
     class ReceiveViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val receiveMessage = itemView.findViewById<TextView>(R.id.tvReceiveMessage)
         val tvSentTime = itemView.findViewById<TextView>(R.id.tvReceiveTime)
-        val tvTranslate = itemView.findViewById<TextView>(R.id.tvTranslate)
     }
 
     class SystemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

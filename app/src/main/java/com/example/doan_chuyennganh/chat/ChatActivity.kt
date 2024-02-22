@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.Button
@@ -35,16 +34,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.MutableData
-import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import java.util.UUID
-
-private const val STORAGE_PATH = "images/"
-
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : AppCompatActivity(), MessageHandler {
     private var optionsVisible = false
     private lateinit var messageRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
@@ -65,11 +57,12 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var btnHeart: Button
     private lateinit var ivSendImage: ImageView
     private lateinit var btnRandom: Button
-    private val storageRef: StorageReference = FirebaseStorage.getInstance().reference
+    private lateinit var imageUtils: ImageUtils
 
     companion object {
         const val REQUEST_CODE = 1
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
@@ -77,7 +70,7 @@ class ChatActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         checkSession()
-
+        imageUtils = ImageUtils(this)
         chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
         usersRef = FirebaseDatabase.getInstance().getReference("users")
         messageRecyclerView = binding.rcMessage
@@ -128,8 +121,6 @@ class ChatActivity : AppCompatActivity() {
             }
             endChat(chatRoomId) { success ->
                 if (success) {
-                } else {
-                    Log.e("EndChat", "Failed to end chat.")
                 }
             }
         }
@@ -142,81 +133,29 @@ class ChatActivity : AppCompatActivity() {
             }
         }
         ivSendImage.setOnClickListener {
-//            val imageUris: List<Uri> = getImageUrisFromDevice(this)
-//            showImagePicker(this, imageUris)
-            showImagePickerDialog()
+            checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+                if (!isChatRoomEnded) {
+                    imageUtils.showImagePickerDialog()
+                } else {
+                    Toast.makeText(this, "Bạn cần tìm người chat trước!", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
 
     }
-
-
-    private fun showImagePickerDialog() {
-        val intent = Intent()
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Chọn ảnh"), REQUEST_CODE)
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             val selectedImageUri: Uri = data.data ?: return
-            uploadImageToFirebaseStorage(selectedImageUri)
+            if (currentUserId != null) {
+                imageUtils.uploadImageToFirebaseStorage(
+                    selectedImageUri, chatRoomId, "chatRooms", currentUserId, receiverId
+                )
+            }
         }
-    }
-    private fun updateUsersCoin(userId: String, coin: Int) {
-        val userRef = FirebaseDatabase.getInstance().getReference("users/$userId")
-
-        // Lấy thông tin hiện tại của người dùng
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Giả sử bạn có trường 'coins' trong object của người dùng
-                val currentCoins = dataSnapshot.child("coins").getValue(Double::class.java) ?: 0.0
-                val newCoinValue = currentCoins - coin
-
-                // Cập nhật số dư mới
-                userRef.child("coins").setValue(newCoinValue)
-                    .addOnSuccessListener {
-                    }
-                    .addOnFailureListener {
-                    }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        })
-    }
-    private fun uploadImageToFirebaseStorage(imageUri: Uri) {
-        val imageName = UUID.randomUUID().toString()
-        val imageRef = storageRef.child("$STORAGE_PATH$imageName.jpg")
-
-        imageRef.putFile(imageUri)
-            .addOnSuccessListener { taskSnapshot ->
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    val imageUrl = uri.toString()
-                    handleImageUploadSuccess(imageUrl)
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Lỗi khi tải ảnh lên: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-    private fun handleImageUploadSuccess(imageUrl: String) {
-        val timestamp = System.currentTimeMillis()
-        val messageId = UUID.randomUUID().toString()
-        val secretKey = EncryptionUtils.generateKey()
-        val encryptedMessage = EncryptionUtils.encrypt(imageUrl, secretKey)
-        val encryptedKey = EncryptionUtils.getKeyAsString(secretKey)
-        val type = "image"
-        val message =
-            Message(messageId, currentUserId.toString(), receiverId, encryptedMessage, type, encryptedKey, timestamp)
-        chatRoomsRef.child(chatRoomId).child("messages")
-            .push().setValue(message)
-        Toast.makeText(this, "Ảnh đã được gửi", Toast.LENGTH_SHORT).show()
-        updateUsersCoin(currentUserId!!,3)
     }
 
     private fun shareMoreInformation() {
@@ -235,33 +174,12 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.e("shareMoreInformation", "Error: ${databaseError.message}")
             }
         })
     }
 
-    private fun updatePoints(userId: String) {
-        val userPointRef = usersRef.child(userId).child("point")
-        userPointRef.runTransaction(object : Transaction.Handler {
-            override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                var points = mutableData.getValue(Int::class.java)
-                if (points == null) {
-                    points = 0
-                }
-                if (points < 100) {
-                    mutableData.value = points + 5
-                }
-                return Transaction.success(mutableData)
-            }
-
-            override fun onComplete(
-                databaseError: DatabaseError?,
-                committed: Boolean,
-                dataSnapshot: DataSnapshot?
-            ) {
-                Log.d("updatePoints", "Points updated: $databaseError")
-            }
-        })
+    override fun updatePoints(userId: String) {
+        super<MessageHandler>.updatePoints(userId)
     }
 
     private fun shareUserInfo(shareFromUserId: String, shareToUserId: String) {
@@ -276,7 +194,6 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.e("shareUserInfo", "Error: ${databaseError.message}")
             }
         })
     }
@@ -321,6 +238,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(message: String) {
         val systemMessage = Message(
             UUID.randomUUID().toString(),
@@ -355,14 +273,14 @@ class ChatActivity : AppCompatActivity() {
         usersRef.get().addOnSuccessListener { snapshot ->
             val allUsers = snapshot.children.map {
                 it.getValue(User::class.java)!!
-            }
-                .filter { it.ready && it.id != currentUserId }
+            }.filter { it.ready && it.id != currentUserId }
 
             if (allUsers.isNotEmpty()) {
                 handler.removeCallbacks(timeoutRunnable)
                 val randomUser = allUsers.random()
                 receiverId = randomUser.id.toString()
-                chatRoomId = currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
+                chatRoomId =
+                    currentUser?.toUser()?.let { createChatRoom(it, randomUser) }.toString()
                 sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId)
                 currentUserId?.let { updateUserStatus(it, false) }
             }
@@ -411,33 +329,27 @@ class ChatActivity : AppCompatActivity() {
                     @SuppressLint("NotifyDataSetChanged")
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val newMessages = snapshot.children.mapNotNull { msgSnapshot ->
-                            val messageId = msgSnapshot.child("messageId").getValue(String::class.java)
-                            val senderId = msgSnapshot.child("senderId").getValue(String::class.java)
+                            val messageId =
+                                msgSnapshot.child("messageId").getValue(String::class.java)
+                            val senderId =
+                                msgSnapshot.child("senderId").getValue(String::class.java)
                             val receiverId =
                                 msgSnapshot.child("receiverId").getValue(String::class.java)
-
-                            // Check if the current user is the sender or receiver
                             if (senderId == currentUserId || receiverId == currentUserId) {
                                 val encryptedMessage =
                                     msgSnapshot.child("content").getValue(String::class.java)
-                                val type =
-                                    msgSnapshot.child("type").getValue(String::class.java)
+                                val type = msgSnapshot.child("type").getValue(String::class.java)
                                 val encryptedKey =
                                     msgSnapshot.child("encryptKey").getValue(String::class.java)
                                 val timestamp =
                                     msgSnapshot.child("timestamp").getValue(Long::class.java)
-
-                                // Decrypt the message
                                 var decryptedMessage = encryptedMessage?.let {
                                     encryptedKey?.let { key ->
                                         EncryptionUtils.decrypt(
-                                            it,
-                                            EncryptionUtils.getKeyFromString(key)
+                                            it, EncryptionUtils.getKeyFromString(key)
                                         )
                                     }
                                 }
-
-                                // Apply the filter for bad words if needed
                                 if (filter) {
                                     decryptedMessage = badwords.filterBadWords(decryptedMessage)
                                 }
@@ -448,8 +360,15 @@ class ChatActivity : AppCompatActivity() {
                                             decryptedMessage?.let { msg ->
                                                 timestamp?.let { time ->
                                                     type?.let { it1 ->
-                                                        Message(it, sid, rid, msg,
-                                                            it1, encryptedKey ?: "", time)
+                                                        Message(
+                                                            it,
+                                                            sid,
+                                                            rid,
+                                                            msg,
+                                                            it1,
+                                                            encryptedKey ?: "",
+                                                            time
+                                                        )
                                                     }
                                                 }
                                             }
@@ -468,15 +387,20 @@ class ChatActivity : AppCompatActivity() {
                         messageRecyclerView.scrollToPosition(messageList!!.size - 1)
 
                         if (newMessages.isNotEmpty()) {
+                            var content = "";
                             val lastMessage = newMessages.last()
+                            if (lastMessage.type!! == "image") {
+                                content = "Người lạ đã gửi 1 hình ảnh"
+                            } else {
+                                content = lastMessage.content!!
+                            }
                             if (lastMessage.senderId != currentUserId) {
-                                lastMessage.content?.let { showNotification("New Message", it) }
+                                lastMessage.content?.let { showNotification("Chat ngẫu nhiên", content) }
                             }
                         }
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        Log.e("loadMessages", "Error loading messages: ${error.message}")
                     }
                 })
             }
@@ -489,10 +413,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendMessage(
-        chatRoomId: String,
-        senderId: String,
-        receiverId: String,
-        text: String
+        chatRoomId: String, senderId: String, receiverId: String, text: String
     ) {
         val secretKey = EncryptionUtils.generateKey()
         val encryptedMessage = EncryptionUtils.encrypt(text, secretKey)
@@ -502,13 +423,18 @@ class ChatActivity : AppCompatActivity() {
             if (!isChatRoomEnded) {
                 val timestamp = System.currentTimeMillis()
                 val messageId = UUID.randomUUID().toString()
-                val message =
-                    Message(messageId, senderId, receiverId, encryptedMessage, "text" ,encryptedKey, timestamp)
-                chatRoomsRef.child(chatRoomId).child("messages")
-                    .push().setValue(message)
+                val message = Message(
+                    messageId,
+                    senderId,
+                    receiverId,
+                    encryptedMessage,
+                    "text",
+                    encryptedKey,
+                    timestamp
+                )
+                chatRoomsRef.child(chatRoomId).child("messages").push().setValue(message)
             } else {
                 Toast.makeText(this, "Bạn cần tìm người chat trước!", Toast.LENGTH_SHORT).show()
-                Log.d("SendMessage", "Cannot send message, ChatRoom has ended.")
             }
         }
     }
@@ -521,9 +447,7 @@ class ChatActivity : AppCompatActivity() {
                 val status = snapshot.getValue(String::class.java)
                 callback.invoke(status == "ended")
             }
-
             override fun onCancelled(error: DatabaseError) {
-                Log.e("CheckChatRoomStatus", "Error checking ChatRoom status: ${error.message}")
                 callback.invoke(false)
             }
         })
@@ -539,16 +463,12 @@ class ChatActivity : AppCompatActivity() {
             userRef.child("randomChatRoom").addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     chatRoomValue = snapshot.getValue(String::class.java).toString()
-                    if (chatRoomValue != null) {
-                        checkUsersInChatRoom(chatRoomValue)
-                        chatRoomId = chatRoomValue
-                        loadMessages(chatRoomId)
-                    } else {
-                    }
+                    checkUsersInChatRoom(chatRoomValue)
+                    chatRoomId = chatRoomValue
+                    loadMessages(chatRoomId)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("ChatRoomValue", "Error getting chatRoom value: ${error.message}")
                 }
             })
         }
@@ -561,36 +481,26 @@ class ChatActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user1Id = snapshot.child("user1Id").getValue(String::class.java)
                 val user2Id = snapshot.child("user2Id").getValue(String::class.java)
-                if (user1Id != "" && user2Id != "" && !user1Id.isNullOrEmpty() && !user2Id.isNullOrEmpty())
-                    receiverId = if (user1Id == currentUserId) user2Id ?: "" else user1Id ?: ""
-
-                Log.d("receiver", "User2Id: $receiverId")
+                if (user1Id != "" && user2Id != "" && !user1Id.isNullOrEmpty() && !user2Id.isNullOrEmpty()) receiverId =
+                    if (user1Id == currentUserId) user2Id else user1Id
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("UsersInChatRoom", "Error checking users in chatRoom: ${error.message}")
             }
         })
     }
 
     private fun endChat(chatRoomId: String, callback: (Boolean) -> Unit) {
         sendMessage(
-            this.chatRoomId,
-            "system",
-            currentUserId.toString(),
-            "Cuộc trò chuyện đã kết thúc!"
+            this.chatRoomId, "system", currentUserId.toString(), "Cuộc trò chuyện đã kết thúc!"
         )
         sendMessage(
-            this.chatRoomId,
-            "system",
-            receiverId,
-            "Cuộc trò chuyện đã kết thúc!"
+            this.chatRoomId, "system", receiverId, "Cuộc trò chuyện đã kết thúc!"
         )
         val chatRoomRef = FirebaseDatabase.getInstance().getReference("chatRooms").child(chatRoomId)
-        chatRoomRef.child("status").setValue("ended")
-            .addOnCompleteListener { task ->
-                callback.invoke(task.isSuccessful)
-            }
+        chatRoomRef.child("status").setValue("ended").addOnCompleteListener { task ->
+            callback.invoke(task.isSuccessful)
+        }
     }
 
     private fun removeMessage(chatRoomId: String) {
@@ -601,7 +511,6 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("EndChat", "Error getting chatRoom info: ${error.message}")
             }
         })
     }
@@ -610,15 +519,8 @@ class ChatActivity : AppCompatActivity() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         val receiverUserId = currentUserId
         val senderUserId = message.senderId
-
-        Log.d(
-            "reportMessage",
-            "currentUserId: $currentUserId, senderUserId: $senderUserId, receiverUserId: $receiverUserId"
-        )
-
         val messageMap = mapOf(
-            "timestamp" to message.timestamp,
-            "content" to message.content
+            "timestamp" to message.timestamp, "content" to message.content
         )
 
         val report = Reports(senderUserId!!, receiverUserId!!)
@@ -628,14 +530,12 @@ class ChatActivity : AppCompatActivity() {
         reportRef.setValue(report)
 
         reportRef.child("status").setValue("doing")
-        reportRef.child("messageMap").setValue(messageMap)
-            .addOnSuccessListener {
-                Toast.makeText(this, "Report added successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Error adding report: ${it.message}", Toast.LENGTH_SHORT).show()
-                Log.e("reportMessage", "Error adding report: ${it.message}")
-            }
+        reportRef.child("messageMap").setValue(messageMap).addOnSuccessListener {
+            Toast.makeText(this, "Report added successfully", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            Toast.makeText(this, "Error adding report: ${it.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     private fun getSessionId(): String? {
@@ -658,7 +558,6 @@ class ChatActivity : AppCompatActivity() {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
-                        // Handle error
                     }
                 })
         }
@@ -674,8 +573,6 @@ class ChatActivity : AppCompatActivity() {
             handleLogout()
             finish()
         }
-
-
         builder.show()
     }
 
@@ -690,5 +587,4 @@ class ChatActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
-
 }

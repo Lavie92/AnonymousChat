@@ -16,10 +16,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="135dp"
+            android:layout_marginStart="135dp"
             android:fontFamily="@font/roboto_bold"
             android:text="Chat Nearest"
-            android:textSize="23dp"
+            android:textSize="23sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -65,7 +65,7 @@
         android:gravity="bottom"
         android:weightSum="100" >
         <LinearLayout
-            android:layout_width="85dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <Button
@@ -109,7 +109,7 @@
                 android:layout_height="50dp"
                 android:visibility="gone"
                 android:src="@drawable/picture"
-
+                android:background="@drawable/message_background_receive"
                 />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="6dp"
-                android:contentDescription="@string/app_name"
+                android:contentDescription="floatButton"
                 app:backgroundTint="@color/purple_200"
                 app:srcCompat="@drawable/baseline_add_24" />
 
@@ -131,7 +131,7 @@
             android:layout_height="50dp"
             android:layout_weight="10"
             android:background="@drawable/message_box_background"
-            android:hint="hello"
+            android:hint="@string/greeting"
             android:maxLines="2"
             android:paddingLeft="10dp"
             android:singleLine="false"
