@@ -39,9 +39,6 @@
             android:name=".authentication.PayHistoryActivity"
             android:exported="false" />
         <activity
-            android:name=".chat.CountryMatchingActivity"
-            android:exported="false" />
-        <activity
             android:name=".chat.FullImageActivity"
             android:exported="false" />
         <activity

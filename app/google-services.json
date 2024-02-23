@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:950748527968:android:ac93897723374be5f07205",
         "android_client_info": {
-          "package_name": "com.example.AnonymousChat"
+          "package_name": "com.example.anonymousChat"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "950748527968-4kpq9mf56lntap7dv3gdcltnr41pn2ha.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.AnonymousChat",
+            "package_name": "com.example.anonymousChat",
             "certificate_hash": "21f31bf37c03f53f08d6eafab486b802f3ab22ef"
           }
         },
@@ -26,7 +26,7 @@
           "client_id": "950748527968-stcijveqt7kjbedqoc1vshi3c2pmopgl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.AnonymousChat",
+            "package_name": "com.example.anonymousChat",
             "certificate_hash": "f394ba2181df687392537a88b479b86e645669ca"
           }
         },

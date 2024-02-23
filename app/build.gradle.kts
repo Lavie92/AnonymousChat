@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.AnonymousChat"
+    namespace = "com.example.anonymousChat"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.AnonymousChat"
+        applicationId = "com.example.anonymousChat"
         minSdk = 28
         targetSdk = 34
         versionCode = 1
