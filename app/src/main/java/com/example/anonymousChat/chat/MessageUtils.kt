@@ -18,9 +18,6 @@ class MessageUtils (private val activity: Activity, chatType: String) {
     fun sendMessage(
         chatRoomId: String, senderId: String, receiverId: String, content: String
     ) {
-//        val secretKey = EncryptionUtils.generateKey()
-//        val encryptedMessage = EncryptionUtils.encrypt(text, secretKey)
-//        val encryptedKey = EncryptionUtils.getKeyAsString(secretKey)
 
         checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
             if (!isChatRoomEnded) {

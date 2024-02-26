@@ -33,19 +33,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/dayflow_sitting"
-        android:layout_width="273dp"
-        android:layout_height="219dp"
-        android:layout_marginStart="204dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="dayflow_sitting"
-        android:src="@drawable/dayflow_sitting"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.136"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/happy_to_see_you_again__to_use_your_account_please_login_first_"
         android:layout_width="300.5dp"
@@ -56,8 +43,6 @@
         android:text="@string/happy_to_see_you_again__to_use_your_account_please_login_first__string"
         android:textColor="@color/_bg__frame_2_ek2_color"
         android:textSize="15sp"
-        app:layout_constraintEnd_toStartOf="@+id/dayflow_sitting"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hello__welcome_back" />
 
@@ -97,8 +82,7 @@
         app:layout_constraintVertical_bias="0.853" />
 
     <Button
-
-        android:alpha="0.7"
+        android:alpha="0.9"
         android:id="@+id/btnLogin"
         android:layout_width="107dp"
         android:layout_height="51dp"
@@ -115,18 +99,16 @@
         app:strokeColor="#3F51B5" />
 
     <EditText
-
         android:id="@+id/login_email"
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginStart="26dp"
-
         android:layout_marginEnd="25dp"
         android:background="@drawable/rectangle_1_shape"
         android:drawableLeft="@drawable/icon_email"
         android:drawablePadding="7dp"
         android:ems="10"
-        android:alpha="0.5"
+        android:alpha="0.9"
         android:hint="Email"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -142,9 +124,7 @@
         android:layout_height="52dp"
         android:layout_marginStart="26dp"
         android:layout_marginTop="29dp"
-        android:alpha="0.5"
-
-
+        android:alpha="0.9"
         android:layout_marginEnd="25dp"
         android:background="@drawable/rectangle_1_shape"
         android:drawableLeft="@drawable/baseline_lock_person_24"
@@ -161,7 +141,6 @@
         app:layout_constraintVertical_bias="0.544" />
 
     <ImageView
-        android:visibility="gone"
         android:id="@+id/signInButton"
         android:layout_width="43dp"
         android:layout_height="27dp"

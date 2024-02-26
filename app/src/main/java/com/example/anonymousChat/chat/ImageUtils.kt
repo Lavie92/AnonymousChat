@@ -48,11 +48,9 @@ class ImageUtils(private val activity: Activity) {
     fun handleImageUploadSuccess(imageUrl: String, chatRoomId: String, chatType: String, currentUserId: String, receiverId: String) {
         val timestamp = System.currentTimeMillis()
         val messageId = UUID.randomUUID().toString()
-        val secretKey = EncryptionUtils.generateKey()
-        val encryptedKey = EncryptionUtils.getKeyAsString(secretKey)
         val type = "image"
         val message =
-            Message(messageId, currentUserId, receiverId, type, encryptedKey, timestamp)
+            Message(messageId, currentUserId, receiverId, imageUrl, type, timestamp)
 
         FirebaseDatabase.getInstance().getReference(chatType).child(chatRoomId)
             .child("messages").push().setValue(message)
@@ -85,16 +83,11 @@ class ImageUtils(private val activity: Activity) {
 
         oldImagesQuery.addOnSuccessListener { result ->
             for (fileRef in result.items) {
-                // Lấy metadata của file để kiểm tra thời gian tải lên
                 fileRef.metadata.addOnSuccessListener { metadata ->
                     val uploadedTime = metadata.creationTimeMillis
-
-                    // Nếu thời gian tải lên của hình cũ hơn ngưỡng cho phép, thì xoá nó
                     if (uploadedTime < oldImageThreshold) {
                         fileRef.delete().addOnSuccessListener {
-                            // Xoá thành công, bạn có thể thực hiện các hành động khác nếu cần
-                        }.addOnFailureListener { e ->
-                            // Xoá thất bại, xử lý lỗi nếu cần
+                        }.addOnFailureListener {
                         }
                     }
                 }

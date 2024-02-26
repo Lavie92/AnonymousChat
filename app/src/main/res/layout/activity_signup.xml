@@ -1,25 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="#404C1F9E"
-    tools:context=".SignupActivity">
-
-    <View
-        android:id="@+id/ellipse_4"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="358dp"
-        android:background="@drawable/ellipse_1_shape"
-        android:foregroundGravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="match_parent">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
@@ -32,136 +16,149 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/login"
         tools:layout_editor_absoluteY="53dp" />
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="24dp"
-        android:contentDescription="combined_shape3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.066"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/combined_shape" />
 
     <TextView
-        android:id="@+id/hello__welcome_back2"
+        android:id="@+id/hello__welcome_back"
         android:layout_width="301dp"
         android:layout_height="63dp"
-        android:layout_marginTop="116dp"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:text="Welcome New Member!"
-        android:textColor="@color/hello__welcome_back_color"
-        android:textSize="24sp"
+        android:text="@string/new_member"
+        android:textColor="@color/_bg__frame_2_ek2_color"
+        android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.145"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/dayflow_sitting2"
-        android:layout_width="273dp"
-        android:layout_height="219dp"
-        android:layout_marginStart="204dp"
-        android:layout_marginTop="64dp"
-        android:contentDescription="dayflow_sitting"
-        android:src="@drawable/dayflow_sitting"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+    <TextView
+        android:id="@+id/happy_to_see_you_again__to_use_your_account_please_login_first_"
+        android:layout_width="300.5dp"
+        android:layout_height="56.5dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/roboto_light"
+        android:text="@string/create_account_to_make_friend"
+        android:textColor="@color/_bg__frame_2_ek2_color"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/hello__welcome_back" />
+
+
+    <TextView
+        android:id="@+id/textLogin"
+        android:layout_width="182dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginEnd="147dp"
+        android:text="Bạn đã có tài khoản? "
+        android:textColor="@color/purple_500"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.424"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.853" />
+
+    <Button
+        android:id="@+id/btnSignup"
+        android:layout_width="107dp"
+        android:layout_height="51dp"
+        android:alpha="0.9"
+        android:background="@drawable/my_button"
+        android:shadowColor="#9C27B0"
+        android:text="Đăng ký"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.751"
+        app:rippleColor="#673AB7"
+        app:strokeColor="#3F51B5" />
 
     <EditText
         android:id="@+id/edtEmail"
-        android:layout_width="360dp"
+        android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginStart="26dp"
-        android:layout_marginTop="13dp"
-        android:alpha="0.5"
-        android:layout_marginEnd="55dp"
+        android:layout_marginEnd="25dp"
+        android:alpha="0.9"
         android:background="@drawable/rectangle_1_shape"
         android:drawableLeft="@drawable/icon_email"
         android:drawablePadding="7dp"
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dayflow_sitting2" />
-
-    <Button
-        android:id="@+id/btnSignup"
-        android:layout_width="107dp"
-        android:layout_height="51dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/my_button"
-        android:shadowColor="#9C27B0"
-        android:text="Sign up"
-        android:alpha="0.5"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtConfirmPassword"
-        app:rippleColor="#673AB7"
-        app:strokeColor="#3F51B5" />
-
-
-    <TextView
-        android:id="@+id/text_login"
-        android:layout_width="199dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="145dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="101dp"
-        android:text="Already have an Account?"
-        android:textColor="@color/purple_500"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSignup" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.405" />
 
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edtPassword"
-        android:layout_width="360dp"
+        android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_marginStart="25dp"
-        android:alpha="0.5"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="56dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginEnd="25dp"
+        android:alpha="0.9"
         android:background="@drawable/rectangle_1_shape"
         android:drawableLeft="@drawable/baseline_lock_person_24"
         android:drawablePadding="7dp"
         android:ems="10"
-        android:hint="Password"
+        android:hint="Mật khẩu"
         android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtEmail"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.476"
         app:passwordToggleEnabled="true" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/edtConfirmPassword"
-        android:layout_width="360dp"
+        android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:alpha="0.5"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="56dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginEnd="25dp"
+        android:alpha="0.9"
         android:background="@drawable/rectangle_1_shape"
-        android:drawableLeft="@drawable/baseline_password_24"
+        android:drawableLeft="@drawable/baseline_lock_person_24"
         android:drawablePadding="7dp"
         android:ems="10"
-        android:hint="Confirm Password"
+        android:hint="Xác nhận mật khẩu"
         android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtPassword"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.576"
         app:passwordToggleEnabled="true" />
+
+    <ImageView
+        android:id="@+id/signInButton"
+        android:layout_width="43dp"
+        android:layout_height="27dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="72dp"
+        android:background="@color/white"
+        android:src="@drawable/google"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

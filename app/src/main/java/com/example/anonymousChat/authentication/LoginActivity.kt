@@ -104,7 +104,6 @@ public class LoginActivity : AppCompatActivity() {
         binding.textSignup.setOnClickListener{
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
-            finish()
         }
         val currentUser = auth.currentUser
 
