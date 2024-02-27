@@ -114,9 +114,9 @@ public class LoginActivity : AppCompatActivity() {
         //
         val focusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
-                v.alpha = 1.0f // Đậm lên khi focus
+                v.alpha = 1.0f
             } else {
-                v.alpha = 0.5f // Mờ đi khi không focus
+                v.alpha = 0.5f
             }
         }
 
@@ -144,8 +144,6 @@ public class LoginActivity : AppCompatActivity() {
         }
 
     }
-
-    //end Sign in Email/Password
 
 
     //Google

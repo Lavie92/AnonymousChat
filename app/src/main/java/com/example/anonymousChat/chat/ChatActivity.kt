@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import android.view.animation.TranslateAnimation
@@ -235,7 +236,9 @@ class ChatActivity : AppCompatActivity() {
             updateUserStatus(currentUserId, true)
         }
         showMessage("Đang tìm kiếm...")
-        handler.postDelayed(timeoutRunnable, 30000)
+        val currentTime = SystemClock.uptimeMillis()
+        val timeoutTime = currentTime + 30000
+        handler.postAtTime(timeoutRunnable, timeoutTime)
 
         usersRef.get().addOnSuccessListener { snapshot ->
             val allUsers = snapshot.children.map {
@@ -243,7 +246,9 @@ class ChatActivity : AppCompatActivity() {
             }.filter { it.ready && it.id != currentUserId }
 
             if (allUsers.isNotEmpty()) {
-                handler.removeCallbacks(timeoutRunnable)
+                if (currentTime < timeoutTime) {
+                    handler.removeCallbacks(timeoutRunnable)
+                }
                 val randomUser = allUsers.random()
                 receiverId = randomUser.id.toString()
                 chatRoomId =

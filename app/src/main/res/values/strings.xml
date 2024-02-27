@@ -37,7 +37,8 @@
     <string name="user_name_ek5_string">Gender</string>
     <string name="jamesfranco_ek1_string">select  </string>
     <string name="dang_truong_an_string">DANG TRUONG AN</string>
-    <string name="default_web_client_id">950748527968-stcijveqt7kjbedqoc1vshi3c2pmopgl.apps.googleusercontent.com</string>
+<!--    <string name="default_web_client_id">950748527968-stcijveqt7kjbedqoc1vshi3c2pmopgl.apps.googleusercontent.com</string>-->
+    <string name="default_web_client_id">950748527968-ofvj4553no3ufno8h0al649qemud4v8l.apps.googleusercontent.com</string>
 
     <string name="greeting">Tớ chào cậu!</string>
 
