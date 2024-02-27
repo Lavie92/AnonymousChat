@@ -68,7 +68,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_weight="20">
         <Button
             android:layout_marginLeft="2dp"
             android:id="@+id/btnHeart"
@@ -130,7 +131,7 @@
             android:id="@+id/messageBox"
             android:layout_width="260dp"
             android:layout_height="50dp"
-            android:layout_weight="10"
+            android:layout_weight="60"
             android:background="@drawable/message_box_background"
             android:hint="@string/greeting"
             android:maxLines="2"
@@ -145,6 +146,4 @@
             android:layout_weight="20"
             android:paddingLeft="10dp" />
     </LinearLayout>
-
-
 </RelativeLayout>

@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -94,22 +95,41 @@ class ChatActivity : AppCompatActivity() {
             startActivity(splashIntent)
         }
         checkChatRoomId()
-        Log.d("chatRoomIdRandomOnCreate", "id $chatRoomId")
+        var hasPressHeart = false
         btnHeart.setOnClickListener {
-            messageUtils.sendMessage(
-                chatRoomId,
-                "system",
-                currentUserId.toString(),
-                "Bạn đã nhấn yêu thích, nếu đối phương đồng ý thì bạn sẽ chia sẻ thông tin (tuổi, giới tính, username)"
-            )
-            messageUtils.sendMessage(
-                chatRoomId,
-                "system",
-                receiverId,
-                "Đối phương thích bạn, nếu bạn cũng vậy hãy nhấn tim để chia sẻ thông tin gồm (username, tuổi, giới tính)"
-            )
-            messageUtils.shareMoreInformation(chatRoomId, currentUserId.toString(), receiverId)
+            if (!hasPressHeart) {
+                val alertDialogBuilder = AlertDialog.Builder(this)
+                alertDialogBuilder.setTitle("Cảnh báo")
+                alertDialogBuilder.setMessage("Khi nhấn tim, bạn đồng ý chia sẻ thông tin cá nhân của bạn cho đối phương")
+                alertDialogBuilder.setPositiveButton("Đồng ý") { dialog, which ->
+                    hasPressHeart = true
+                    messageUtils.sendMessage(
+                        chatRoomId,
+                        "system",
+                        currentUserId.toString(),
+                        "Bạn đã nhấn yêu thích, nếu đối phương đồng ý thì bạn sẽ chia sẻ thông tin (tuổi, giới tính, username)"
+                    )
+                    messageUtils.sendMessage(
+                        chatRoomId,
+                        "system",
+                        receiverId,
+                        "Đối phương thích bạn, nếu bạn cũng vậy hãy nhấn tim để chia sẻ thông tin gồm (username, tuổi, giới tính)"
+                    )
+                    messageUtils.shareMoreInformation(chatRoomId, currentUserId.toString(), receiverId)
+
+                }
+                alertDialogBuilder.setNegativeButton("Hủy") { dialog, which ->
+                    dialog.dismiss()
+                }
+
+                val alertDialog = alertDialogBuilder.create()
+                alertDialog.show()
+            }
+            else {
+                Toast.makeText(this, "Bạn chỉ được gửi tim 1 lần", Toast.LENGTH_SHORT).show()
+            }
         }
+
         btnRandom.setOnClickListener {
             if (chatRoomId.isNotEmpty()) {
                 checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
@@ -246,16 +266,15 @@ class ChatActivity : AppCompatActivity() {
             }.filter { it.ready && it.id != currentUserId }
 
             if (allUsers.isNotEmpty()) {
-                if (currentTime < timeoutTime) {
                     handler.removeCallbacks(timeoutRunnable)
-                }
-                val randomUser = allUsers.random()
-                receiverId = randomUser.id.toString()
-                chatRoomId =
-                    currentUser?.toUser()?.let { createChatRoom(it, randomUser) }
-                        .toString()
-                sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId)
-                currentUserId?.let { updateUserStatus(it, false) }
+                    val randomUser = allUsers.random()
+                    receiverId = randomUser.id.toString()
+                    chatRoomId =
+                        currentUser?.toUser()?.let { createChatRoom(it, randomUser) }
+                            .toString()
+                    sendInitialMessages(chatRoomId, currentUserId.toString(), receiverId)
+                    currentUserId?.let { updateUserStatus(it, false) }
+                    updateUserStatus(receiverId, false)
             }
         }
     }
