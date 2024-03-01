@@ -18,8 +18,8 @@
             android:layout_height="wrap_content"
             android:maxWidth="250dp"
             android:padding="10dp"
-            android:text="Receive"
-            android:textColor="#B9000000"
+            android:text="System"
+            android:textColor="#7a4d48"
             android:textSize="18sp" />
 
     </RelativeLayout>

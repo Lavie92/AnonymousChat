@@ -54,5 +54,6 @@
     <string name="to_webview">To WebView</string>
     <string name="new_member">Thành viên mới?</string>
     <string name="create_account_to_make_friend">Hãy tạo tài khoản và kết nối cùng những người bạn phương xa</string>
+    <string name="dang_tai">Đang tải</string>
 </resources>
 
