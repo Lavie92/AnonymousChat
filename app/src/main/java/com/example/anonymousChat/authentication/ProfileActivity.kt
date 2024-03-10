@@ -21,7 +21,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.anonymousChat.achievement.AchievementsActivity
 import com.example.anonymousChat.active.SharedPreferencesManager
 import com.example.anonymousChat.authentication.NotificationActivity
-import com.example.anonymousChat.authentication.PayHistoryActivity
 import com.example.anonymousChat.authentication.SettingActivity
 import com.example.anonymousChat.databinding.ActivityProfileBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -114,11 +113,6 @@ class ProfileActivity : AppCompatActivity() {
         }
         binding.btnAchie.setOnClickListener{
             startActivity(Intent(this, AchievementsActivity::class.java))
-        }
-        binding.btnPayment.setOnClickListener{
-            startActivity(Intent(this, PayHistoryActivity::class.java))
-            startActivity(Intent(this, PayHistoryActivity::class.java))
-
         }
 
             binding.btnSave.setOnClickListener{

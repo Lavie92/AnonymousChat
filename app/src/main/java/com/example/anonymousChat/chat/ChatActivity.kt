@@ -22,7 +22,6 @@ import com.example.anonymousChat.adapter.MessageAdapter
 import com.example.anonymousChat.authentication.User
 import com.example.anonymousChat.authentication.toUser
 import com.example.anonymousChat.databinding.ActivityChatBinding
-import com.example.anonymousChat.encrypt.EncryptionUtils
 import com.example.anonymousChat.layout.SplashScreenActivity
 import com.example.anonymousChat.notification.NotificationService
 import com.example.anonymousChat.report.Reports
@@ -58,6 +57,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var btnRandom: Button
     private lateinit var imageUtils: ImageUtils
     private lateinit var messageUtils: MessageUtils
+
 
     companion object {
         const val REQUEST_CODE = 1
@@ -95,38 +95,41 @@ class ChatActivity : AppCompatActivity() {
             startActivity(splashIntent)
         }
         checkChatRoomId()
-        var hasPressHeart = false
         btnHeart.setOnClickListener {
-            if (!hasPressHeart) {
-                val alertDialogBuilder = AlertDialog.Builder(this)
-                alertDialogBuilder.setTitle("Cảnh báo")
-                alertDialogBuilder.setMessage("Khi nhấn tim, bạn đồng ý chia sẻ thông tin cá nhân của bạn cho đối phương")
-                alertDialogBuilder.setPositiveButton("Đồng ý") { dialog, which ->
-                    hasPressHeart = true
-                    messageUtils.sendMessage(
-                        chatRoomId,
-                        "system",
-                        currentUserId.toString(),
-                        "Bạn đã nhấn yêu thích, nếu đối phương đồng ý thì bạn sẽ chia sẻ thông tin (tuổi, giới tính, username)"
-                    )
-                    messageUtils.sendMessage(
-                        chatRoomId,
-                        "system",
-                        receiverId,
-                        "Đối phương thích bạn, nếu bạn cũng vậy hãy nhấn tim để chia sẻ thông tin gồm (username, tuổi, giới tính)"
-                    )
-                    messageUtils.shareMoreInformation(chatRoomId, currentUserId.toString(), receiverId)
+            checkIfUserHasPressedHeart(chatRoomId, currentUserId.toString()) { hasPressedHeart ->
+                if (!hasPressedHeart) {
+                    val alertDialogBuilder = AlertDialog.Builder(this)
+                    alertDialogBuilder.setTitle("Cảnh báo")
+                    alertDialogBuilder.setMessage("Khi nhấn tim, bạn đồng ý chia sẻ thông tin cá nhân của bạn cho đối phương")
+                    alertDialogBuilder.setPositiveButton("Đồng ý") { dialog, which ->
+                        messageUtils.sendMessage(
+                            chatRoomId,
+                            "system",
+                            currentUserId.toString(),
+                            "Bạn đã nhấn yêu thích, nếu đối phương đồng ý thì bạn sẽ chia sẻ thông tin (tuổi, giới tính, username)"
+                        )
+                        messageUtils.sendMessage(
+                            chatRoomId,
+                            "system",
+                            receiverId,
+                            "Đối phương thích bạn, nếu bạn cũng vậy hãy nhấn tim để chia sẻ thông tin gồm (username, tuổi, giới tính)"
+                        )
+                        messageUtils.shareMoreInformation(
+                            chatRoomId,
+                            currentUserId.toString(),
+                            receiverId
+                        )
 
-                }
-                alertDialogBuilder.setNegativeButton("Hủy") { dialog, which ->
-                    dialog.dismiss()
-                }
+                    }
+                    alertDialogBuilder.setNegativeButton("Hủy") { dialog, which ->
+                        dialog.dismiss()
+                    }
 
-                val alertDialog = alertDialogBuilder.create()
-                alertDialog.show()
-            }
-            else {
-                Toast.makeText(this, "Bạn chỉ được gửi tim 1 lần", Toast.LENGTH_SHORT).show()
+                    val alertDialog = alertDialogBuilder.create()
+                    alertDialog.show()
+                } else {
+                    Toast.makeText(this, "Bạn chỉ được gửi tim 1 lần", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -139,7 +142,6 @@ class ChatActivity : AppCompatActivity() {
                             "Bạn cần kết thúc cuộc trò chuyện hiện tại trước!!",
                             Toast.LENGTH_SHORT
                         ).show()
-                        Log.d("chatRoomIdRandom", "id $chatRoomId")
                     } else {
                         removeMessage(chatRoomId) {
                             findRandomUserForChat()
@@ -149,6 +151,7 @@ class ChatActivity : AppCompatActivity() {
             } else {
                 findRandomUserForChat()
             }
+            messageUtils.checkAndDeleteOldChatRooms()
         }
         btnEndChat.setOnClickListener {
             updateUserStatus(currentUserId.toString(), false)
@@ -158,6 +161,7 @@ class ChatActivity : AppCompatActivity() {
             if (chatRoomId.isNotEmpty()) {
                 messageUtils.endChat(chatRoomId, currentUserId.toString(), receiverId)
             }
+            btnRandom.isEnabled = true
         }
 
         btnSend.setOnClickListener {
@@ -192,6 +196,19 @@ class ChatActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+    private fun checkIfUserHasPressedHeart(chatRoomId: String, currentUserId: String, callback: (Boolean) -> Unit) {
+        val heartRef = chatRoomsRef.child(chatRoomId).child("heart").child(currentUserId)
+        heartRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val hasPressedHeart = snapshot.getValue(Boolean::class.java) ?: false
+                callback.invoke(hasPressedHeart)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback.invoke(false)
+            }
+        })
     }
 
     private fun toggleOptions() {
@@ -228,7 +245,7 @@ class ChatActivity : AppCompatActivity() {
     private val timeoutRunnable = Runnable {
         updateUserStatus(currentUserId.toString(), false)
         isFindByLocation(currentUserId.toString(), false)
-        showNotification("Không tìm thấy người nào", "Vui lòng thử lại sau")
+        btnRandom.isEnabled = true
     }
 
 
@@ -249,14 +266,15 @@ class ChatActivity : AppCompatActivity() {
         messageRecyclerView.scrollToPosition(messageList!!.size - 1)
     }
 
-    private fun findRandomUserForChat() {
+     private fun findRandomUserForChat() {
         chatRoomId = ""
         receiverId = ""
         if (currentUserId != null) {
             updateUserStatus(currentUserId, true)
         }
         showMessage("Đang tìm kiếm...")
-        val currentTime = SystemClock.uptimeMillis()
+         btnRandom.isEnabled = false
+         val currentTime = SystemClock.uptimeMillis()
         val timeoutTime = currentTime + 30000
         handler.postAtTime(timeoutRunnable, timeoutTime)
 
@@ -266,8 +284,9 @@ class ChatActivity : AppCompatActivity() {
             }.filter { it.ready && it.id != currentUserId }
 
             if (allUsers.isNotEmpty()) {
-                    handler.removeCallbacks(timeoutRunnable)
-                    val randomUser = allUsers.random()
+                handler.removeCallbacks(timeoutRunnable)
+                btnRandom.isEnabled = true
+                val randomUser = allUsers.random()
                     receiverId = randomUser.id.toString()
                     chatRoomId =
                         currentUser?.toUser()?.let { createChatRoom(it, randomUser) }

@@ -8,7 +8,6 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.Button
@@ -22,7 +21,6 @@ import com.example.anonymousChat.adapter.MessageAdapter
 import com.example.anonymousChat.authentication.User
 import com.example.anonymousChat.authentication.toUser
 import com.example.anonymousChat.databinding.ActivityChatNearestBinding
-import com.example.anonymousChat.encrypt.EncryptionUtils
 import com.example.anonymousChat.layout.SplashScreenActivity
 import com.example.anonymousChat.location.MyLocation
 import com.example.anonymousChat.notification.NotificationService

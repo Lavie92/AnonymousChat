@@ -2,7 +2,6 @@ package com.example.anonymousChat.chat
 
 import android.app.Activity
 import android.widget.Toast
-import com.example.anonymousChat.encrypt.EncryptionUtils
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -10,6 +9,11 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.MutableData
 import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class MessageUtils (private val activity: Activity, chatType: String) {
@@ -37,6 +41,7 @@ class MessageUtils (private val activity: Activity, chatType: String) {
             }
         }
     }
+
     private fun checkChatRoomStatus(chatRoomId: String, callback: (Boolean) -> Unit) {
         val chatRoomRef = chatRoomsRef.child(chatRoomId)
         chatRoomRef.child("status").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -44,12 +49,43 @@ class MessageUtils (private val activity: Activity, chatType: String) {
                 val status = snapshot.getValue(String::class.java)
                 callback.invoke(status == "ended")
             }
-
             override fun onCancelled(error: DatabaseError) {
                 callback.invoke(false)
             }
         })
     }
+    fun checkAndDeleteOldChatRooms() {
+        chatRoomsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (chatRoomSnapshot in snapshot.children) {
+                    val chatRoomId = chatRoomSnapshot.key
+                    chatRoomId?.let {
+                        val lastMessageRef = chatRoomSnapshot.child("messages").children.lastOrNull()
+                        lastMessageRef?.let { lastMessageSnapshot ->
+                            val timestamp = lastMessageSnapshot.child("timestamp").getValue(Long::class.java)
+                            if (timestamp != null && isOlderThan7Days(timestamp)) {
+                                deleteChatRoom(chatRoomId)
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+    }
+
+    private fun isOlderThan7Days(timestamp: Long): Boolean {
+        val currentTime = System.currentTimeMillis()
+        val sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000
+        return currentTime - timestamp > sevenDaysInMillis
+    }
+
+    private fun deleteChatRoom(chatRoomId: String) {
+        chatRoomsRef.child(chatRoomId).removeValue()
+    }
+
     fun endChat(chatRoomId: String, currentUserId: String, receiverId: String) {
         sendMessage(chatRoomId, "system", currentUserId, "Cuộc trò chuyện đã kết thúc!")
         sendMessage(chatRoomId, "system", receiverId, "Cuộc trò chuyện đã kết thúc!")

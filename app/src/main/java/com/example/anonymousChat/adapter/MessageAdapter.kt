@@ -23,9 +23,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.nipunru.nsfwdetector.NSFWDetector
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import com.example.anonymousChat.myMemory.TranslationApiClient
-import com.example.anonymousChat.myMemory.TranslationCallback
-import com.example.anonymousChat.myMemory.TranslationResponse
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -279,44 +276,6 @@ class MessageAdapter(val context: Context, val messageList: ArrayList<Message>) 
                 callback(null)
             }
         })
-    }
-
-    private fun performTranslation(
-        textToTranslate: String,
-        translationCallback: TranslationCallback
-    ) {
-        var call: Call<TranslationResponse> ?= null
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        getCountryFromFirebase(currentUserId.toString()) { country ->
-            if (country?.isNotEmpty()!! && country == "vn") {
-                    call = TranslationApiClient.translationService.translate(
-                    textToTranslate,
-                    "en|vi",
-                    "bdc32ef1b6fdcb885335"
-                )
-            }
-
-
-            call?.enqueue(object : retrofit2.Callback<TranslationResponse> {
-                override fun onResponse(
-                    call: Call<TranslationResponse>,
-                    response: Response<TranslationResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        val translationResponse = response.body()
-                        val translatedText =
-                            translationResponse?.responseData?.translatedText ?: "Không thể dịch"
-                        translationCallback.onTranslationResult(translatedText)
-                    } else {
-                        translationCallback.onTranslationError("Không thể kết nối đến dịch vụ dịch ngôn ngữ")
-                    }
-                }
-
-                override fun onFailure(call: Call<TranslationResponse>, t: Throwable) {
-                    translationCallback.onTranslationError("Lỗi khi thực hiện yêu cầu dịch ngôn ngữ: ${t.message}")
-                }
-            })
-        }
     }
 
 

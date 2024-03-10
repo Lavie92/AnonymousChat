@@ -202,40 +202,6 @@
 
 
             <LinearLayout
-                android:id="@+id/layoutAIChat"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_margin="20dp"
-                android:layout_weight="1"
-                android:background="@drawable/border_ai"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/imgAI"
-                    android:layout_width="82dp"
-                    android:layout_height="58dp"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ai" />
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:layout_weight="2"
-                    android:fontFamily="monospace"
-                    android:gravity="end"
-                    android:text="AI Chat"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/layoutTicTacToe"
                 android:layout_width="match_parent"
                 android:layout_height="63dp"

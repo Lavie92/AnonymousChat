@@ -9,7 +9,6 @@ import com.example.anonymousChat.R
 import com.example.anonymousChat.authentication.BannedActivity
 import com.example.anonymousChat.chat.ChatActivity
 import com.example.anonymousChat.chat.ChatNearestActivity
-import com.example.anonymousChat.chatAI.ChatbotActivity
 import com.example.anonymousChat.tictactoe.TictactoeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -56,12 +55,7 @@ class SplashScreenActivity : AppCompatActivity() {
                     val chatIntent = Intent(this@SplashScreenActivity, ChatActivity::class.java)
                     startActivity(chatIntent)
                     finish()
-                } else if (sourceActivity != null && sourceActivity == "toChatAI") {
-
-                    val chatIntent = Intent(this@SplashScreenActivity, ChatbotActivity::class.java)
-                    startActivity(chatIntent)
-                    finish()
-                } else if (sourceActivity != null && sourceActivity == "toChatNearest") {
+                }  else if (sourceActivity != null && sourceActivity == "toChatNearest") {
 
                     val chatIntent = Intent(this@SplashScreenActivity, ChatNearestActivity::class.java)
                     startActivity(chatIntent)

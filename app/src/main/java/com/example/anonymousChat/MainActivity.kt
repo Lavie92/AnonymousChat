@@ -12,7 +12,6 @@ import androidx.appcompat.widget.Toolbar
 import com.example.anonymousChat.authentication.User
 import com.example.anonymousChat.chat.ChatActivity
 import com.example.anonymousChat.databinding.ActivityMainBinding
-import com.example.anonymousChat.exchanges.PaymentsActivity
 import com.example.anonymousChat.layout.SplashScreenActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -52,20 +51,11 @@ class MainActivity : AppCompatActivity() {
             splashIntent.putExtra("source_activity", "toChatNearest")
             startActivity(splashIntent)
         }
-
-        binding.layoutAIChat.setOnClickListener{
-            val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
-            splashIntent.putExtra("source_activity", "toChatAI")
-            startActivity(splashIntent)
-        }
         binding.layoutTicTacToe.setOnClickListener{
             val splashIntent = Intent(this@MainActivity, SplashScreenActivity::class.java)
             splashIntent.putExtra("source_activity", "toGame")
             startActivity(splashIntent)
         }
-
-
-
 
         this.auth = FirebaseAuth.getInstance()
 
@@ -81,14 +71,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-
-        binding.paymentBox.setOnClickListener{
-            startActivity(Intent(this@MainActivity, PaymentsActivity::class.java))
-        }
-        //Load Screen to check Active
-        checkSession()
         checkActive()
-        //
 
 
 
@@ -109,87 +92,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-    private fun updateUsersCoin(userId: String, coin: Int) {
-        val userRef = FirebaseDatabase.getInstance().getReference("users/$userId")
-
-        // Lấy thông tin hiện tại của người dùng
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Giả sử bạn có trường 'coins' trong object của người dùng
-                val currentCoins = dataSnapshot.child("coins").getValue(Double::class.java) ?: 0.0
-                val newCoinValue = currentCoins - coin
-
-                // Cập nhật số dư mới
-                userRef.child("coins").setValue(newCoinValue)
-                    .addOnSuccessListener {
-                    }
-                    .addOnFailureListener {
-                    }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        })
-    }
-
-    //Sessions check
-    private fun getSessionId(): String? {
-        val sharedPref = getSharedPreferences("PreSession2", Context.MODE_PRIVATE)
-        return sharedPref.getString("sessionID2", null)
-    }
-    private fun checkSession() {
-        val sessionId = getSessionId()
-        databaseReferences = FirebaseDatabase.getInstance().getReference("users")
-        val user = auth.currentUser
-        user?.let {
-            databaseReferences.child(it.uid).child("session")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val currentSessionID = snapshot.value as String?
-                        if(sessionId != currentSessionID){
-                            showConfirmationDialog()
-                        }
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // Handle error
-                    }
-                })
-        }
-    }
-    private fun showConfirmationDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Thông báo!")
-        builder.setMessage("Tài khoản này đang được đăng nhập ở thiết bị khác, vui lòng đăng nhập lại!")
-
-        builder.setPositiveButton("OK") { _: DialogInterface, _: Int ->
-            signOutAndStartSignInActivity()
-            handleLogout()
-            finish()
-        }
-
-
-        builder.show()
-    }
-    private fun signOutAndStartSignInActivity() {
-        auth.signOut()
-        startActivity(Intent(this, LoginActivity::class.java))
-
-
-    }
-    private fun handleLogout() {
-        // Tạo Intent để chuyển hướng đến LoginActivity và xóa toàn bộ Activity đã mở trước đó
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-
-        // Kết thúc Activity hiện tại
-        finish()
-    }
-
-    //end Sessions check
-
-
 
     override fun onResume() {
         super.onResume()
@@ -197,29 +99,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
             finish() // Optional: Finish the current activity to prevent going back to it
         }
-    }
-    fun findRandomUserForChat() {
-        val usersRef = FirebaseDatabase.getInstance().getReference("users")
-        val context = this@MainActivity
-
-        usersRef.orderByChild("available").equalTo(true).limitToFirst(1)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        val currentUser = FirebaseAuth.getInstance().currentUser
-                        val matchedUser = dataSnapshot.children.first().getValue(User::class.java)
-
-                        val chatRoomId = createChatRoom(currentUser?.uid, matchedUser?.id)
-                        val intent = Intent(context, ChatActivity::class.java)
-                        intent.putExtra("chatRoomId", chatRoomId)
-                        startActivity(intent)
-                    } else {
-                    }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                }
-            })
     }
     override fun onBackPressed() {
         // Kiểm tra xem người dùng đang ở MainActivity hay không
@@ -240,25 +119,8 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-    fun createChatRoom(user1Id: String?, user2Id: String?): String {
-        val chatRoomsRef = FirebaseDatabase.getInstance().getReference("chatRooms")
 
-        val chatRoomId = chatRoomsRef.push().key
-        val chatRoom = HashMap<String, Any>()
-        chatRoomsRef.child(chatRoomId!!).setValue(chatRoom)
-
-        return chatRoomId
-    }
-
-
-
-
-
-    fun checkPassword(plainPassword: String, hashedPassword: String): Boolean {
-        return BCrypt.checkpw(plainPassword, hashedPassword)
-    }
     private fun checkActive(){
-        //mAuth = FirebaseAuth.getInstance()
         databaseReferences = FirebaseDatabase.getInstance().getReference("users")
         databaseReferences.child(auth.currentUser!!.uid).get().addOnSuccessListener {
             if(it.exists()){
