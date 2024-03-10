@@ -51,12 +51,13 @@
         app:lottie_rawRes="@raw/flash" />
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvTip"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="192dp"
-        android:text="Cat is running...."
-        android:textSize="20sp"
+        android:text=""
+        android:gravity="center"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/lottieAnimationView3" />
@@ -74,4 +75,5 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/cat4" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
