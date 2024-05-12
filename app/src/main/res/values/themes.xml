@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.DoAn_ChuyenNganh" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/cardview_light_background</item>
+    </style>
+
+    <style name="Theme.DoAn_ChuyenNganh" parent="Base.Theme.DoAn_ChuyenNganh" />
+</resources>

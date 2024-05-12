@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- login_screen colors -->
+
+	<color name="colorPrimary">#008577</color>
+	<color name="green">#4CAF50</color>
+	<color name="colorPrimaryDark">#00574B</color>
+	<color name="colorAccent">#D81B60</color>
+	<color name="purple_200">#FFBB86FC</color>
+	<color name="purple_500">#FF6200EE</color>
+	<color name="purple_700">#FF3700B3</color>
+	<color name="teal_200">#FF03DAC5</color>
+	<color name="teal_700">#FF018786</color>
+	<color name="black">#FF000000</color>c
+	<color name="white">#FFFFFFFF</color>
+	<color name="blue">#459DE4</color>
+	<color name="red">#FF0000</color>
+	<color name="_bg__login_screen_ek2_color">#FFFFFF</color>
+	<color name="ellipse_1_color">#ffffff</color>
+	<color name="hello__welcome_back_color">#000000</color>
+	<color name="forgot_password_color">#993F3F</color>
+	<color name="login_color">#F3F3F3</color>
+	<color name="line_1_color">#939393</color>
+	<color name="yellow">#ffff00</color>
+	<color name="_bg__frame_6_ek2_color">#000000</color>
+	<color name="rectangle_3_color">#F1F1F1</color>
+	<color name="rectangle_5_color">#F7F7F7</color>
+	<color name="rectangle_4_color">#ffffff</color>
+	<color name="search_chat_color">#252525</color>
+	<color name="chats_color">#771F98</color>
+
+
+	<color name="_bg__splash_screen_ek2_color">#FFFFFF</color>
+	<color name="get_closer_to_color">#FFFFFF</color>
+	<color name="get_started_color">#F3F3F3</color>
+	<color name="ellipse_11_color">#D9D9D9</color>
+	<color name="rectangle_12_color">#8D8D8D</color>
+
+	<color name="gold_background">#ffd700</color>
+
+
+	<color name="_bg__frame_2_ek2_color">#FFFFFF</color>
+	<color name="_bg__frame_1_ek1_color">#771F98</color>
+	<color name="submit_color">#771F98</color>
+
+
+	<color name="notifications_ek2_color">#303535</color>
+	<color name="lightyellow">#ffb780</color>
+	<color name="base_color">#771F98</color>
+	<color name="james_gmail_com_color">#6F8BA4</color>
+	<color name="ai">#feddd4</color>
+	<color name="nearest">#789c76</color>
+	<color name="random">#b8d6e1</color>
+</resources>

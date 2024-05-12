@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- login_screen strings -->
+
+    <string name="app_name">Anonymous Chat</string>
+    <string name="ek_img_content">ExportKit Image</string>
+    <string name="hello__welcome_back_string">Xin chào</string>
+    <string name="happy_to_see_you_again__to_use_your_account_please_login_first__string">Rất vui được gặp lại bạn, vui lòng đăng nhập để sử dụng.</string>
+    <string name="email_address_string">Email Address</string>
+    <string name="password_string">Password</string>
+    <string name="or_login_with_string">Or Login with</string>
+    <string name="forgot_password_string">Quên mật khẩu?</string>
+    <string name="login_string">Login</string>
+
+
+    <string name="get_closer_to_string">Get Closer To </string>
+    <string name="everyone_string">EveryOne</string>
+    <string name="helps_you_to_contact_everyone_with_just_easy_way_string">Helps you to contact everyone with just easy way</string>
+    <string name="get_started_string">Get Started</string>
+
+    <string name="search_chat_string">Search Chat</string>
+    <string name="chats_string">Chats</string>
+    <string name="friends_string">Friends</string>
+    <string name="calls_string">Calls</string>
+
+
+    <string name="please_enter_the_email_associated_with_your_account_we_will_send_an_email_instruction_to_reset_your_password_string">Please enter the Email associated with your account we will send an email instruction to reset your password</string>
+    <string name="submit_string">Submit</string>
+    <string name="please_enter_your_email_string">Please Enter Your Email</string>
+
+    <string name="notifications_ek2_string">Notifications</string>
+    <string name="reset_password_ek2_string">Reset Password</string>
+    <string name="your_email_ek2_string">Your Email</string>
+    <string name="james_gmail_com_string">james@gmail.com</string>
+    <string name="user_name_ek2_string">User Name</string>
+    <string name="jamesfranco_string">jamesfranco</string>
+    <string name="user_name_ek5_string">Gender</string>
+    <string name="jamesfranco_ek1_string">select  </string>
+    <string name="dang_truong_an_string">DANG TRUONG AN</string>
+<!--    <string name="default_web_client_id">950748527968-stcijveqt7kjbedqoc1vshi3c2pmopgl.apps.googleusercontent.com</string>-->
+    <string name="default_web_client_id">950748527968-ofvj4553no3ufno8h0al649qemud4v8l.apps.googleusercontent.com</string>
+
+    <string name="greeting">Tớ chào cậu!</string>
+
+    <string name="coins_display">You have: %1$d</string>
+
+    <string name="lbl_sotien">Số Tiền</string>
+    <string name="lbl_donhang">DEMO</string>
+    <string name="btn_create_order">Tạo Đơn Hàng</string>
+    <string name="txt_amount_init">1000</string>
+    <string name="txt_amount_hint">1000</string>
+    <string name="btn_pay">Thanh Toán</string>
+    <string name="lbl_zptranstoken">zptranstoken</string>
+    <string name="to_webview">To WebView</string>
+    <string name="new_member">Thành viên mới?</string>
+    <string name="create_account_to_make_friend">Hãy tạo tài khoản và kết nối cùng những người bạn phương xa</string>
+    <string name="dang_tai">Đang tải</string>
+</resources>
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- rectangle_1 from your XD file. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:shape="rectangle" >
+	<corners android:radius="20dp" />
+	<stroke android:color="#6b6b6b" android:width="2dp" />
+	<solid android:color="@color/ellipse_1_color" />
+</shape>
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/relavetive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp">
+
+        <ImageView
+            android:id="@+id/ivImageSent"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:maxWidth="130dp"
+            android:maxHeight="130dp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvImageSentTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relavetive"
+        android:layout_alignEnd="@+id/relavetive"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="14dp"
+        android:gravity="end"
+        android:text="12:00"
+        android:textColor="#F0272525"
+        android:textSize="12sp" />
+
+</RelativeLayout>

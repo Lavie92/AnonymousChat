@@ -1,0 +1,99 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <View
+        android:id="@+id/ellipse_"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="358dp"
+        android:background="@drawable/ellipse_1_shape"
+        android:foregroundGravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="24dp"
+        android:contentDescription="combined_shape3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.066"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/combined_shape" />
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="241dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="164dp"
+        android:layout_marginEnd="165dp"
+        android:layout_marginBottom="84dp"
+        android:background="@drawable/my_button"
+        android:shadowColor="#9C27B0"
+        android:text="Submit"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:rippleColor="#673AB7"
+        app:strokeColor="#3F51B5" />
+
+    <TextView
+        android:id="@+id/please_enter_the_email_associated_with_your_account_we_will_send_an_email_instruction_to_reset_your_password"
+        android:layout_width="321dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="392dp"
+        android:layout_marginEnd="45dp"
+        android:text="@string/please_enter_the_email_associated_with_your_account_we_will_send_an_email_instruction_to_reset_your_password_string"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/locked_padlock_outline_3" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/locked_padlock_outline_3"
+        android:layout_width="403dp"
+        android:layout_height="381dp"
+        android:contentDescription="locked_padlock_outline_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.122"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/forgotpassword" />
+
+    <EditText
+        android:id="@+id/forgotEmail"
+        style="@style/Widget.Material3.TextInputEditText.OutlinedBox"
+        android:layout_width="318dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="484dp"
+        android:background="@drawable/border_text"
+        android:ems="10"
+        android:hint="Please Enter Your Email"
+        android:inputType="text"
+        android:textAlignment="center"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.569"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/locked_padlock_outline_3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

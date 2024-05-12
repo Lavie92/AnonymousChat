@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F1ECE6"
+    tools:context=".presentation.ChatActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="135dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Chat Random"
+            android:textSize="23sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="41dp"
+            android:layout_height="31dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/backbutton"
+            android:contentDescription="@string/hello__welcome_back_string" />
+
+        <ImageView
+            android:id="@+id/btnInfo"
+            android:layout_width="43dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/info" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcMessage"
+        android:layout_width="match_parent"
+        android:background="@drawable/background"
+        android:layout_height="614dp"
+        android:layout_above="@id/llTextField"
+        android:layout_below="@+id/navigation"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="2dp" />
+
+    <LinearLayout
+        android:id="@+id/llTextField"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        android:gravity="bottom"
+        android:weightSum="100" >
+        <LinearLayout
+            android:id="@+id/option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="20"  >
+            <Button
+                android:layout_marginStart="2dp"
+                android:id="@+id/btnHeart"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="center"
+                android:background="@drawable/heart"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:layout_marginTop="8dp"
+                android:id="@+id/btnEndChat"
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:visibility="gone"
+                android:background="@drawable/message_background_receive"
+                android:text="Kết Thúc"
+                />
+
+            <Button
+                android:id="@+id/btnRandom"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:visibility="gone"
+                android:background="@drawable/message_background_receive"
+                android:text="Lẹt gô"
+                />
+            <ImageView
+                android:id="@+id/ivSendImage"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="gone"
+                android:src="@drawable/picture"
+                android:background="@drawable/message_background_receive"
+                />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnShowOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="6dp"
+                android:contentDescription="floatButton"
+                app:backgroundTint="@color/purple_200"
+                app:srcCompat="@drawable/baseline_add_24" />
+        </LinearLayout>
+        <EditText
+            android:id="@+id/messageBox"
+            android:layout_width="260dp"
+            android:layout_height="50dp"
+            android:layout_weight="60"
+            android:background="@drawable/message_box_background"
+            android:hint="@string/greeting"
+            android:maxLines="2"
+            android:paddingLeft="10dp"
+            android:singleLine="false"
+            />
+        <ImageView
+            android:id="@+id/ivSend"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/send"
+            android:layout_weight="20"
+            android:paddingLeft="10dp" />
+    </LinearLayout>
+</RelativeLayout>
