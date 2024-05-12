@@ -1,5 +1,6 @@
 package com.example.anonymousChat.adapter
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anonymousChat.R
 import com.example.anonymousChat.presentation.ChatActivity
@@ -29,13 +32,13 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
-class MessageAdapter(val context: Context, var messageList: List<Message>) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    val ITEM_RECEIVE = 1
-    val ITEM_SENT = 2
-    val ITEM_SYSTEM = 3
-    val ITEM_IMAGE_SENT = 4
-    val ITEM_IMAGE_RECEIVE = 5
+class MessageAdapter(val context: Context) :
+    ListAdapter<Message, RecyclerView.ViewHolder>(MessagesComparator()) {
+    private val ITEM_RECEIVE = 1
+    private val ITEM_SENT = 2
+    private val ITEM_SYSTEM = 3
+    private val ITEM_IMAGE_SENT = 4
+    private val ITEM_IMAGE_RECEIVE = 5
     private var isReported: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -74,17 +77,10 @@ class MessageAdapter(val context: Context, var messageList: List<Message>) :
         }
     }
 
-
-    override fun getItemCount(): Int {
-        return messageList.size
-    }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val currentMessage = messageList[position]
+        val currentMessage = getItem(position)
         val messageText = currentMessage.getMessageText()
         var lastMessageTimestamp: Long = 0
-        var isTranslated = false
-
         when (holder) {
             is SentViewHolder -> {
                 holder.sentMessage.text = messageText
@@ -233,7 +229,7 @@ class MessageAdapter(val context: Context, var messageList: List<Message>) :
     }
 
     override fun getItemViewType(position: Int): Int {
-        val currentMessage = messageList[position]
+        val currentMessage = getItem(position)
         val type = currentMessage.type
         if (FirebaseAuth.getInstance().currentUser?.uid.equals(currentMessage.senderId) && type.equals(
                 "text"
@@ -257,25 +253,6 @@ class MessageAdapter(val context: Context, var messageList: List<Message>) :
         }
 
     }
-
-    private fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun getCountryFromFirebase(userId: String, callback: (String?) -> Unit) {
-        val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val country = snapshot.child("Country").getValue(String::class.java)
-                callback(country)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                callback(null)
-            }
-        })
-    }
-
 
     class SentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val sentMessage = itemView.findViewById<TextView>(R.id.tvSentMessage)
@@ -302,4 +279,16 @@ class MessageAdapter(val context: Context, var messageList: List<Message>) :
         val ivReceiveMessage = itemView.findViewById<ImageView>(R.id.ivImageReceive)
         val tvImageSentTime = itemView.findViewById<TextView>(R.id.tvImageReceiveTime)
     }
+    class MessagesComparator: DiffUtil.ItemCallback<Message>() {
+        override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
+            return oldItem.messageId == newItem.messageId
+        }
+
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
+
+

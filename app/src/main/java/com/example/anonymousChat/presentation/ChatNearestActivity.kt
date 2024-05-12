@@ -100,7 +100,7 @@ class ChatNearestActivity : AppCompatActivity() {
         btnRandom = binding.btnRandom
         messageList = ArrayList()
         btnHeart = binding.btnHeart
-        messageAdapter = MessageAdapter(this, messageList!!)
+        messageAdapter = MessageAdapter(this)
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(this)
         val btnEndChat: Button = binding.btnEndChat

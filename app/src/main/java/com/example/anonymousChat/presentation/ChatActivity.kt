@@ -50,7 +50,6 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var usersRef: DatabaseReference
     private lateinit var chatRoomsRef: DatabaseReference
     private var chatRoomId: String = ""
-    private var messageList: ArrayList<Message>? = null
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
     private var receiverId: String = ""
     private val currentUser = FirebaseAuth.getInstance().currentUser
@@ -85,8 +84,7 @@ class ChatActivity : AppCompatActivity() {
         btnHeart = binding.btnHeart
         btnRandom = binding.btnRandom
         ivSendImage = binding.ivSendImage
-        messageList = ArrayList()
-        messageAdapter = MessageAdapter(this, messageList!!)
+        messageAdapter = MessageAdapter(this)
         messageRecyclerView.adapter = messageAdapter
         messageRecyclerView.layoutManager = LinearLayoutManager(this)
         val btnEndChat: Button = binding.btnEndChat
@@ -271,10 +269,6 @@ class ChatActivity : AppCompatActivity() {
             System.currentTimeMillis()
         )
 
-        messageList?.add(systemMessage)
-        messageAdapter.notifyDataSetChanged()
-
-        messageRecyclerView.scrollToPosition(messageList!!.size - 1)
     }
 
      private fun findRandomUserForChat() {
@@ -372,17 +366,16 @@ class ChatActivity : AppCompatActivity() {
         }
 
         chatViewModel.observeMessageLiveData().observe(this@ChatActivity, Observer { messageList ->
-            messageAdapter.messageList = messageList
+            messageAdapter.submitList(messageList)
             messageAdapter.notifyDataSetChanged()
+            messageRecyclerView.smoothScrollToPosition(messageList.size - 1)
             if (messageList != null) {
                 val content = messageList.last().content
-                Log.d("MessageList","$messageList")
-                Log.d("MessageListContent","$content")
-                if (content != null) {
+                val receiverId = messageList.last().receiverId
+                if (content != null && receiverId == currentUserId) {
                     NotificationUtils.showNotification(this@ChatActivity, "new message", content, "chatRooms")
                 }
             }
-            messageRecyclerView.scrollToPosition(messageList.size - 1)
         })
     }
 
