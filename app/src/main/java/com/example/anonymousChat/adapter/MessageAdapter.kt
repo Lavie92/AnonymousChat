@@ -9,13 +9,15 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.anonymousChat.R
+import com.example.anonymousChat.databinding.ItemImageReceiveBinding
+import com.example.anonymousChat.databinding.ItemImageSentBinding
+import com.example.anonymousChat.databinding.ItemMessageReceiveBinding
+import com.example.anonymousChat.databinding.ItemMessageSentBinding
+import com.example.anonymousChat.databinding.ItemSystemBinding
 import com.example.anonymousChat.presentation.ChatActivity
 import com.example.anonymousChat.presentation.ChatNearestActivity
 import com.example.anonymousChat.presentation.FullImageActivity
@@ -26,11 +28,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.nipunru.nsfwdetector.NSFWDetector
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-
 
 class MessageAdapter(val context: Context) :
     ListAdapter<Message, RecyclerView.ViewHolder>(MessagesComparator()) {
@@ -44,33 +41,24 @@ class MessageAdapter(val context: Context) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             1 -> {
-                val view: View = LayoutInflater.from(context)
-                    .inflate(R.layout.item_message_receive, parent, false)
-                ReceiveViewHolder(view)
+                return ReceiveViewHolder(ItemMessageReceiveBinding.inflate(LayoutInflater.from(parent.context)))
             }
 
             2 -> {
-                val view: View =
-                    LayoutInflater.from(context).inflate(R.layout.item_message_sent, parent, false)
-                SentViewHolder(view)
+                return SentViewHolder(ItemMessageSentBinding.inflate(LayoutInflater.from(parent.context)))
+
             }
 
             3 -> {
-                val view: View =
-                    LayoutInflater.from(context).inflate(R.layout.item_system, parent, false)
-                SystemViewHolder(view)
+                return SystemViewHolder(ItemSystemBinding.inflate(LayoutInflater.from(parent.context)))
             }
 
             4 -> {
-                val view: View =
-                    LayoutInflater.from(context).inflate(R.layout.item_image_sent, parent, false)
-                ImageSentViewHolder(view)
+                return ImageSentViewHolder(ItemImageSentBinding.inflate(LayoutInflater.from(parent.context)))
             }
 
             5 -> {
-                val view: View =
-                    LayoutInflater.from(context).inflate(R.layout.item_image_receive, parent, false)
-                ImageReceiveViewHolder(view)
+                return ImageReceiveViewHolder(ItemImageReceiveBinding.inflate(LayoutInflater.from(parent.context)))
             }
 
             else -> throw IllegalArgumentException("Invalid viewType: $viewType")
@@ -170,10 +158,6 @@ class MessageAdapter(val context: Context) :
                     }
                 })
             }
-
-            is ReceiveViewHolder -> {
-                holder.receiveMessage.text = messageText
-            }
         }
         when (holder) {
             is SentViewHolder -> {
@@ -254,30 +238,30 @@ class MessageAdapter(val context: Context) :
 
     }
 
-    class SentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val sentMessage = itemView.findViewById<TextView>(R.id.tvSentMessage)
-        val tvSentTime = itemView.findViewById<TextView>(R.id.tvSentTime)
+    class SentViewHolder(binding: ItemMessageSentBinding) : RecyclerView.ViewHolder(binding.root) {
+        val sentMessage = binding.tvSentMessage
+        val tvSentTime = binding.tvSentTime
 
     }
 
-    class ReceiveViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val receiveMessage = itemView.findViewById<TextView>(R.id.tvReceiveMessage)
-        val tvSentTime = itemView.findViewById<TextView>(R.id.tvReceiveTime)
+    class ReceiveViewHolder(binding: ItemMessageReceiveBinding) : RecyclerView.ViewHolder(binding.root) {
+        val receiveMessage = binding.tvReceiveMessage
+        val tvSentTime = binding.tvReceiveTime
     }
 
-    class SystemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val systemMessage = itemView.findViewById<TextView>(R.id.tvSystemMessage)
-        val tvSentTime = itemView.findViewById<TextView>(R.id.tvSystemTime)
+    class SystemViewHolder(binding: ItemSystemBinding) : RecyclerView.ViewHolder(binding.root) {
+        val systemMessage = binding.tvSystemMessage
+        val tvSentTime = binding.tvSystemTime
     }
 
-    class ImageSentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val ivSentMessage = itemView.findViewById<ImageView>(R.id.ivImageSent)
-        val tvSentTime = itemView.findViewById<TextView>(R.id.tvImageSentTime)
+    class ImageSentViewHolder(binding: ItemImageSentBinding) : RecyclerView.ViewHolder(binding.root) {
+        val ivSentMessage = binding.ivImageSent
+        val tvSentTime = binding.tvImageSentTime
     }
 
-    class ImageReceiveViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val ivReceiveMessage = itemView.findViewById<ImageView>(R.id.ivImageReceive)
-        val tvImageSentTime = itemView.findViewById<TextView>(R.id.tvImageReceiveTime)
+    class ImageReceiveViewHolder(binding: ItemImageReceiveBinding) : RecyclerView.ViewHolder(binding.root) {
+        val ivReceiveMessage = binding.ivImageReceive
+        val tvImageSentTime = binding.tvImageReceiveTime
     }
     class MessagesComparator: DiffUtil.ItemCallback<Message>() {
         override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {

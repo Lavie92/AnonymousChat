@@ -46,7 +46,7 @@ class ImageUtils(private val activity: Activity) {
             }
     }
 
-    fun handleImageUploadSuccess(imageUrl: String, chatRoomId: String, chatType: String, currentUserId: String, receiverId: String) {
+    private fun handleImageUploadSuccess(imageUrl: String, chatRoomId: String, chatType: String, currentUserId: String, receiverId: String) {
         val timestamp = System.currentTimeMillis()
         val messageId = UUID.randomUUID().toString()
         val type = "image"
