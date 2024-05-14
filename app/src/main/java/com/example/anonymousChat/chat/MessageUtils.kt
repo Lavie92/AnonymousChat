@@ -19,23 +19,23 @@ class MessageUtils (private val activity: Activity, chatType: String) {
         chatRoomId: String, senderId: String, receiverId: String, content: String
     ) {
 
-        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
-            if (!isChatRoomEnded) {
-                val timestamp = System.currentTimeMillis()
-                val messageId = UUID.randomUUID().toString()
-                val message = Message(
-                    messageId,
-                    senderId,
-                    receiverId,
-                    content,
-                    "text",
-                    timestamp
-                )
-                chatRoomsRef.child(chatRoomId).child("messages").push().setValue(message)
-            } else {
-                Toast.makeText(activity, "Bạn cần tìm người chat trước!", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+//            if (!isChatRoomEnded) {
+//                val timestamp = System.currentTimeMillis()
+//                val messageId = UUID.randomUUID().toString()
+//                val message = Message(
+//                    messageId,
+//                    senderId,
+//                    receiverId,
+//                    content,
+//                    "text",
+//                    timestamp
+//                )
+//                chatRoomsRef.child(chatRoomId).child("messages").push().setValue(message)
+//            } else {
+//                Toast.makeText(activity, "Bạn cần tìm người chat trước!", Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 
     private fun checkChatRoomStatus(chatRoomId: String, callback: (Boolean) -> Unit) {

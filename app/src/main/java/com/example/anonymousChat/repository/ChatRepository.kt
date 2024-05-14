@@ -10,40 +10,27 @@ class ChatRepository(
 ) : IChatRepository {
     override suspend fun sendMessage(
         chatRoomId: String,
+        chatType: String,
         senderId: String,
         receiverId: String,
         content: String
     ) {
+        chatService.sendMessage(chatRoomId, chatType, senderId, receiverId, content)
     }
 
     override suspend fun loadMessageSync(
-        chatRoomId: String, callback: (List<Message>) -> Unit
+        chatRoomId: String, chatType: String, callback: (List<Message>) -> Unit
     ): List<Message>? {
-        return suspendCoroutine { continuation ->
-            var isResumed = false
-            chatService.loadMessage(chatRoomId, onSuccess = { messages ->
+        return suspendCoroutine {
+            chatService.loadMessage(chatRoomId, chatType = chatType, onSuccess = { messages ->
                 callback(messages)
-            }, onError = { error ->
-                // Xử lý lỗi nếu cần
+            }, onError = {
             })
         }
-//            chatService.loadMessage(
-//                chatRoomId = chatRoomId,
-//                onSuccess = {
-//                    if (!isResumed) {
-//                        continuation.resume(it)
-//                        isResumed = true
-//                    }
-//                },
-//                onError = {
-//                    continuation.resume(listOf())
-//                    isResumed = true
-//                }
-//            )
         }
 
 
-    override suspend fun checkChatRoomStatus(chatRoomId: String): Boolean {
+//    override suspend fun checkChatRoomStatus(chatRoomId: String): Boolean {
 //        return try {
 //            val snapshot = chatRoomsRefProvider.getReference(chatType).child(chatRoomId).child("status").get().await()
 //            val status = snapshot.getValue(String::class.java)
@@ -51,7 +38,7 @@ class ChatRepository(
 //        } catch (e: Exception) {
 //            false
 //        }
-        return true
-    }
+//        return true
+//    }
 
 }

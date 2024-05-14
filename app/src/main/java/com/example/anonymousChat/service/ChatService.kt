@@ -9,15 +9,16 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.util.UUID
 
-class ChatService(private val chatType: String) : IChatService {
+class ChatService() : IChatService {
     override fun sendMessage(
         chatRoomId: String,
+        chatType: String,
         senderId: String,
         receiverId: String,
         content: String
     ) {
         val chatRoomsRef = FirebaseDatabase.getInstance().getReference(chatType)
-        checkChatRoomStatus(chatRoomId) { isChatRoomEnded ->
+        checkChatRoomStatus(chatRoomId, chatType) { isChatRoomEnded ->
             if (!isChatRoomEnded) {
                 val timestamp = System.currentTimeMillis()
                 val messageId = UUID.randomUUID().toString()
@@ -36,6 +37,7 @@ class ChatService(private val chatType: String) : IChatService {
 
     override fun loadMessage(
         chatRoomId: String,
+        chatType: String,
         onSuccess: (data: List<Message>) -> Unit,
         onError: (message: String) -> Unit
     ) {
@@ -77,8 +79,8 @@ class ChatService(private val chatType: String) : IChatService {
     }
 
 
-    private fun checkChatRoomStatus(chatRoomId: String, callback: (Boolean) -> Unit) {
-        val chatRoomsRef = FirebaseDatabase.getInstance().getReference(chatType)
+    private fun checkChatRoomStatus(chatRoomId: String, chatType: String, callback: (Boolean) -> Unit) {
+        val chatRoomsRef = FirebaseDatabase.getInstance().getReference(chatType).child(chatRoomId)
         chatRoomsRef.child("status").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val status = snapshot.getValue(String::class.java)

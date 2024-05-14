@@ -62,8 +62,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var imageUtils: ImageUtils
     private lateinit var messageUtils: MessageUtils
     private lateinit var chatViewModel: ChatViewModel
-
-
+    private val chatType = "chatRooms"
     companion object {
         const val REQUEST_CODE = 1
     }
@@ -72,8 +71,8 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        messageUtils = MessageUtils(this, "chatRooms")
-        chatViewModel = ChatViewModel(ChatRepository(ChatService("chatRooms")))
+        messageUtils = MessageUtils(this, chatType)
+        chatViewModel = ChatViewModel(ChatRepository(ChatService()), chatType)
         messageRecyclerView = binding.rcMessage
         auth = FirebaseAuth.getInstance()
         imageUtils = ImageUtils(this)
@@ -172,7 +171,7 @@ class ChatActivity : AppCompatActivity() {
         btnSend.setOnClickListener {
             val messageText = messageBox.text.toString().trim()
             if (messageText.isNotEmpty() && currentUserId != null && chatRoomId.isNotEmpty()) {
-                messageUtils.sendMessage(chatRoomId, currentUserId, receiverId, messageText)
+                sendMessage(chatRoomId, chatType, currentUserId, receiverId, messageText)
                 messageBox.text.clear()
             }
         }
@@ -190,8 +189,8 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendMessage(chatRoomId: String, senderId: String, receiverId: String, content: String) {
-        chatViewModel.sendMessage(chatRoomId, senderId, receiverId, content)
+    private fun sendMessage(chatRoomId: String, chatType: String, senderId: String, receiverId: String, content: String) {
+        chatViewModel.sendMessage(chatRoomId, chatType, senderId, receiverId, content)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -303,8 +302,8 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendInitialMessages(chatRoomId: String, senderId: String, receiverId: String) {
-        sendMessage(chatRoomId, "system", senderId, "Bạn đã tham gia chat!!")
-        sendMessage(chatRoomId, "system", receiverId, "Bạn đã tham gia chat!!")
+        sendMessage(chatRoomId, chatType,"system", senderId, "Bạn đã tham gia chat!!")
+        sendMessage(chatRoomId, chatType, "system", receiverId, "Bạn đã tham gia chat!!")
     }
 
     private fun updateUserStatus(userId: String, ready: Boolean) {
@@ -356,7 +355,7 @@ class ChatActivity : AppCompatActivity() {
                     chatRoomValue = snapshot.getValue(String::class.java).toString()
                     checkUsersInChatRoom(chatRoomValue)
                     chatRoomId = chatRoomValue
-                    chatViewModel.loadMessageAsync(chatRoomId)
+                    chatViewModel.loadMessageAsync(chatRoomId, "chatRooms")
                 }
 
                 override fun onCancelled(error: DatabaseError) {

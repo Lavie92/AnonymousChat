@@ -11,20 +11,20 @@ import com.example.anonymousChat.repository.IChatRepository
 import com.example.anonymousChat.service.ChatService
 import kotlinx.coroutines.launch
 
-class ChatViewModel(private val chatRepository: IChatRepository = ChatRepository(ChatService(chatType = "chatRooms"))) : ViewModel() {
+class ChatViewModel(private val chatRepository: IChatRepository = ChatRepository(ChatService()), chatType: String) : ViewModel() {
     private val _messageLiveData = MutableLiveData<List<Message>>()
     private val messageLiveData: LiveData<List<Message>> get() = _messageLiveData
     fun observeMessageLiveData() : LiveData<List<Message>> {
         return messageLiveData
     }
-    fun sendMessage(chatRoomId: String, senderId: String, receiverId: String, content: String) {
+    fun sendMessage(chatRoomId: String, chatType: String, senderId: String, receiverId: String, content: String) {
         viewModelScope.launch {
-            chatRepository.sendMessage(chatRoomId, senderId, receiverId, content)
+            chatRepository.sendMessage(chatRoomId, chatType, senderId, receiverId, content)
         }
     }
-    fun loadMessageAsync(chatRoomId: String) {
+    fun loadMessageAsync(chatRoomId: String, chatType: String) {
         viewModelScope.launch {
-            chatRepository.loadMessageSync(chatRoomId) { messages ->
+            chatRepository.loadMessageSync(chatRoomId, chatType = chatType) { messages ->
                 _messageLiveData.postValue(messages)
             }
         }
